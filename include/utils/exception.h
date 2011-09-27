@@ -13,6 +13,7 @@
 
 #include <exception>
 
+#include "platform.h"
 #include "string.h"
 
 namespace karen { namespace utils {
@@ -22,8 +23,23 @@ namespace karen { namespace utils {
  * exception in Karen. Any exception class extends from this, indicating
  * more specific exception conditions. 
  */
-class Exception : public std::exception
+class KAREN_EXPORT Exception : public std::exception
 {
+public:
+
+   /**
+    * Obtain exception cause.
+    */
+   inline const String& cause() const
+   { return _cause; }
+   
+   /**
+    * Obtain nested exception. If there is no nested exception, it returns
+    * null.
+    */
+   inline const Exception* nestedException() const
+   { return _nestedException; }
+
 protected:
 
    /**
@@ -61,7 +77,7 @@ protected:
     * Virtual destructor. 
     */
    inline virtual ~Exception() throw () {}
-
+   
 private:
 
    String         _cause;
@@ -72,19 +88,19 @@ private:
 };
 
 #define KAREN_DECL_EXCEPTION(classname) \
-   class classname : public ::karen::utils::Exception { \
+   class KAREN_EXPORT classname : public karen::utils::Exception { \
    public:\
       classname(const String& cause, const String& file, long line) \
-        : Exception(cause, file, line) {}\
+        : karen::utils::Exception(cause, file, line) {}\
       \
       classname(const String& cause, const String& file, \
-                long line, Exception* nestedException) \
-        : Exception(cause, file, line, nestedException) {}\
+                long line, karen::utils::Exception* nestedException) \
+        : karen::utils::Exception(cause, file, line, nestedException) {}\
       \
    }
 
 #define KAREN_DECL_CHILD_EXCEPTION(classname, parent) \
-   class classname : public parent { \
+   class KAREN_EXPORT classname : public parent { \
    public:\
       classname(const String &cause, const String &file, int line) \
         : parent(cause, file, line) {}\
@@ -124,6 +140,12 @@ KAREN_DECL_EXCEPTION(NullPointerException);
  * is received by a subprogram. 
  */
 KAREN_DECL_EXCEPTION(InvalidInputException);
+
+/**
+ * Invalid conversion exception. This exception is raised when one object
+ * cannot be converted from one class to another. 
+ */
+KAREN_DECL_EXCEPTION(InvalidConversionException);
 
 }}; // namespace karen::utils
 
