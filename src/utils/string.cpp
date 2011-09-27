@@ -58,6 +58,54 @@ String::fromLong(long num)
    return String(s.str());
 }
 
+String::Element&
+String::operator [] (const Position &pos)
+{
+   Length len = length();
+   if (pos < len)
+      return _base.at(pos);
+   else
+      KAREN_THROW(OutOfBoundsException, 
+         "attempt of accessing string element at position %d; "
+         "string length is %d", (unsigned long) pos, len);
+}
 
+const String::Element&
+String::operator [] (const Position &pos) const
+{ return ((String&) *this)[pos]; }
+
+Array<String>
+StringTokenizer::tokenize(const String& str, String::Element separator)
+{
+   Array<String> res;
+   if (!str.empty())
+   {
+      const char *p = str, *b;
+      int c;
+      while (p && (*p != '\0'))
+      {      
+         // Ignore leading separators.
+         while (*p == separator)
+            p++;
+         
+         // Read characters until end of word
+         b = p;
+         c = 0;
+         while (*p != separator && *p != '\0')
+         {
+            c++;
+            p++;
+         }
+
+         // Ignore rest of spaces.
+         while (p && (*p == separator))
+            p++;
+
+         res.pushBack(String(b, c));
+      }
+   }
+   
+   return res;
+}
 
 }}; // namespace karen::utils
