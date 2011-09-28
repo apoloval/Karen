@@ -255,6 +255,9 @@ private:
       return obj;
    }   
 
+   const T *safeObject() const throw (NullPointerException)
+   { return ((Ptr*) this)->safeObject(); }
+
 };
 
 }}; // namespace karen::utils
