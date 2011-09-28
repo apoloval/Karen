@@ -193,6 +193,11 @@ public:
    }
    
    /**
+    * Copy constructor. 
+    */
+   inline Iterator(const Iterator& it) : Iterator(it._concreteIterator) {}
+   
+   /**
     * Equals to operator.
     */
    inline bool operator == (const Iterator& it) const
@@ -261,18 +266,121 @@ private:
 
 };
 
+/**
+ * Constant iterator class. This class provides a generic iterator with the 
+ * ability of iterating on any ordered collection without altering its 
+ * contents. 
+ */
+template <class T>
+class ConstIterator : public AbstractConstIterator<T>
+{
+public:
+
+   /**
+    * Create a new iterator from a concrete implementation. If given concrete
+    * iterator is null, a InvalidInputException is raised. 
+    */
+   inline ConstIterator(const Ptr<AbstractConstIterator<T>>& concreteIterator)
+         throw (InvalidInputException)
+    : _concreteIterator(concreteIterator)
+   {
+      if (concreteIterator.isNull())
+         KAREN_THROW(InvalidInputException, 
+            "cannot create an instance of ConstIterator class with a "
+            "null concrete iterator");
+   }
+   
+   /**
+    * Copy constructor. 
+    */
+   inline ConstIterator(const ConstIterator& it)
+    : ConstIterator(it._concreteIterator)
+   {}
+   
+   /**
+    * Equals to operator.
+    */
+   inline bool operator == (const ConstIterator& it) const
+   {
+      return _concreteIterator->fingerprint() == 
+             it._concreteIterator->fingerprint();
+   }
+
+   /**
+    * Not equals to operator.
+    */
+   inline bool operator != (const ConstIterator& it) const
+   {
+      return _concreteIterator->fingerprint() != 
+             it._concreteIterator->fingerprint();
+   }
+   
+   /**
+    * Increment operator
+    */
+   inline ConstIterator& operator ++ () throw (OutOfBoundsException)
+   { return _concreteIterator->next(); }
+
+   /**
+    * Decrement operator
+    */
+   inline ConstIterator& operator -- () throw (OutOfBoundsException)
+   { return _concreteIterator->previous(); }
+
+   /**
+    * Indicates whether this iterator is null, i.e. either it is pointing
+    * to the end of a collection or it has not been initialized. 
+    */
+   virtual bool isNull() const
+   { return _concreteIterator->isNull(); }
+
+   /**
+    * Move the iterator to the next element. If iterator is pointing to
+    * the end of the collection, a OutOfBounds exception is raised. 
+    */
+   inline virtual ConstIterator& next() throw (OutOfBoundsException)
+   { _concreteIterator->next(); return *this; }
+
+   /**
+    * Move the iterator to the previous element. If iterator is pointing to
+    * the end of the collection, a OutOfBounds exception is raised. 
+    */
+   inline virtual ConstIterator& prev() throw (OutOfBoundsException)
+   { _concreteIterator->prev(); return *this; }
+
+   /**
+    * Obtain the value of the element pointed by this iterator.
+    */
+   virtual const T& value() const throw (NullIteratorException)
+   { return _concreteIterator->value(); }
+
+private:
+
+   Ptr<AbstractConstIterator<T>> _concreteIterator;
+
+};
+
 template <class T>
 class OrderedCollection
 {
 public:
 
-   
+   /**
+    * Obtain an iterator for this collection. 
+    */
+   virtual Iterator<T> begin() = 0;
+
+   /**
+    * Obtain a constant iterator for this collection. 
+    */
+   virtual ConstIterator<T> begin() const = 0;   
 
 };
 
 template <class T>
 class SequentialCollection : public OrderedCollection<T>
 {
+public:
 };
 
 /**
@@ -332,6 +440,22 @@ public:
    { _base.push_back(elem); }
    
    /**
+    * Obtain an iterator for this collection. 
+    */
+   inline virtual Iterator<T> begin()
+   {
+      return Iterator<T>(new IteratorImpl(this, _base.begin()));
+   }
+
+   /**
+    * Obtain a constant iterator for this collection. 
+    */
+   inline virtual ConstIterator<T> begin() const
+   {
+      return ConstIterator<T>(new IteratorImpl(this, _base.begin()));
+   }
+
+   /**
     * Position-access operator.
     */
    inline const T& operator [] (Position pos) const throw (OutOfBoundsException)
@@ -347,6 +471,53 @@ public:
 private:
 
    typedef std::vector<T> ArrayBase;
+   typedef typename ArrayBase::iterator ArrayIteratorBase;
+   
+   /**
+    * Iterator implementation for array collections.
+    */
+   class IteratorImpl : public AbstractIterator<T>
+   {
+   public:
+   
+      /**
+       * Create a new iterator from pointed collection and given iterator
+       * base. 
+       */
+      inline IteratorImpl(const Array *array, const ArrayIteratorBase &base)
+       : _array(array), _base(base)
+      {
+      }
+
+      inline virtual bool isNull() const
+      { return _base == _array->base.end(); }
+
+      inline virtual AbstractIteratorBase<T>& next() 
+      throw (OutOfBoundsException)
+      {
+         if (isNull())
+            KAREN_THROW(OutOfBoundsException, 
+                        "invoke on prev operation on a null iterator");
+         _base++;
+         return *this;
+      }
+
+      inline virtual AbstractIteratorBase<T>& prev() 
+      throw (OutOfBoundsException)
+      {
+         if (isNull())
+            KAREN_THROW(OutOfBoundsException, 
+                        "invoke on prev operation on a null iterator");
+         _base--;
+         return *this;
+      }
+      
+   private:
+   
+      const Array*      _array;
+      ArrayIteratorBase _base;
+   
+   };
 
    ArrayBase _base;
    
