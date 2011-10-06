@@ -161,6 +161,18 @@ KAREN_DECL_EXCEPTION(InvalidInputException);
  */
 KAREN_DECL_EXCEPTION(InvalidConversionException);
 
+/**
+ * Invalid state exception. This exception is raised when one object
+ * have an state that prevents the execution of certain action. 
+ */
+KAREN_DECL_EXCEPTION(InvalidStateException);
+
+/**
+ * Not found exception. This exception is raised when some action
+ * is requested that implies a resource that cannot be found.
+ */
+KAREN_DECL_EXCEPTION(NotFoundException);
+
 }}; // namespace karen::utils
 
 #endif
