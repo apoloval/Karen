@@ -292,6 +292,12 @@ public:
    }
    
    /**
+    * Assign operator.
+    */
+   inline String& operator = (const String& str)
+   { _base = str._base; }
+   
+   /**
     * Add operator. This add operator return a string resulting of
     * concatenating this string with given one passed as argument. 
     */
@@ -321,6 +327,30 @@ public:
     */
    inline bool operator != (const char* str) const
    { return _base != str; }
+   
+   /**
+    * Less than operator.
+    */
+   inline bool operator < (const String &str) const
+   { return _base < str._base; }
+   
+   /**
+    * Greater than operator.
+    */
+   inline bool operator > (const String &str) const
+   { return _base > str._base; }
+   
+   /**
+    * Less than or equal operator.
+    */
+   inline bool operator <= (const String &str) const
+   { return _base <= str._base; }
+   
+   /**
+    * Greater than or equal operator.
+    */
+   inline bool operator >= (const String &str) const
+   { return _base >= str._base; }
    
    /**
     * Index operator. If given position is not valid for this string, a
