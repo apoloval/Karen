@@ -89,50 +89,50 @@ public:
    /**
     * Value constructor.
     */
-   Tuple(const T1 &t1, const T2 &t2) : mFirst(t1), mSecond(t2) {}
+   Tuple(const T1 &t1, const T2 &t2) : _first(t1), _second(t2) {}
    
    /**
     * Obtain the first element of the tuple.
     */
    const T1 &first() const
-   { return mFirst; }
+   { return _first; }
    
    /**
     * Obtain the first element of the tuple.
     */
    T1 &first()
-   { return mFirst; }
+   { return _first; }
    
    /**
     * Obtain the second element of the tuple.
     */
    const T2 &second() const
-   { return mSecond; }
+   { return _second; }
    
    /**
     * Obtain the second element of the tuple.
     */
    T2 &second()
-   { return mSecond; }
+   { return _second; }
    
 private:
 
-   T1 mFirst;  //!< The first element of the tuple
-   T2 mSecond; //!< The second element of the tuple
+   T1 _first;  //!< The first element of the tuple
+   T2 _second; //!< The second element of the tuple
 
 };
 
 /**
- * DECL_TUPLE macro. This macro function may be used to extend the
+ * KAREN_DECL_TUPLE macro. This macro function may be used to extend the
  * Tuple template class to provide custom getters for the first
  * and second elements of the tuple. 
  */
-#define DECL_TUPLE(classname, type1, type2, getter1, getter2) \
+#define KAREN_DECL_TUPLE(classname, type1, type2, getter1, getter2) \
    class classname : public ::karen::utils::Tuple<type1, type2> \
    { \
    public:\
       classname(const type1 &t1, const type2 &t2) \
-         : ::geo::utils::Tuple<type1, type2>((type1&) t1, (type2&) t2) {} \
+         : ::karen::utils::Tuple<type1, type2>((type1&) t1, (type2&) t2) {} \
       const type1 &getter1() const { return this->first(); } \
       type1 &getter1() { return this->first(); } \
       const type2 &getter2() const { return this->second(); } \
