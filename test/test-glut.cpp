@@ -38,6 +38,59 @@ ui::ScreenProperties screenProps =
    "Karen GLUT Test"          // caption
 };
 
+#define XMIN   0.0f
+#define XMAX   540.0f
+#define SIZE   100.0f
+#define SPEED  0.1f
+
+class SimpleDrawing : public ui::Drawable
+{
+public:
+
+   SimpleDrawing(ui::DrawingContext* ctx)
+    : xpos(XMIN), inc(SPEED), frameCount(0), context(ctx)
+   {}
+
+   inline virtual void draw(ui::Canvas& canvas)
+   {
+      ui::Canvas::QuadParams quad =
+      {
+         { ui::Vector(xpos, 100), ui::Vector(xpos + SIZE, 100), 
+           ui::Vector(xpos + SIZE, 100 + SIZE), ui::Vector(xpos, 100 + SIZE), },
+         { ui::Color::RED, ui::Color::GREEN, 
+           ui::Color::BLUE, ui::Color::MAGENTA },
+         1.0f,
+         true,
+      };
+      canvas.drawQuad(quad);
+      animate();
+      context->postRedisplay();
+   }
+   
+   void animate()
+   {
+      if (xpos < XMIN)
+      {
+         xpos = XMIN;
+         inc = -inc;
+      }
+      else if (XMAX < xpos)
+      {
+         xpos = XMAX;
+         inc = -inc;
+      }
+      xpos += inc;
+   }
+
+private:
+
+   float xpos;
+   float inc;
+   long frameCount;
+   ui::DrawingContext* context;
+
+};
+
 int main(int argc, char* argv[])
 {
    try
@@ -48,8 +101,11 @@ int main(int argc, char* argv[])
       std::cerr << "Done" << std::endl;
 
       std::cerr << "Initializing screen... ";
-      ui::Canvas& cvs = dc.initScreen(screenProps);
+      dc.initScreen(screenProps);
       std::cerr << "Done" << std::endl;
+      
+      SimpleDrawing sd(&dc);   
+      dc.setDrawingTarget(&sd);
       
       engine.runLoop();
    }
