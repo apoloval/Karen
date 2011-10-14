@@ -112,4 +112,22 @@
 #  define KAREN_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
+// Integer formats of fixed bit width
+typedef unsigned int       UInt32;
+typedef unsigned short     UInt16;
+typedef unsigned char      UInt8;
+
+typedef int                Int32;
+typedef short              Int16;
+typedef char               Int8;
+
+// Special case: 64-bit types
+#if KAREN_COMPILER == KAREN_COMPILER_MSVC
+typedef unsigned __int64   UInt64;
+typedef __int64            Int64;
+#else
+typedef unsigned long long UInt64;
+typedef long long          Int64;
+#endif
+
 #endif
