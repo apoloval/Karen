@@ -262,4 +262,6 @@ private:
 
 }}; // namespace karen::utils
 
+using karen::utils::Ptr;
+
 #endif
