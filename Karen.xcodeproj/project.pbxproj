@@ -21,6 +21,28 @@
 		B50947CE1430C4B700F3449C /* numeric.h in Headers */ = {isa = PBXBuildFile; fileRef = B50947CD1430C4B700F3449C /* numeric.h */; };
 		B50947D01430C66400F3449C /* numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947CF1430C66400F3449C /* numeric.cpp */; };
 		B5312DF21431B7F300D24DAE /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = B5312DF11431B7F300D24DAE /* platform.h */; };
+		B53669A214473495001374A8 /* timing.h in Headers */ = {isa = PBXBuildFile; fileRef = B53669A114473495001374A8 /* timing.h */; };
+		B53669A51447371A001374A8 /* timing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669A41447371A001374A8 /* timing.cpp */; };
+		B53669A714481335001374A8 /* gl.h in Headers */ = {isa = PBXBuildFile; fileRef = B53669A614481335001374A8 /* gl.h */; };
+		B53669A914481499001374A8 /* gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669A814481499001374A8 /* gl.cpp */; };
+		B53669AB14482CD5001374A8 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669AA14482CD5001374A8 /* image.cpp */; };
+		B53669C014487848001374A8 /* test-glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669BF14487848001374A8 /* test-glut.cpp */; };
+		B53669C314487B8A001374A8 /* karen.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5094790142B89A100F3449C /* karen.dylib */; };
+		B5E8FF72143C95E1007AE498 /* app.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF71143C95E1007AE498 /* app.h */; };
+		B5E8FF76143C983F007AE498 /* engine.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF75143C983F007AE498 /* engine.h */; };
+		B5E8FF78143C9935007AE498 /* draw.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF77143C9935007AE498 /* draw.h */; };
+		B5E8FF7A143C9C72007AE498 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF79143C9C72007AE498 /* types.h */; };
+		B5E8FF7D143DA7FE007AE498 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF7C143DA7FE007AE498 /* types.cpp */; };
+		B5E8FF7F143DBB50007AE498 /* image.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF7E143DBB50007AE498 /* image.h */; };
+		B5E8FF81143DF114007AE498 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF80143DF114007AE498 /* engine.cpp */; };
+		B5E8FF83143DF851007AE498 /* parsing.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF82143DF850007AE498 /* parsing.h */; };
+		B5E8FF85143DF8FF007AE498 /* parsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF84143DF8FF007AE498 /* parsing.cpp */; };
+		B5E8FF88143E0B7B007AE498 /* glut.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF87143E0B7B007AE498 /* glut.h */; };
+		B5E8FF8A143E0BEE007AE498 /* glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF89143E0BEE007AE498 /* glut.cpp */; };
+		B5E8FF8C143E0DD7007AE498 /* loop.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF8B143E0DD7007AE498 /* loop.h */; };
+		B5E8FF8E143E1272007AE498 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF8D143E1272007AE498 /* event.h */; };
+		B5E8FF9014446524007AE498 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF8F14446524007AE498 /* event.cpp */; };
+		B5E8FF921444C333007AE498 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = B5E8FF911444C333007AE498 /* timer.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,10 +53,26 @@
 			remoteGlobalIDString = B509478F142B89A100F3449C;
 			remoteInfo = karen;
 		};
+		B53669C114487AB6001374A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B509476D142B86AF00F3449C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B509478F142B89A100F3449C;
+			remoteInfo = karen;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B50947B5142C8CFB00F3449C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B53669B214487826001374A8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -62,6 +100,28 @@
 		B50947CD1430C4B700F3449C /* numeric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = numeric.h; path = include/utils/numeric.h; sourceTree = "<group>"; };
 		B50947CF1430C66400F3449C /* numeric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = numeric.cpp; path = src/utils/numeric.cpp; sourceTree = "<group>"; };
 		B5312DF11431B7F300D24DAE /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform.h; path = include/utils/platform.h; sourceTree = "<group>"; };
+		B53669A114473495001374A8 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timing.h; path = include/utils/timing.h; sourceTree = "<group>"; };
+		B53669A41447371A001374A8 /* timing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timing.cpp; path = src/utils/timing.cpp; sourceTree = "<group>"; };
+		B53669A614481335001374A8 /* gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl.h; path = include/ui/core/gl.h; sourceTree = "<group>"; };
+		B53669A814481499001374A8 /* gl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl.cpp; path = src/ui/core/gl.cpp; sourceTree = "<group>"; };
+		B53669AA14482CD5001374A8 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = src/ui/image.cpp; sourceTree = "<group>"; };
+		B53669B414487826001374A8 /* test-glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test-glut"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B53669BF14487848001374A8 /* test-glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-glut.cpp"; path = "test/test-glut.cpp"; sourceTree = "<group>"; };
+		B5E8FF71143C95E1007AE498 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = app.h; path = include/app.h; sourceTree = "<group>"; };
+		B5E8FF75143C983F007AE498 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = engine.h; path = include/ui/engine.h; sourceTree = "<group>"; };
+		B5E8FF77143C9935007AE498 /* draw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = draw.h; path = include/ui/draw.h; sourceTree = "<group>"; };
+		B5E8FF79143C9C72007AE498 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = include/ui/types.h; sourceTree = "<group>"; };
+		B5E8FF7C143DA7FE007AE498 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = src/ui/types.cpp; sourceTree = "<group>"; };
+		B5E8FF7E143DBB50007AE498 /* image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = image.h; path = include/ui/image.h; sourceTree = "<group>"; };
+		B5E8FF80143DF114007AE498 /* engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = engine.cpp; path = src/ui/engine.cpp; sourceTree = "<group>"; };
+		B5E8FF82143DF850007AE498 /* parsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parsing.h; path = include/utils/parsing.h; sourceTree = "<group>"; };
+		B5E8FF84143DF8FF007AE498 /* parsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parsing.cpp; path = src/utils/parsing.cpp; sourceTree = "<group>"; };
+		B5E8FF87143E0B7B007AE498 /* glut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glut.h; path = include/ui/core/glut.h; sourceTree = "<group>"; };
+		B5E8FF89143E0BEE007AE498 /* glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glut.cpp; path = src/ui/core/glut.cpp; sourceTree = "<group>"; };
+		B5E8FF8B143E0DD7007AE498 /* loop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = loop.h; path = include/ui/loop.h; sourceTree = "<group>"; };
+		B5E8FF8D143E1272007AE498 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = event.h; path = include/ui/event.h; sourceTree = "<group>"; };
+		B5E8FF8F14446524007AE498 /* event.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = event.cpp; path = src/ui/event.cpp; sourceTree = "<group>"; };
+		B5E8FF911444C333007AE498 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = include/ui/timer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +142,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B53669B114487826001374A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B53669C314487B8A001374A8 /* karen.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -99,6 +167,7 @@
 		B5094774142B86CB00F3449C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				B5E8FF7B143DA7E4007AE498 /* UI */,
 				B50947AB142BA7C400F3449C /* Utils */,
 			);
 			name = Sources;
@@ -109,6 +178,7 @@
 			children = (
 				B5094790142B89A100F3449C /* karen.dylib */,
 				B50947B7142C8CFB00F3449C /* test-utils */,
+				B53669B414487826001374A8 /* test-glut */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,7 +186,9 @@
 		B5094788142B873200F3449C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				B5E8FF74143C9811007AE498 /* UI */,
 				B5094789142B874B00F3449C /* Utils */,
+				B5E8FF71143C95E1007AE498 /* app.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -132,6 +204,8 @@
 				B50947CA1430B39600F3449C /* pointer.h */,
 				B50947CD1430C4B700F3449C /* numeric.h */,
 				B5312DF11431B7F300D24DAE /* platform.h */,
+				B5E8FF82143DF850007AE498 /* parsing.h */,
+				B53669A114473495001374A8 /* timing.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -151,6 +225,8 @@
 				B50947A2142B978B00F3449C /* string.cpp */,
 				B50947B0142C87C300F3449C /* test.cpp */,
 				B50947CF1430C66400F3449C /* numeric.cpp */,
+				B5E8FF84143DF8FF007AE498 /* parsing.cpp */,
+				B53669A41447371A001374A8 /* timing.cpp */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -159,8 +235,54 @@
 			isa = PBXGroup;
 			children = (
 				B50947C1142C8D2400F3449C /* test-utils.cpp */,
+				B53669BF14487848001374A8 /* test-glut.cpp */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		B5E8FF74143C9811007AE498 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B5E8FF86143E0B52007AE498 /* Core */,
+				B5E8FF75143C983F007AE498 /* engine.h */,
+				B5E8FF77143C9935007AE498 /* draw.h */,
+				B5E8FF79143C9C72007AE498 /* types.h */,
+				B5E8FF7E143DBB50007AE498 /* image.h */,
+				B5E8FF8B143E0DD7007AE498 /* loop.h */,
+				B5E8FF8D143E1272007AE498 /* event.h */,
+				B5E8FF911444C333007AE498 /* timer.h */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		B5E8FF7B143DA7E4007AE498 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B5E8FF931444C6DD007AE498 /* Core */,
+				B5E8FF7C143DA7FE007AE498 /* types.cpp */,
+				B5E8FF80143DF114007AE498 /* engine.cpp */,
+				B5E8FF8F14446524007AE498 /* event.cpp */,
+				B53669AA14482CD5001374A8 /* image.cpp */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		B5E8FF86143E0B52007AE498 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B5E8FF87143E0B7B007AE498 /* glut.h */,
+				B53669A614481335001374A8 /* gl.h */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		B5E8FF931444C6DD007AE498 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B5E8FF89143E0BEE007AE498 /* glut.cpp */,
+				B53669A814481499001374A8 /* gl.cpp */,
+			);
+			name = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +299,18 @@
 				B50947CB1430B39600F3449C /* pointer.h in Headers */,
 				B50947CE1430C4B700F3449C /* numeric.h in Headers */,
 				B5312DF21431B7F300D24DAE /* platform.h in Headers */,
+				B5E8FF72143C95E1007AE498 /* app.h in Headers */,
+				B5E8FF76143C983F007AE498 /* engine.h in Headers */,
+				B5E8FF78143C9935007AE498 /* draw.h in Headers */,
+				B5E8FF7A143C9C72007AE498 /* types.h in Headers */,
+				B5E8FF7F143DBB50007AE498 /* image.h in Headers */,
+				B5E8FF83143DF851007AE498 /* parsing.h in Headers */,
+				B5E8FF88143E0B7B007AE498 /* glut.h in Headers */,
+				B5E8FF8C143E0DD7007AE498 /* loop.h in Headers */,
+				B5E8FF8E143E1272007AE498 /* event.h in Headers */,
+				B5E8FF921444C333007AE498 /* timer.h in Headers */,
+				B53669A214473495001374A8 /* timing.h in Headers */,
+				B53669A714481335001374A8 /* gl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +352,24 @@
 			productReference = B50947B7142C8CFB00F3449C /* test-utils */;
 			productType = "com.apple.product-type.tool";
 		};
+		B53669B314487826001374A8 /* test-glut */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B53669BD14487826001374A8 /* Build configuration list for PBXNativeTarget "test-glut" */;
+			buildPhases = (
+				B53669B014487826001374A8 /* Sources */,
+				B53669B114487826001374A8 /* Frameworks */,
+				B53669B214487826001374A8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B53669C214487AB6001374A8 /* PBXTargetDependency */,
+			);
+			name = "test-glut";
+			productName = "test-glut";
+			productReference = B53669B414487826001374A8 /* test-glut */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -240,6 +392,7 @@
 			targets = (
 				B509478F142B89A100F3449C /* karen */,
 				B50947B6142C8CFB00F3449C /* test-utils */,
+				B53669B314487826001374A8 /* test-glut */,
 			);
 		};
 /* End PBXProject section */
@@ -252,6 +405,14 @@
 				B50947A3142B978B00F3449C /* string.cpp in Sources */,
 				B50947B1142C87C300F3449C /* test.cpp in Sources */,
 				B50947D01430C66400F3449C /* numeric.cpp in Sources */,
+				B5E8FF7D143DA7FE007AE498 /* types.cpp in Sources */,
+				B5E8FF81143DF114007AE498 /* engine.cpp in Sources */,
+				B5E8FF85143DF8FF007AE498 /* parsing.cpp in Sources */,
+				B5E8FF8A143E0BEE007AE498 /* glut.cpp in Sources */,
+				B5E8FF9014446524007AE498 /* event.cpp in Sources */,
+				B53669A51447371A001374A8 /* timing.cpp in Sources */,
+				B53669A914481499001374A8 /* gl.cpp in Sources */,
+				B53669AB14482CD5001374A8 /* image.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +424,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B53669B014487826001374A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B53669C014487848001374A8 /* test-glut.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -270,6 +439,11 @@
 			isa = PBXTargetDependency;
 			target = B509478F142B89A100F3449C /* karen */;
 			targetProxy = B50947C4142CB9EC00F3449C /* PBXContainerItemProxy */;
+		};
+		B53669C214487AB6001374A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B509478F142B89A100F3449C /* karen */;
+			targetProxy = B53669C114487AB6001374A8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -354,6 +528,51 @@
 			};
 			name = Release;
 		};
+		B53669BB14487826001374A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B53669BC14487826001374A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -383,6 +602,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B53669BD14487826001374A8 /* Build configuration list for PBXNativeTarget "test-glut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B53669BB14487826001374A8 /* Debug */,
+				B53669BC14487826001374A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
