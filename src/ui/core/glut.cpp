@@ -159,8 +159,11 @@ GlutDrawingContext::postRedisplay()
 void
 GlutDrawingContext::glutDisplayHandler()
 {
+   _activeContext->_canvas->clear();
    if (_activeContext->_target)
       _activeContext->_target->draw(*_activeContext->_canvas);
+   _activeContext->_canvas->flush();
+   glutSwapBuffers();
 }
 
 GlutDrawingContext::GlutDrawingContext()
