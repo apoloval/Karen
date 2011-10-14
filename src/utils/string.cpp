@@ -22,6 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
+#include "utils/pointer.h"
 #include "utils/string.h"
 #include "utils/types.h"
 
@@ -87,39 +88,5 @@ String::operator [] (const Position &pos)
 const String::Element&
 String::operator [] (const Position &pos) const
 { return ((String&) *this)[pos]; }
-
-Array<String>
-StringTokenizer::tokenize(const String& str, String::Element separator)
-{
-   Array<String> res;
-   if (!str.empty())
-   {
-      const char *p = str, *b;
-      int c;
-      while (p && (*p != '\0'))
-      {      
-         // Ignore leading separators.
-         while (*p == separator)
-            p++;
-         
-         // Read characters until end of word
-         b = p;
-         c = 0;
-         while (*p != separator && *p != '\0')
-         {
-            c++;
-            p++;
-         }
-
-         // Ignore rest of spaces.
-         while (p && (*p == separator))
-            p++;
-
-         res.pushBack(String(b, c));
-      }
-   }
-   
-   return res;
-}
 
 }}; // namespace karen::utils
