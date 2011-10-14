@@ -22,9 +22,10 @@
  * ---------------------------------------------------------------------
  */
 
-#include "utils/test.h"
-#include "utils/string.h"
 #include "utils/numeric.h"
+#include "utils/parsing.h"
+#include "utils/string.h"
+#include "utils/test.h"
 
 using namespace karen::utils;
 
@@ -298,7 +299,7 @@ public:
    {
       String s("Welcome to the jungle");
       Array<String> tokens = StringTokenizer::tokenize(s);
-      KAREN_UTEST_ASSERT(tokens.length() == 4);
+      KAREN_UTEST_ASSERT(tokens.size() == 4);
       KAREN_UTEST_ASSERT(tokens[0] == "Welcome");
       KAREN_UTEST_ASSERT(tokens[1] == "to");
       KAREN_UTEST_ASSERT(tokens[2] == "the");
@@ -309,7 +310,7 @@ public:
    {
       String s("Welcome");
       Array<String> tokens = StringTokenizer::tokenize(s);
-      KAREN_UTEST_ASSERT(tokens.length() == 1);
+      KAREN_UTEST_ASSERT(tokens.size() == 1);
       KAREN_UTEST_ASSERT(tokens[0] == "Welcome");
    }
 
@@ -317,7 +318,7 @@ public:
    {
       String s("");
       Array<String> tokens = StringTokenizer::tokenize(s);
-      KAREN_UTEST_ASSERT(tokens.length() == 0);
+      KAREN_UTEST_ASSERT(tokens.size() == 0);
    }
    
    void startsWithString()
@@ -633,6 +634,743 @@ public:
 
 };
 
+class ArrayTestSuite : public UnitTestSuite
+{
+public:
+
+   ArrayTestSuite() : UnitTestSuite("Collections - Array")
+   {
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldCreateEmptyArray);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldCreateFromRawArray);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldNotIndexWhenEmpty);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldPushBackItems);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldIndexWhenNotEmpty);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldIterateArray);
+      KAREN_UTEST_ADD(ArrayTestSuite::shouldIterateArrayUsingForRange);
+   }
+   
+   void shouldCreateEmptyArray()
+   {
+      Array<int> a;
+      KAREN_UTEST_ASSERT(a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 0);
+   }
+   
+   void shouldNotIndexWhenEmpty()
+   {
+      Array<int> a;
+      try
+      {
+         a[0];
+         KAREN_UTEST_FAILED("expected exception not raised");
+      }
+      catch (OutOfBoundsException&) {}
+   }
+   
+   void shouldCreateFromRawArray()
+   {
+      int raw[] = { 10, 11, 12, 13, 14, 15 };
+      Array<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 6);
+   }
+   
+   void shouldPushBackItems()
+   {
+      Array<int> a;
+      a.pushBack(10);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 1);
+      KAREN_UTEST_ASSERT(a[0] == 10);
+      a.pushBack(11);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 2);
+      KAREN_UTEST_ASSERT(a[1] == 11);
+      a.pushBack(12);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 3);
+      KAREN_UTEST_ASSERT(a[2] == 12);   
+   }
+
+   void shouldIndexWhenNotEmpty()
+   {
+      int raw[] = { 10, 11, 12, 13, 14, 15 };
+      Array<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 6);
+      for (int i = 0; i < a.size(); i++)
+         KAREN_UTEST_ASSERT(a[i] == raw[i]);
+   }
+   
+   void shouldIterateArray()
+   {
+      int raw[] = { 10, 11, 12, 13, 14, 15 };
+      Array<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 6);
+      int i = 0;
+      for (Iterator<int> it = a.begin(), end = a.end(); it != end; it++)
+         KAREN_UTEST_ASSERT(*it == raw[i++]);
+   }
+
+   void shouldIterateArrayUsingForRange()
+   {
+      int raw[] = { 10, 11, 12, 13, 14, 15 };
+      Array<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.empty());
+      KAREN_UTEST_ASSERT(a.size() == 6);
+      int i = 0;
+      for (int n : a)
+         KAREN_UTEST_ASSERT(n == raw[i++]);
+   }
+
+};
+
+class ListTestSuite : public UnitTestSuite
+{
+public:
+   ListTestSuite() : UnitTestSuite("Collections - List")
+   {
+      KAREN_UTEST_ADD(ListTestSuite::createEmptyList);
+      KAREN_UTEST_ADD(ListTestSuite::insertOneElementToHead);
+      KAREN_UTEST_ADD(ListTestSuite::insertOneElementToTail);
+      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsToHead);
+      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsToTail);
+      KAREN_UTEST_ADD(ListTestSuite::iterateFromHead);
+      KAREN_UTEST_ADD(ListTestSuite::iterateFromTail);
+      KAREN_UTEST_ADD(ListTestSuite::contains);
+      KAREN_UTEST_ADD(ListTestSuite::removeIterator);
+      KAREN_UTEST_ADD(ListTestSuite::removeWithInvalidIterator);
+      KAREN_UTEST_ADD(ListTestSuite::removeFirst);
+      KAREN_UTEST_ADD(ListTestSuite::removeLast);
+      KAREN_UTEST_ADD(ListTestSuite::clearEmpty);
+      KAREN_UTEST_ADD(ListTestSuite::clearNotEmpty);
+      KAREN_UTEST_ADD(ListTestSuite::insertBefore);
+      KAREN_UTEST_ADD(ListTestSuite::insertAfter);
+      KAREN_UTEST_ADD(ListTestSuite::iterateForRange);
+   }
+   
+   void createEmptyList()
+   {
+      List<int> l;
+      KAREN_UTEST_ASSERT(l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 0);      
+   }
+   
+   void insertOneElementToHead()
+   {
+      List<int> l;
+      l.toHead(11);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 1);
+      KAREN_UTEST_ASSERT(l.head() == 11);
+      KAREN_UTEST_ASSERT(l.tail() == 11);
+   }
+
+   void insertOneElementToTail()
+   {
+      List<int> l;
+      l.toTail(10);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 1);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 10);
+   }
+
+   void insertSeveralElementsToHead()
+   {
+      List<int> l;
+      l.toHead(11);
+      l.toHead(12);
+      l.toHead(13);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 3);
+      KAREN_UTEST_ASSERT(l.head() == 13);
+      KAREN_UTEST_ASSERT(l.tail() == 11);
+   }
+
+   void insertSeveralElementsToTail()
+   {
+      List<int> l;
+      l.toTail(11);
+      l.toTail(12);
+      l.toTail(13);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 3);
+      KAREN_UTEST_ASSERT(l.head() == 11);
+      KAREN_UTEST_ASSERT(l.tail() == 13);
+   }
+
+   void iterateFromHead()
+   {
+      List<int> l;
+      int j = 10;
+      for (int i = j; i < 20; i++)
+         l.toTail(i);
+            
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 10);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 19);
+      Iterator<int> it = l.begin();
+      KAREN_UTEST_ASSERT(it);
+      for (; it; it++)
+         KAREN_UTEST_ASSERT(*it == j++);
+   }
+
+   void iterateFromTail()
+   {
+      List<int> l;
+      int j = 10;
+      for (int i = j; i < 20; i++)
+         l.toTail(i);
+            
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 10);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 19);
+      j = 19;
+      Iterator<int> it = l.begin(BEGIN_AT_BACK);
+      KAREN_UTEST_ASSERT(it);
+      for (; it; it--)
+         KAREN_UTEST_ASSERT(*it == j--);
+   }
+   
+   void contains()
+   {
+      List<int> l;
+      int j = 10;
+      for (int i = j; i < 20; i++)
+         l.toTail(i);
+            
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 10);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 19);
+      KAREN_UTEST_ASSERT(l.contains(15));
+      KAREN_UTEST_ASSERT(!l.contains(25));
+   }
+
+   void removeIterator()
+   {
+      List<int> l;
+      int j = 10;
+      for (int i = j; i < 20; i++)
+         l.toTail(i);
+            
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 10);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 19);
+
+      Iterator<int> it = l.begin();
+      for (int i = 0; i < 5; i++)
+         it++;
+      l.remove(it);
+      KAREN_UTEST_ASSERT(*it == 16);
+      KAREN_UTEST_ASSERT(!l.contains(15));
+   }
+
+   void removeFirst()
+   {
+      List<int> l;
+      for (int i = 10; i < 20; i++)
+         l.toTail(i);
+      Iterator<int> it = l.begin();
+      l.remove(it);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 9);
+      KAREN_UTEST_ASSERT(l.head() == 11);
+      KAREN_UTEST_ASSERT(l.tail() == 19);
+   }
+   
+   void removeLast()
+   {
+      List<int> l;
+      for (int i = 10; i < 20; i++)
+         l.toTail(i);
+      Iterator<int> it = l.begin(BEGIN_AT_BACK);
+      l.remove(it);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 9);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 18);
+   }
+   
+   void removeWithInvalidIterator()
+   {
+      List<int> l;
+      for (int i = 10; i < 20; i++)
+         l.toTail(i);
+      
+      try
+      {
+         Iterator<int> it;
+         l.remove(it);
+         KAREN_UTEST_FAILED("expected exception not raised");
+      }
+      catch (InvalidInputException&) {}
+      try
+      {
+         List<int> ll;
+         Iterator<int> it = ll.begin();
+         l.remove(it);
+         KAREN_UTEST_FAILED("expected exception not raised");
+      }
+      catch (InvalidInputException&) {}
+   }
+   
+   void clearNotEmpty()
+   {
+      List<int> l;
+      for (int i = 10; i < 20; i++)
+         l.toTail(i);
+      l.clear();
+      KAREN_UTEST_ASSERT(l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 0);
+   }
+   
+   void clearEmpty()
+   {
+      List<int> l;
+      l.clear();
+      KAREN_UTEST_ASSERT(l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 0);
+   }
+   
+   void insertBefore()
+   {
+      List<int> l;
+      l.toTail(10);
+      l.toTail(11);
+      l.toTail(12);
+      l.toTail(14);
+      Iterator<int> it = l.begin(BEGIN_AT_BACK);
+      l.insertBefore(13, it);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 5);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 14);
+      KAREN_UTEST_ASSERT(*it == 14);
+      int j = 10;
+      it = l.begin();
+      KAREN_UTEST_ASSERT(it);
+      for (; it; it++)
+         KAREN_UTEST_ASSERT(*it == j++);
+   }
+
+   void insertAfter()
+   {
+      List<int> l;
+      l.toTail(10);
+      l.toTail(12);
+      l.toTail(13);
+      l.toTail(14);
+      Iterator<int> it = l.begin();
+      l.insertAfter(11, it);
+      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(l.size() == 5);
+      KAREN_UTEST_ASSERT(l.head() == 10);
+      KAREN_UTEST_ASSERT(l.tail() == 14);
+      KAREN_UTEST_ASSERT(*it == 10);
+      int j = 10;
+      it = l.begin();
+      KAREN_UTEST_ASSERT(it);
+      for (; it; it++)
+         KAREN_UTEST_ASSERT(*it == j++);
+   }
+   
+   void iterateForRange()
+   {
+      List<int> l;
+      l.toTail(10);
+      l.toTail(12);
+      l.toTail(13);
+      l.toTail(14);
+      int i = 0;
+      int values[] = { 10, 12, 13, 14 };
+      for (int num : l)
+      {
+         KAREN_UTEST_ASSERT(num == values[i++]);
+      }
+      KAREN_UTEST_ASSERT(i == 4);
+      
+   }
+   
+};
+
+class SetTestSuite : public UnitTestSuite
+{
+public:
+
+   SetTestSuite() : UnitTestSuite("Collections - Set")
+   {
+      KAREN_UTEST_ADD(SetTestSuite::createEmptySet);
+      KAREN_UTEST_ADD(SetTestSuite::insertOneElement);
+      KAREN_UTEST_ADD(SetTestSuite::insertSeveralElements);
+      KAREN_UTEST_ADD(SetTestSuite::insertDuplicatedElements);
+      KAREN_UTEST_ADD(SetTestSuite::containsElement);
+      KAREN_UTEST_ADD(SetTestSuite::iterate);
+      KAREN_UTEST_ADD(SetTestSuite::removeElement);
+      KAREN_UTEST_ADD(SetTestSuite::clear);
+   }
+   
+   void createEmptySet()
+   {
+      Set<int> s;
+      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.size() == 0);
+   }
+   
+   void insertOneElement()
+   {
+      Set<int> s;
+      s.insert(10);
+      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(s.size() == 1);
+   }
+   
+   void insertSeveralElements()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(s.size() == 3);
+   }
+   
+   void insertDuplicatedElements()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      s.insert(10);
+      s.insert(15);
+      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(s.size() == 3);
+   }
+   
+   void containsElement()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      s.insert(10);
+      s.insert(15);
+      KAREN_UTEST_ASSERT(s.contains(7));
+      KAREN_UTEST_ASSERT(!s.contains(13));
+   }
+   
+   void iterate()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      s.insert(10);
+      s.insert(15);
+      s.insert(20);
+      s.insert(17);
+      s.insert(2);
+      
+      int seq[] = { 2, 7, 10, 15, 17, 20 };
+      int i = 0;
+      ConstIterator<int> it = s.begin();
+      KAREN_UTEST_ASSERT(it);
+      for (; it; it++)
+         KAREN_UTEST_ASSERT(*it == seq[i++]);
+   }
+   
+   void removeElement()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      s.insert(10);
+      s.insert(15);
+      s.insert(20);
+      s.insert(17);
+      s.insert(2);
+
+      s.remove(10);
+      
+      int seq[] = { 2, 7, 15, 17, 20 };
+      int i = 0;
+      for (ConstIterator<int> it = s.begin(); it; it++)
+         KAREN_UTEST_ASSERT(*it == seq[i++]);
+   }
+   
+   void clear()
+   {
+      Set<int> s;
+      s.insert(10);
+      s.insert(15);
+      s.insert(7);
+      s.insert(10);
+      s.insert(15);
+      s.insert(20);
+      s.insert(17);
+      s.insert(2);
+      
+      s.clear();
+      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.size() == 0);
+   }
+   
+};
+
+class DictTestSuite : public UnitTestSuite
+{
+public:
+
+   DictTestSuite() : UnitTestSuite("Collections - Dictionary")
+   {
+      KAREN_UTEST_ADD(DictTestSuite::shouldCreateAnEmptyDictionary);
+      KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElement);
+      KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElementUsingIndexingOperator);
+      KAREN_UTEST_ADD(DictTestSuite::shouldUpdateAnExistingElement);
+      KAREN_UTEST_ADD(DictTestSuite::shouldRemoveAnExistingElement);
+      KAREN_UTEST_ADD(DictTestSuite::shouldClear);
+      KAREN_UTEST_ADD(DictTestSuite::shouldIterate);
+   }
+   
+   void shouldCreateAnEmptyDictionary()
+   {
+      Dictionary<String, int> d;
+      KAREN_UTEST_ASSERT(d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 0);
+   }
+   
+   void shouldInsertOneElement()
+   {
+      Dictionary<String, int> d;
+      d.insert("Mark", 45);
+      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 1);
+      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d["Mark"] == 45);
+   }
+   
+   void shouldInsertOneElementUsingIndexingOperator()
+   {
+      Dictionary<String, int> d;
+      d["Mark"] = 45;
+      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 1);
+      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d["Mark"] == 45);
+   }
+      
+   void shouldUpdateAnExistingElement()
+   {
+      Dictionary<String, int> d;
+      d.insert("Mark", 45);
+      d["Mark"] = 40;
+      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 1);
+      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d["Mark"] == 40);
+   }
+      
+   void shouldRemoveAnExistingElement()
+   {
+      Dictionary<String, int> d;
+      d.insert("Mark", 45);
+      d.insert("John", 35);
+      d.remove("Mark");
+      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 1);
+      KAREN_UTEST_ASSERT(d.defined("John"));
+   }
+      
+   void shouldClear()
+   {
+      Dictionary<String, int> d;
+      d.insert("Mark", 45);
+      d.insert("John", 35);
+      d.clear();
+      KAREN_UTEST_ASSERT(d.empty());
+      KAREN_UTEST_ASSERT(d.size() == 0);
+   }
+   
+   void shouldIterate()
+   {
+      KeyValuePair<String, int> elems[] =
+      {
+         KeyValuePair<String, int>("John",   12 ),
+         KeyValuePair<String, int>("Laura",  33 ),
+         KeyValuePair<String, int>("Mark",   45 ),
+         KeyValuePair<String, int>("Patty",  18 ),
+      };
+      Dictionary<String, int> d(elems, 4);
+      ConstIterator<KeyValuePair<String, int> > it;
+      int i = 0;
+      for (it = d.begin(); it; it++)
+      {
+         KAREN_UTEST_ASSERT(it->key == elems[i].key);
+         KAREN_UTEST_ASSERT(it->value == elems[i].value);
+         i++;
+      }
+   }
+      
+};
+
+class PriorityQueueTestSuite : public UnitTestSuite
+{
+public:
+
+   struct Entry
+   {
+      int priority;
+      String name;
+   };
+   
+   struct EntryLessThan
+   {
+      bool operator()(const Entry &e1, const Entry &e2) const
+      { return e1.priority < e2.priority; }
+   };
+
+   PriorityQueueTestSuite()
+      : UnitTestSuite("Collections - Priority Queue")
+   {
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::createEmptyQueue);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertOneElement);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertSeveralElements);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::removeElement);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertDuplicatedElements);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::iterateOnDuplicatedElements);
+      KAREN_UTEST_ADD(PriorityQueueTestSuite::pullDuplicatedElements);
+   }
+   
+   void createEmptyQueue()
+   {
+      PriorityQueue<int> q;
+      KAREN_UTEST_ASSERT(q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 0);
+   }
+   
+   void insertOneElement()
+   {
+      PriorityQueue<int> q;
+      q.push(10);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 1);
+      KAREN_UTEST_ASSERT(q.contains(10));
+   }
+   
+   void insertSeveralElements()
+   {
+      PriorityQueue<int> q;
+      q.push(10);
+      q.push(4);
+      q.push(15);
+      q.push(1);
+      q.push(3);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 5);
+      KAREN_UTEST_ASSERT(q.contains(1));
+      KAREN_UTEST_ASSERT(q.contains(3));
+      KAREN_UTEST_ASSERT(q.contains(4));
+      KAREN_UTEST_ASSERT(q.contains(10));
+      KAREN_UTEST_ASSERT(q.contains(15));
+      KAREN_UTEST_ASSERT(q.next() == 15);
+   }
+   
+   void removeElement()
+   {
+      PriorityQueue<int> q;
+      q.push(10);
+      q.push(4);
+      q.push(15);
+      q.push(1);
+      q.push(3);
+      q.remove(15);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 4);
+      KAREN_UTEST_ASSERT(q.contains(1));
+      KAREN_UTEST_ASSERT(q.contains(3));
+      KAREN_UTEST_ASSERT(q.contains(4));
+      KAREN_UTEST_ASSERT(q.contains(10));
+      KAREN_UTEST_ASSERT(!q.contains(15));
+      KAREN_UTEST_ASSERT(q.next() == 10);
+   }
+   
+   void insertDuplicatedElements()
+   {
+      PriorityQueue<Entry, EntryLessThan> q;
+      Entry ent[] = {
+         { 10, "Jack" },
+         { 15, "John" },
+         { 12, "Mary" },
+         { 15, "Stephen" },
+      };
+      for (int i = 0; i < 4; i++)
+         q.push(ent[i]);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 4);
+   }
+   
+   void iterateOnDuplicatedElements()
+   {
+      PriorityQueue<Entry, EntryLessThan> q;
+      Entry ent[] = {
+         { 10, "Jack" },
+         { 15, "John" },
+         { 12, "Mary" },
+         { 15, "Stephen" },
+      };
+      Entry ord[] = {
+         ent[0],
+         ent[2],
+         ent[1],
+         ent[3],
+      };
+      for (int i = 0; i < 4; i++)
+         q.push(ent[i]);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 4);
+      PriorityQueue<Entry, EntryLessThan>::ConstIterator it = q.begin();
+      for (int i = 0; i < 4; i++)
+      {
+         const Entry &e = *it;
+         KAREN_UTEST_ASSERT(e.name == ord[i].name);
+         it++;
+      }
+   }
+   
+   void pullDuplicatedElements()
+   {
+      PriorityQueue<Entry, EntryLessThan> q;
+      Entry ent[] = {
+         { 10, "Jack" },
+         { 15, "John" },
+         { 12, "Mary" },
+         { 15, "Stephen" },
+      };
+      Entry ord[] = {
+         ent[1],
+         ent[3],
+         ent[2],
+         ent[0],
+      };
+      for (int i = 0; i < 4; i++)
+         q.push(ent[i]);
+      KAREN_UTEST_ASSERT(!q.empty());
+      KAREN_UTEST_ASSERT(q.size() == 4);
+      for (int i = 0; i < 4; i++)
+      {
+         Entry e = q.pull();
+         KAREN_UTEST_ASSERT(e.name == ord[i].name);
+      }
+   }
+   
+};
+
 int main(int argc, char* argv[])
 {
    StdOutUnitTestReporter rep;
@@ -640,5 +1378,24 @@ int main(int argc, char* argv[])
       StringTestSuite suite;
       suite.run(&rep, NULL, 0);
    }
-
+   {
+      ArrayTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }
+   {
+      ListTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }   
+   {
+      SetTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }
+   {
+      DictTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }
+   {
+      PriorityQueueTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }
 }
