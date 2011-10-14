@@ -178,7 +178,7 @@ public:
     * Append a determined count of a character to the end of the string.
     */
    inline String& append(Element character, Length count)
-   { _base.append(count, character); }
+   { _base.append(count, character); return *this; }
    
    /**
     * Append string passed as argument to this string. 
@@ -295,7 +295,7 @@ public:
     * Assign operator.
     */
    inline String& operator = (const String& str)
-   { _base = str._base; }
+   { _base = str._base; return *this; }
    
    /**
     * Add operator. This add operator return a string resulting of
@@ -368,25 +368,6 @@ private:
 
    std::string _base;
 
-};
-
-}}; // namespace karen::utils
-
-#include "collection.h"
-
-namespace karen { namespace utils {
-
-class StringTokenizer
-{
-public:
-
-   /**
-    * Split this string in tokens considering given separator.
-    */
-   static Array<String> tokenize(
-         const String& str, 
-         String::Element separator = ' '); 
-   
 };
 
 }}; // namespace karen::utils
