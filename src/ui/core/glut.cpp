@@ -41,9 +41,9 @@ public:
          unsigned long ms)
    throw (utils::InvalidInputException) 
    {
-      for (auto info : _callbacks)
+      for (auto entry : _callbacks)
       {
-         if (info.cb == callback)
+         if (entry.cb == callback)
             KAREN_THROW(utils::InvalidInputException, 
                         "cannot register timer callback: already registered");
       }
@@ -88,6 +88,8 @@ private:
       {
          utils::Nullable<unsigned long> newMillis = 
                next.cb->onTimeElapsed(elapsed);
+         if (!newMillis.isNull())
+            inst.registerCallback(next.cb, next.ms);
       }
       else
          /* Theoretically, this should never happen. */
