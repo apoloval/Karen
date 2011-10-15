@@ -29,63 +29,86 @@
 
 using namespace karen;
 
+#define SCREEN_W     640.0f
+#define SCREEN_H     480.0f
+#define SPEED_X      0.40f
+#define SPEED_Y      0.0f
+#define FIG_SIZE     100.0f
+#define FPS          60.0f
+
 ui::ScreenProperties screenProps =
 {
-   ui::Vector(640, 480),      // dimensions
-   ui::FORMAT_32BPP_RGBA,     // pixel format
-   false,                     // fullscreen
-   true,                      // double buffered
-   "Karen GLUT Test"          // caption
+   ui::Vector(SCREEN_W, SCREEN_H),  // dimensions
+   ui::FORMAT_32BPP_RGBA,           // pixel format
+   false,                           // fullscreen
+   true,                            // double buffered
+   "Karen GLUT Test"                // caption
 };
 
-#define XMIN   0.0f
-#define XMAX   540.0f
-#define SIZE   100.0f
-#define SPEED  0.1f
-
-class SimpleDrawing : public ui::Drawable
+class SimpleDrawing : public ui::Drawable, public ui::TimerCallback
 {
 public:
 
    SimpleDrawing(ui::DrawingContext* ctx)
-    : xpos(XMIN), inc(SPEED), frameCount(0), context(ctx)
+    : mov(SPEED_X, SPEED_Y), frameCount(0), context(ctx)
    {}
 
    inline virtual void draw(ui::Canvas& canvas)
    {
       ui::Canvas::QuadParams quad =
       {
-         { ui::Vector(xpos, 100), ui::Vector(xpos + SIZE, 100), 
-           ui::Vector(xpos + SIZE, 100 + SIZE), ui::Vector(xpos, 100 + SIZE), },
-         { ui::Color::RED, ui::Color::GREEN, 
-           ui::Color::BLUE, ui::Color::MAGENTA },
+         { ui::Vector(pos.x,              pos.y), 
+           ui::Vector(pos.x + FIG_SIZE,   pos.y), 
+           ui::Vector(pos.x + FIG_SIZE,   pos.y + FIG_SIZE), 
+           ui::Vector(pos.x,              pos.y + FIG_SIZE), },
+         { ui::Color(pos.x * 255.0f / SCREEN_W , 0xff, 0xff), 
+           ui::Color(0xff, pos.y * 255.0f / SCREEN_H, 0xff), 
+           ui::Color(0xff, 0xff, pos.x * 255.0f / SCREEN_W), 
+           ui::Color(0xff, 0x00, pos.y * 255.0f / SCREEN_H) },
          1.0f,
          true,
       };
       canvas.drawQuad(quad);
-      animate();
-      context->postRedisplay();
    }
    
-   void animate()
+   virtual utils::Nullable<unsigned long> onTimeElapsed(unsigned long ms)
    {
-      if (xpos < XMIN)
+      float ts = ms * FPS / 1000.0f;
+      if (pos.x < 0)
       {
-         xpos = XMIN;
-         inc = -inc;
+         pos.x = 0;
+         mov.x = -mov.x;
       }
-      else if (XMAX < xpos)
+      else if (SCREEN_W < pos.x + FIG_SIZE)
       {
-         xpos = XMAX;
-         inc = -inc;
+         pos.x = SCREEN_W - FIG_SIZE;
+         mov.x = -mov.x;
       }
-      xpos += inc;
+      if (pos.y < 0)
+      {
+         pos.y = 0;
+         mov.y = -mov.y;
+      }
+      else if (SCREEN_H < pos.y + FIG_SIZE)
+      {
+         pos.y = SCREEN_H - FIG_SIZE;
+         mov.y = -mov.y * 0.9f;
+      }
+            
+      pos.x += mov.x * ts;
+      pos.y += mov.y * ts;
+      
+      mov.y += 0.5f * 9.8f * ms * ms * 0.00001f;
+
+      context->postRedisplay();
+      
+      return 1000.0f / FPS;
    }
 
 private:
 
-   float xpos;
-   float inc;
+   ui::Vector pos;
+   ui::Vector mov;
    long frameCount;
    ui::DrawingContext* context;
 
@@ -106,6 +129,8 @@ int main(int argc, char* argv[])
       
       SimpleDrawing sd(&dc);   
       dc.setDrawingTarget(&sd);
+      ui::Timer& timer = engine.timer();
+      timer.registerCallback(&sd, 1000.0f / FPS);
       
       engine.runLoop();
    }
