@@ -2711,8 +2711,7 @@ public:
     */
    inline virtual ConstIterator end() const
    {
-      return ConstIterator(new PriorityQueueConstIterator(
-            this, this->_tree ? this->_tree->major() : NULL));
+      return ConstIterator(new PriorityQueueConstIterator(this, NULL));
    }
 
 private:
@@ -2734,7 +2733,7 @@ private:
       inline PriorityQueueIteratorBase(
             const PriorityQueue* q, 
             MultiBinarySearchTree<Data, Data, LessThanOp>* t)
-         : _queue(q), _tree(t), _holder(t->value) {}
+         : _queue(q), _tree(t), _holder(t ? t->value : NULL) {}
 
       /**
        * Check whether iterator is null.
