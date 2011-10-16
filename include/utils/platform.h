@@ -113,13 +113,18 @@
 #endif
 
 // Integer formats of fixed bit width
+#if KAREN_ARCH_TYPE == KAREN_ARCH_32
+typedef unsigned long      UInt32;
+typedef long               Int32;
+#else
 typedef unsigned int       UInt32;
-typedef unsigned short     UInt16;
-typedef unsigned char      UInt8;
-
 typedef int                Int32;
+#endif
+typedef unsigned short     UInt16;
 typedef short              Int16;
+typedef unsigned char      UInt8;
 typedef char               Int8;
+
 
 // Special case: 64-bit types
 #if KAREN_COMPILER == KAREN_COMPILER_MSVC
