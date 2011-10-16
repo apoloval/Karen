@@ -188,7 +188,26 @@ GlutEngine::timer()
 void
 GlutEngine::runLoop()
 {
-   glutMainLoop();
+   try
+   {
+      glutMainLoop();
+   }
+   catch (GlutLoopInterruptedException&)
+   {
+   }
+}
+
+void
+GlutEngine::stopLoop()
+{
+}
+
+void
+GlutEngine::consumeInputEvent(const InputEvent& ev)
+{
+   if (ev.type == APPLICATION_QUIT_EVENT)
+   {
+   }
 }
 
 GlutEngine::GlutEngine() : Engine(ENGINE_NAME)
@@ -197,6 +216,8 @@ GlutEngine::GlutEngine() : Engine(ENGINE_NAME)
    char* argv[] = {};
    glutInit(&argc, argv);
    _drawingContext = new GlutDrawingContext();
+   
+   inputEventChannel().addInputEventConsumer(this);
 }
 
 }}}; /* Namespace karen::ui::core */

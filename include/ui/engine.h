@@ -26,6 +26,7 @@
 #define KAREN_UI_ENGINE_H
 
 #include "ui/draw.h"
+#include "ui/event.h"
 #include "ui/timer.h"
 #include "utils/exception.h"
 #include "utils/platform.h"
@@ -63,13 +64,19 @@ public:
     * Obtain engine name.
     */
    const String& name() const { return _name; }
+   
+   /**
+    * Obtain the input event channel for this engine.
+    */
+   inline InputEventChannel& inputEventChannel()
+   { return *_inputEventChannel; }
 
    /**
     * Obtain the drawing context for this engine. If the screen has not
     * been initialized yet, a InvalidStateException is raised. 
     */
    virtual DrawingContext& drawingContext()
-         throw (utils::InvalidStateException)= 0;
+         throw (utils::InvalidStateException) = 0;
          
    /**
     * Obtain the engine timer.
@@ -81,17 +88,24 @@ public:
     * events and drawing into screen until the engine is requested to stop.    
     */
    virtual void runLoop() = 0;
+   
+   /**
+    * Stop the engine main loop. This causes the main loop to end and return
+    * the control to its caller. 
+    */
+   virtual void stopLoop() = 0;
 
 protected:
 
    /**
     * Protected constructor.
     */
-   inline Engine(const String& name) : _name(name) {}
+   Engine(const String& name);
    
 private:
 
    String _name;
+   Ptr<InputEventChannel> _inputEventChannel;
 
 };
 

@@ -22,11 +22,16 @@
  * ---------------------------------------------------------------------
  */
 
-#include "ui/core/glut.h"
 #include "ui/engine.h"
+#include "ui/core/glut.h"
 #include "utils/exception.h"
+#include "utils/platform.h"
 #include "utils/string.h"
 #include "utils/types.h"
+
+#if KAREN_PLATFORM == KAREN_PLATFORM_OSX
+#include "ui/core/cocoa.h"
+#endif
 
 namespace karen { namespace ui {
 
@@ -42,7 +47,10 @@ throw (utils::InvalidInputException, utils::InvalidStateException)
    
    if (engineName == core::GlutEngine::ENGINE_NAME)
       _engineInstance = new core::GlutEngine();
-   
+#if KAREN_PLATFORM == KAREN_PLATFORM_OSX
+   if (engineName == core::CocoaEngine::ENGINE_NAME)
+      _engineInstance = new core::CocoaEngine();
+#endif   
    if (_engineInstance.isNull())
       KAREN_THROW(utils::InvalidInputException, 
             "cannot initialize UI engine: unkown engine %s", 
@@ -58,6 +66,12 @@ throw (utils::InvalidStateException)
       KAREN_THROW(utils::InvalidStateException, 
             "cannot obtain instance of UI engine: not initialized yet");
    return *_engineInstance;
+}
+
+Engine::Engine(const String& name)
+ : _name(name),
+   _inputEventChannel(InputEventChannel::newInstance())
+{
 }
 
 }}; /* Namespace karen::ui */

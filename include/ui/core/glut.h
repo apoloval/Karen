@@ -27,6 +27,7 @@
 
 #include "ui/draw.h"
 #include "ui/engine.h"
+#include "ui/event.h"
 #include "ui/timer.h"
 #include "ui/core/gl.h"
 #include "utils/exception.h"
@@ -87,10 +88,20 @@ private:
 };
 
 /**
+ * GLUT loop interrupted exception. This exception is thrown to indicate
+ * the condition when GLUT loop is interrupted. As GLUT specs, the main
+ * loop never ends, so any GLUT application ends by calling a exit() syscall.
+ * This exception is used as a trick in C++ environment, which consist in
+ * throwing it when application needs to be stopped. This is catched from 
+ * GlutEngine::runLoop() to finalize the main loop cleanly. 
+ */
+KAREN_DECL_EXCEPTION(GlutLoopInterruptedException);
+
+/**
  * Glut engine class. This class implements a UI engine supported by
  * GLUT library.
  */
-class KAREN_EXPORT GlutEngine : public Engine
+class KAREN_EXPORT GlutEngine : public Engine, public InputEventConsumer
 {
 public:
 
@@ -123,6 +134,17 @@ public:
     */
    virtual void runLoop();
    
+   /**
+    * Stop the engine main loop. This causes the main loop to end and return
+    * the control to its caller. 
+    */
+   virtual void stopLoop();
+
+   /**
+    * Consume an input event.
+    */
+   virtual void consumeInputEvent(const InputEvent& ev);
+
 private:
 
    /**
