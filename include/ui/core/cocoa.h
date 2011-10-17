@@ -115,7 +115,7 @@ public:
     * Instead, the callback may be ignored and it may return a null value
     * to indicate no further invocations.
     */
-   virtual void registerCallback(TimerCallback* callback, unsigned long ms)
+   virtual void registerCallback(TimerCallback* callback, double ms)
       throw (utils::InvalidInputException);   
 
 private:

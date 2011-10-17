@@ -71,7 +71,7 @@ public:
       canvas.drawQuad(quad);
    }
    
-   virtual utils::Nullable<unsigned long> onTimeElapsed(unsigned long ms)
+   virtual utils::Nullable<double> onTimeElapsed(double ms)
    {
       float ts = ms * FPS / 1000.0f;
       if (pos.x < 0)

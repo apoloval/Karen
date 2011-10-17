@@ -50,7 +50,7 @@ public:
     * elapse time required for the next invokation. If no more callback
     * calls are needed, a null value shall be returned.
     */
-   virtual utils::Nullable<unsigned long> onTimeElapsed(unsigned long ms) = 0;
+   virtual utils::Nullable<double> onTimeElapsed(double ms) = 0;
 
 };
 
@@ -68,7 +68,7 @@ public:
     * Instead, the callback may be ignored and it may return a null value
     * to indicate no further invocations.
     */
-   virtual void registerCallback(TimerCallback* callback, unsigned long ms)
+   virtual void registerCallback(TimerCallback* callback, double ms)
       throw (utils::InvalidInputException) = 0;
 
 };

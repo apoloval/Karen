@@ -38,7 +38,7 @@ public:
 
    inline virtual void registerCallback(
          TimerCallback* callback, 
-         unsigned long ms)
+         double ms)
    throw (utils::InvalidInputException) 
    {
       for (auto entry : _callbacks)
@@ -86,7 +86,7 @@ private:
       double elapsed = now - next.timestamp + next.ms;
       if (elapsed >= 0.0)
       {
-         utils::Nullable<unsigned long> newMillis = 
+         utils::Nullable<double> newMillis = 
                next.cb->onTimeElapsed(elapsed);
          if (!newMillis.isNull())
             inst.registerCallback(next.cb, next.ms);
@@ -139,7 +139,9 @@ throw (utils::InvalidInputException)
    
    glutDisplayFunc(GlutDrawingContext::glutDisplayHandler);
    
-   _canvas = new OpenGLCanvas(screenProps.dimensions); 
+   _canvas = new OpenGLCanvas(screenProps.dimensions);
+   
+   return *_canvas;
 }
 
 Canvas&

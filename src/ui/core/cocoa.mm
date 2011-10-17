@@ -108,7 +108,7 @@
 {
    karen::ui::TimerCallback*  cb;
    CFAbsoluteTime             launchedOn;
-   unsigned long              interval;
+   double                     interval;
 }
 
 /**
@@ -117,7 +117,7 @@
  */
 -(id) initWithCallback: (karen::ui::TimerCallback*) callback 
             launchedOn: (CFAbsoluteTime) timestamp
-              interval: (unsigned long) ms;
+              interval: (double) ms;
 
 /**
  * Callback method for fired timer.
@@ -130,7 +130,7 @@
 
 -(id) initWithCallback: (karen::ui::TimerCallback*) callback 
             launchedOn: (CFAbsoluteTime) timestamp
-              interval: (unsigned long) ms
+              interval: (double) ms
 {
    self = [super init];
    cb = callback;
@@ -142,7 +142,7 @@
 -(void) onTimerFired:(NSTimer*) timer
 {
    CFTimeInterval elapsed = CFAbsoluteTimeGetCurrent() - launchedOn;
-   karen::utils::Nullable<unsigned long> newInterval =
+   karen::utils::Nullable<double> newInterval =
          cb->onTimeElapsed(elapsed * 1000.0);
    if (newInterval.isNull())
    {
@@ -289,7 +289,7 @@ CocoaDrawingContext::postRedisplay()
 
 
 void
-CocoaTimer::registerCallback(TimerCallback* callback, unsigned long ms)
+CocoaTimer::registerCallback(TimerCallback* callback, double ms)
 throw (utils::InvalidInputException)
 {
    KarenTimerTarget* tgt = 
