@@ -31,7 +31,7 @@ using namespace karen;
 
 #define SCREEN_W     640.0f
 #define SCREEN_H     480.0f
-#define SPEED_X      0.40f
+#define SPEED_X      2.0f
 #define SPEED_Y      0.0f
 #define FIG_SIZE     100.0f
 #define FPS          60.0f
@@ -98,7 +98,7 @@ public:
       pos.x += mov.x * ts;
       pos.y += mov.y * ts;
       
-      mov.y += 0.5f * 9.8f * ms * ms * 0.00001f;
+      mov.y += 0.5f * ms * ms * 0.001f;
 
       context->postRedisplay();
       
