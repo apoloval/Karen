@@ -240,6 +240,9 @@ throw (utils::InvalidInputException)
     * create a GL canvas for it to execute OpenGL calls.
     */
    [_glView openGLContext];
+   
+   GLint swapInt = 1;
+   [[_glView openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
 
    _window = [[NSWindow alloc] initWithContentRect: viewRect 
                                styleMask: NSTitledWindowMask 
