@@ -83,7 +83,7 @@ private:
       GlutTimer& inst = instance();
       TimerInfo next = inst._callbacks.pull();
       double now = utils::getTimeSinceLaunched();
-      double elapsed = now - next.timestamp + next.ms;
+      double elapsed = now - next.timestamp;
       if (elapsed >= 0.0)
       {
          utils::Nullable<double> newMillis = 
