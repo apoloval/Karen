@@ -60,9 +60,9 @@
 -(void) setScreenCanvas: (karen::ui::Canvas*) canvas;
 
 /**
- * Redeclaration of update method for redraw a new frame when required.
+ * Redeclaration of draw rect method for redraw when required.
  */
--(void) update;
+-(void) drawRect: (NSRect) dirtyRect;
 
 @end
 
@@ -86,13 +86,90 @@
    screenCanvas = canvas;
 }
 
--(void) update
+-(void) drawRect: (NSRect) dirtyRect
 {
-   [super update];
-   if (drawingTarget != nil && screenCanvas != nil)
+   [super drawRect:dirtyRect];
+   if (screenCanvas != nil)
    {
-      drawingTarget->draw(*screenCanvas);
+      screenCanvas->clear();
+      if (drawingTarget != nil)
+         drawingTarget->draw(*screenCanvas);
       [[self openGLContext] flushBuffer];
+   }
+}
+
+@end
+
+/**
+ * Karen timer delegate. This class is used as target of Cocoa timer
+ * firing handlers.
+ */
+@interface KarenTimerTarget: NSObject
+{
+   karen::ui::TimerCallback*  cb;
+   CFAbsoluteTime             launchedOn;
+   unsigned long              interval;
+}
+
+/**
+ * Initialize the timer target with given Karen timer callback and creation
+ * date.
+ */
+-(id) initWithCallback: (karen::ui::TimerCallback*) callback 
+            launchedOn: (CFAbsoluteTime) timestamp
+              interval: (unsigned long) ms;
+
+/**
+ * Callback method for fired timer.
+ */
+-(void) onTimerFired:(NSTimer*)theTimer;
+
+@end
+
+@implementation KarenTimerTarget
+
+-(id) initWithCallback: (karen::ui::TimerCallback*) callback 
+            launchedOn: (CFAbsoluteTime) timestamp
+              interval: (unsigned long) ms
+{
+   self = [super init];
+   cb = callback;
+   launchedOn = timestamp;
+   interval = ms;
+   return self;
+}
+
+-(void) onTimerFired:(NSTimer*) timer
+{
+   CFTimeInterval elapsed = CFAbsoluteTimeGetCurrent() - launchedOn;
+   karen::utils::Nullable<unsigned long> newInterval =
+         cb->onTimeElapsed(elapsed * 1000.0);
+   if (newInterval.isNull())
+   {
+      [timer invalidate];
+      [timer release];
+   }
+   else if (newInterval != interval)
+   {
+      [timer invalidate];
+      [timer release];
+
+      if (!newInterval.isNull())
+      {
+         NSTimer* tm = [NSTimer timerWithTimeInterval: newInterval / 1000.0
+                                               target: self
+                                             selector: @selector(onTimerFired:) 
+                                             userInfo: nil 
+                                              repeats: YES];
+         [[NSRunLoop currentRunLoop] addTimer: tm 
+                                      forMode: NSDefaultRunLoopMode];
+         launchedOn = CFAbsoluteTimeGetCurrent();
+         interval = newInterval;
+      }
+   }
+   else
+   {
+      launchedOn = CFAbsoluteTimeGetCurrent();
    }
 }
 
@@ -133,6 +210,9 @@ throw (utils::InvalidInputException)
       fmtAttrs[attrIndex++] = NSOpenGLPFAWindow;
    if (screenProps.doubleBuffer)
       fmtAttrs[attrIndex++] = NSOpenGLPFADoubleBuffer;
+   fmtAttrs[attrIndex++] = NSOpenGLPFADepthSize;
+   fmtAttrs[attrIndex++] = (NSOpenGLPixelFormatAttribute) 16;
+
       
    NSOpenGLPixelFormat* fmt = 
          [[NSOpenGLPixelFormat alloc] initWithAttributes:fmtAttrs];
@@ -144,6 +224,9 @@ throw (utils::InvalidInputException)
 
    NSRect viewRect = NSMakeRect(
          0, 0, screenProps.dimensions.x, screenProps.dimensions.y);
+
+   [NSApplication sharedApplication];
+
    _glView = [[KarenOpenGLView alloc] initWithFrame:viewRect pixelFormat:fmt];
    [fmt release];
    
@@ -152,10 +235,16 @@ throw (utils::InvalidInputException)
             "cannot init Cocoa screen: "
             "NSOpenGLView object cannot be initialized");
 
+   /* 
+    * Force the creation of OpenGL context. This is necessary in order to
+    * create a GL canvas for it to execute OpenGL calls.
+    */
+   [_glView openGLContext];
+
    _window = [[NSWindow alloc] initWithContentRect: viewRect 
                                styleMask: NSTitledWindowMask 
                                backing: NSBackingStoreBuffered
-                               defer: NO];
+                               defer: YES];
    
    if (_window == nil)
       KAREN_THROW(utils::InternalErrorException,
@@ -168,6 +257,8 @@ throw (utils::InvalidInputException)
    _glCanvas = new OpenGLCanvas(screenProps.dimensions);
    
    [_glView setScreenCanvas: _glCanvas];
+   
+   [_window makeKeyAndOrderFront: nil];
    
    return *_glCanvas;
 }
@@ -186,12 +277,31 @@ void
 CocoaDrawingContext::setDrawingTarget(Drawable* target)
 {
    [_glView setDrawingTarget: target];
+   postRedisplay();
 }
 
 void
 CocoaDrawingContext::postRedisplay()
 {
    [_glView setNeedsDisplay: YES];
+}
+
+
+
+void
+CocoaTimer::registerCallback(TimerCallback* callback, unsigned long ms)
+throw (utils::InvalidInputException)
+{
+   KarenTimerTarget* tgt = 
+      [[KarenTimerTarget alloc] initWithCallback: callback 
+                                      launchedOn: CFAbsoluteTimeGetCurrent()
+                                        interval: ms];
+   NSTimer* tm = [NSTimer timerWithTimeInterval: ms / 1000.0
+                                         target: tgt 
+                                       selector: @selector(onTimerFired:) 
+                                       userInfo: nil 
+                                        repeats: YES];
+   [[NSRunLoop currentRunLoop] addTimer: tm forMode: NSDefaultRunLoopMode];
 }
 
 
@@ -204,15 +314,17 @@ CocoaEngine::~CocoaEngine()
    [_memPool release];
 };
 
-DrawingContext&
+CocoaDrawingContext&
 CocoaEngine::drawingContext()
 throw (utils::InvalidStateException)
 {
+   return *_drawingContext;
 }
 
 Timer&
 CocoaEngine::timer()
 {
+   return *_timer;
 }
 
 void
@@ -231,6 +343,7 @@ CocoaEngine::CocoaEngine() : Engine(ENGINE_NAME)
 {
    _memPool = [[NSAutoreleasePool alloc] init];
    _drawingContext = new CocoaDrawingContext();
+   _timer = new CocoaTimer();
 }
 
 }}}; /* namespace karen::ui::core */

@@ -52,11 +52,13 @@ namespace karen { namespace ui { namespace core {
 class NSWindow;
 class KarenOpenGLView;
 class NSAutoreleasePool;
+class NSTimer;
 }}};
 #elif defined(__OBJC__)
 @class NSWindow;
 @class KarenOpenGLView;
 @class NSAutoreleasePool;
+@class NSTimer;
 #endif
 
 namespace karen { namespace ui { namespace core {
@@ -65,7 +67,7 @@ namespace karen { namespace ui { namespace core {
  * Cocoa drawing context. This class provides a Cocoa-based implementation
  * of a drawing context.
  */
-class KAREN_EXPORT CocoaDrawingContext
+class KAREN_EXPORT CocoaDrawingContext : public DrawingContext
 {
 public:
 
@@ -101,6 +103,32 @@ private:
 };
 
 /**
+ * Cocoa timer class. This class implements a timer using Cocoa as backend.
+ */
+class KAREN_EXPORT CocoaTimer : public Timer
+{
+public:
+
+   /**
+    * Register a new timer callback. This callback would be invoked when
+    * indicated time elapses. Once registered, the callback cannot be removed.
+    * Instead, the callback may be ignored and it may return a null value
+    * to indicate no further invocations.
+    */
+   virtual void registerCallback(TimerCallback* callback, unsigned long ms)
+      throw (utils::InvalidInputException);   
+
+private:
+
+   struct TimerInfo
+   {
+      TimerCallback*    cb;
+      NSTimer*          cocoaTimer;
+   };
+
+};
+
+/**
  * Cocoa engine class. This class provides a Cocoa-based implementation of
  * UI engine.
  */
@@ -122,7 +150,7 @@ public:
     * Obtain the drawing context for this engine. If the screen has not
     * been initialized yet, a InvalidStateException is raised. 
     */
-   virtual DrawingContext& drawingContext()
+   virtual CocoaDrawingContext& drawingContext()
          throw (utils::InvalidStateException);
          
    /**
@@ -153,6 +181,7 @@ private:
 
    NSAutoreleasePool*         _memPool;
    Ptr<CocoaDrawingContext>   _drawingContext;
+   Ptr<CocoaTimer>            _timer;
 
 };
 
