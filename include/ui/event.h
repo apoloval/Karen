@@ -38,12 +38,13 @@ namespace karen { namespace ui {
  */
 enum EventType
 {
-   MOUSE_MOTION_INPUT_EVENT,
-   MOUSE_BUTTON_INPUT_EVENT,
-   KEY_PRESSED_INPUT_EVENT,
-   KEY_RELEASED_INPUT_EVENT,
+   MOUSE_MOTION_EVENT,
+   MOUSE_PRESSED_EVENT,
+   MOUSE_RELEASED_EVENT,
+   KEY_PRESSED_EVENT,
+   KEY_RELEASED_EVENT,
    APPLICATION_QUIT_EVENT,
-   CUSTOM_INPUT_EVENT,
+   CUSTOM_EVENT,
 };
 
 /**
@@ -61,14 +62,25 @@ struct MouseMotionEvent
 };
 
 /**
+ * Mouse button type. This enumeration represents a mouse button.
+ */
+enum MouseButton
+{
+   LEFT_MOUSE_BUTTON,
+   RIGHT_MOUSE_BUTTON,
+   MIDDLE_MOUSE_BUTTON,
+   OTHER_MOUSE_BUTTON,
+};
+
+/**
  * Mouse button input event. This struct encapsulates the properties
  * of a mouse button input event.
  */
 struct MouseButtonEvent
 {
-   int   posX;
-   int   posY;
-   UInt8 button;
+   int         posX;
+   int         posY;
+   MouseButton button;
 };
 
 /**
@@ -156,6 +168,75 @@ public:
 
 };
 
+/**
+ * Event responder class. This class provides an abstraction of an object
+ * able to respond to UI events. The response interface is structured as
+ * a chain of responsibility. Each responder should determine whether
+ * request a response from the next responder in the chain after it handles
+ * it. Typically, one responder corresponds to one widget, and its next
+ * responder corresponds to its parent container. 
+ */
+class EventResponder
+{
+public:
+
+   /**
+    * Create a new event responder and set its next responder the one
+    * passed as argument.
+    */
+   inline EventResponder(EventResponder* next = NULL)
+    : _nextResponder(next)
+   {
+   }   
+
+   /**
+    * Respond to a mouse button pressed event. The default implementation
+    * considers in ignoring the event and pass it up in the chain.
+    */
+   virtual void respondToMouseButtonPressed(
+         const Vector& pressedAt,
+         MouseButton btn);
+   
+   /**
+    * Respond to a mouse button released event. The default implementation
+    * considers in ignoring the event and pass it up in the chain.
+    */
+   virtual void respondToMouseButtonReleased(
+         const Vector& pressedAt,
+         MouseButton btn);
+   
+   /**
+    * Responde to a mouse moved event. The default implementation
+    * considers in ignoring the event and pass it up in the chain.
+    */
+   virtual void respondToMouseMoved(
+         const Vector& fromPos,
+         const Vector& toPos);
+   
+   /**
+    * Responde to a mouse dragged event. The default implementation
+    * considers in ignoring the event and pass it up in the chain.
+    */
+   virtual void respondToMouseDragged(
+         const Vector& fromPos,
+         const Vector& toPos);
+   
+   /**
+    * Obtain the next responder in the chain, or null if there is none.
+    */
+   inline EventResponder* nextResponder()
+   { return _nextResponder; }
+   
+   /**
+    * Set the next responder of this one.
+    */
+   inline void setNextResponder(EventResponder* next)
+   { _nextResponder = next; }
+   
+private:
+
+   EventResponder* _nextResponder;
+};
 
 }}; /* Namespace karen::ui */
 

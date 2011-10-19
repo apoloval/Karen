@@ -24,6 +24,8 @@
 
 #include "ui/core/cocoa.h"
 
+#include <iostream>
+
 /*
  * There is a name clashing between Ptr type as defined by Cocoa framework
  * and Ptr template class defined by Karen. To avoid this conflict, Cocoa
@@ -95,6 +97,131 @@
       if (drawingTarget != nil)
          drawingTarget->draw(*screenCanvas);
       [[self openGLContext] flushBuffer];
+   }
+}
+
+@end
+
+/**
+ * Karen window class. This class provides a more concrete specialization
+ * of a Cocoa window. The additional behavior consists in capturing the
+ * UI events to redirect them to Karen rather than Cocoa. Also, it simplifies
+ * the initialization of the window requiring just its frame and bar title
+ * content.
+ */
+@interface KarenWindow: NSWindow
+{
+   karen::ui::EventConsumer* _eventConsumer;
+}
+
+/**
+ * Initialize the window at given frame.
+ */
+-(id) initWithContentRect: (NSRect) contentRect
+                    title: (NSString*) winTitle;
+
+/**
+ * Set a new Karen event consumer for this window. 
+ */
+-(void) setEventConsumer: (karen::ui::EventConsumer*) consumer;
+
+/**
+ * UI event handler.
+ */
+-(void) sendEvent :(NSEvent*) ev;
+
+@end
+
+@implementation KarenWindow
+
+-(id) initWithContentRect: (NSRect) contentRect 
+                    title: (NSString*) winTitle
+{
+   self = [super initWithContentRect: contentRect 
+                           styleMask: NSTitledWindowMask
+                             backing: NSBackingStoreBuffered
+                               defer: YES];
+   _eventConsumer = nil;
+   if (self != nil)
+   {
+      [self setTitle: winTitle];
+      [self setAcceptsMouseMovedEvents: YES];
+   }
+   return self;
+}
+
+-(void) setEventConsumer: (karen::ui::EventConsumer*) consumer
+{
+   _eventConsumer = consumer;
+}
+
+-(void) sendEvent :(NSEvent*) ev
+{
+   if (_eventConsumer)
+   {
+      karen::ui::Event kev;
+      NSRect wframe = [(NSView*)[self contentView] frame];
+      switch ([ev type])
+      {
+         case NSLeftMouseDown:
+            kev.type = karen::ui::MOUSE_PRESSED_EVENT;
+            kev.mouseButton.button = karen::ui::LEFT_MOUSE_BUTTON;
+            kev.mouseButton.posX = [ev locationInWindow].x;
+            kev.mouseButton.posY = 
+               wframe.size.height - [ev locationInWindow].y;
+            break;
+         case NSLeftMouseUp:
+            kev.type = karen::ui::MOUSE_RELEASED_EVENT;
+            kev.mouseButton.button = karen::ui::LEFT_MOUSE_BUTTON;
+            kev.mouseButton.posX = [ev locationInWindow].x;
+            kev.mouseButton.posY = 
+               wframe.size.height - [ev locationInWindow].y;
+            break;
+         case NSRightMouseDown:
+            kev.type = karen::ui::MOUSE_PRESSED_EVENT;
+            kev.mouseButton.button = karen::ui::RIGHT_MOUSE_BUTTON;
+            kev.mouseButton.posX = [ev locationInWindow].x;
+            kev.mouseButton.posY = 
+               wframe.size.height - [ev locationInWindow].y;
+            break;
+         case NSRightMouseUp:
+            kev.type = karen::ui::MOUSE_RELEASED_EVENT;
+            kev.mouseButton.button = karen::ui::RIGHT_MOUSE_BUTTON;
+            kev.mouseButton.posX = [ev locationInWindow].x;
+            kev.mouseButton.posY =
+               wframe.size.height - [ev locationInWindow].y;
+            break;
+         case NSMouseMoved:
+            kev.type = karen::ui::MOUSE_MOTION_EVENT;
+            kev.mouseMotion.fromX = 0; /* TODO: fix this value. */
+            kev.mouseMotion.fromY = 0; /* TODO: fix this value. */
+            kev.mouseMotion.toX = [ev locationInWindow].x;
+            kev.mouseMotion.toY = 
+               wframe.size.height - [ev locationInWindow].y - 1;
+            break;
+         default:
+            /* TODO: add additional handlers for keyboard events. */
+            break;
+      }
+      
+      /*
+       * Look for determined consitions to send the event to the consumer.
+       */
+      switch (kev.type)
+      {
+         case karen::ui::MOUSE_PRESSED_EVENT:
+         case karen::ui::MOUSE_RELEASED_EVENT:
+            if (kev.mouseButton.posY >= 0)
+               _eventConsumer->consumeEvent(kev);
+            break;
+         case karen::ui::MOUSE_MOTION_EVENT:
+            if (kev.mouseMotion.toY >= 0)
+               _eventConsumer->consumeEvent(kev);
+            break;
+         default:
+            break;
+      }
+           
    }
 }
 
@@ -244,17 +371,17 @@ throw (utils::InvalidInputException)
    GLint swapInt = 1;
    [[_glView openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
 
-   _window = [[NSWindow alloc] initWithContentRect: viewRect 
-                               styleMask: NSTitledWindowMask 
-                               backing: NSBackingStoreBuffered
-                               defer: YES];
+   NSString* winTitle = [NSString stringWithUTF8String: screenProps.caption];
+   _window = [[KarenWindow alloc] initWithContentRect: viewRect
+                                                title: winTitle];
    
    if (_window == nil)
       KAREN_THROW(utils::InternalErrorException,
             "cannot init Cocoa screen: "
             "NSWindow object cannot be initialized");
             
-   [_window setTitle: [NSString stringWithUTF8String: screenProps.caption]];
+   [_window setEventConsumer: &_engine->eventChannel()];
+            
    [[_window contentView] addSubview: _glView];
    
    _glCanvas = new OpenGLCanvas(screenProps.dimensions);
@@ -345,8 +472,8 @@ CocoaEngine::stopLoop()
 CocoaEngine::CocoaEngine() : Engine(ENGINE_NAME)
 {
    _memPool = [[NSAutoreleasePool alloc] init];
-   _drawingContext = new CocoaDrawingContext();
-   _timer = new CocoaTimer();
+   _drawingContext = new CocoaDrawingContext(this);
+   _timer = new CocoaTimer();   
 }
 
 }}}; /* namespace karen::ui::core */

@@ -42,10 +42,12 @@ ui::ScreenProperties screenProps =
    ui::FORMAT_32BPP_RGBA,           // pixel format
    false,                           // fullscreen
    true,                            // double buffered
-   "Karen GLUT Test"                // caption
+   "Karen Cocoa Test"               // caption
 };
 
-class SimpleDrawing : public ui::Drawable, public ui::TimerCallback
+class SimpleDrawing : public ui::Drawable, 
+                      public ui::TimerCallback,
+                      public ui::EventConsumer
 {
 public:
 
@@ -104,6 +106,23 @@ public:
       
       return 1000.0f / FPS;
    }
+   
+   inline virtual void consumeEvent(const ui::Event& ev)
+   {
+      switch (ev.type)
+      {
+         case ui::MOUSE_PRESSED_EVENT:
+            std::cerr << "Mouse pressed at " << ev.mouseButton.posX << 
+                         ", " << ev.mouseButton.posY << std::endl;
+            break;            
+         case ui::MOUSE_RELEASED_EVENT:
+            std::cerr << "Mouse relesed at " << ev.mouseButton.posX << 
+                         ", " << ev.mouseButton.posY << std::endl;
+            break;            
+         default:
+            break;
+      }
+   }
 
 private:
 
@@ -131,6 +150,8 @@ int main(int argc, char* argv[])
       dc.setDrawingTarget(&sd);
       ui::Timer& timer = engine.timer();
       timer.registerCallback(&sd, 1000.0f / FPS);
+      
+      engine.eventChannel().addEventConsumer(&sd);
       
       engine.runLoop();
    }

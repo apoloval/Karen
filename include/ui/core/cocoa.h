@@ -49,19 +49,21 @@
  */
 #if defined(__cplusplus) && !defined(__OBJC__)
 namespace karen { namespace ui { namespace core {
-class NSWindow;
+class KarenWindow;
 class KarenOpenGLView;
 class NSAutoreleasePool;
 class NSTimer;
 }}};
 #elif defined(__OBJC__)
-@class NSWindow;
+@class KarenWindow;
 @class KarenOpenGLView;
 @class NSAutoreleasePool;
 @class NSTimer;
 #endif
 
 namespace karen { namespace ui { namespace core {
+
+class CocoaEngine;
 
 /**
  * Cocoa drawing context. This class provides a Cocoa-based implementation
@@ -70,6 +72,14 @@ namespace karen { namespace ui { namespace core {
 class KAREN_EXPORT CocoaDrawingContext : public DrawingContext
 {
 public:
+
+   /**
+    * Create a new uninitialized instance of CocoaDrawingContext.
+    */
+   inline CocoaDrawingContext(CocoaEngine* engine)
+    : _window(NULL), _glView(NULL), _engine(engine)
+   {
+   }
 
    /**
     * Initialize the screen from given properties. If given properties
@@ -93,12 +103,13 @@ public:
     * Mark the drawing context to as needing to be redisplayed.
     */
    virtual void postRedisplay();
-
+   
 private:
 
-   NSWindow*         _window;
+   KarenWindow*      _window;
    KarenOpenGLView*  _glView;
    Ptr<OpenGLCanvas> _glCanvas;
+   CocoaEngine*      _engine;
 
 };
 

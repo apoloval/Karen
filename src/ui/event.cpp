@@ -66,4 +66,44 @@ Ptr<EventChannel>
 EventChannel::newInstance()
 { return new EventChannelImpl(); }
 
+void
+EventResponder::respondToMouseButtonPressed(
+      const Vector& pressedAt,
+      MouseButton btn)
+{
+   EventResponder* next = nextResponder();
+   if (next)
+      next->respondToMouseButtonPressed(pressedAt, btn);
+}
+
+void
+EventResponder::respondToMouseButtonReleased(
+      const Vector& pressedAt,
+      MouseButton btn)
+{
+   EventResponder* next = nextResponder();
+   if (next)
+      next->respondToMouseButtonReleased(pressedAt, btn);
+}
+
+void
+EventResponder::respondToMouseMoved(
+      const Vector& fromPos,
+      const Vector& toPos)
+{
+   EventResponder* next = nextResponder();
+   if (next)
+      next->respondToMouseMoved(fromPos, toPos);
+}
+
+void
+EventResponder::respondToMouseDragged(
+      const Vector& fromPos,
+      const Vector& toPos)
+{
+   EventResponder* next = nextResponder();
+   if (next)
+      next->respondToMouseDragged(fromPos, toPos);
+}
+
 }}; /* Namespace karen::ui */
