@@ -101,7 +101,7 @@ KAREN_DECL_EXCEPTION(GlutLoopInterruptedException);
  * Glut engine class. This class implements a UI engine supported by
  * GLUT library.
  */
-class KAREN_EXPORT GlutEngine : public Engine, public InputEventConsumer
+class KAREN_EXPORT GlutEngine : public Engine, public EventConsumer
 {
 public:
 
@@ -143,7 +143,7 @@ public:
    /**
     * Consume an input event.
     */
-   virtual void consumeInputEvent(const InputEvent& ev);
+   virtual void consumeEvent(const Event& ev);
 
 private:
 

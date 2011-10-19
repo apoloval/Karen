@@ -70,7 +70,7 @@ throw (utils::InvalidStateException)
 
 Engine::Engine(const String& name)
  : _name(name),
-   _inputEventChannel(InputEventChannel::newInstance())
+   _eventChannel(EventChannel::newInstance())
 {
 }
 

@@ -68,8 +68,8 @@ public:
    /**
     * Obtain the input event channel for this engine.
     */
-   inline InputEventChannel& inputEventChannel()
-   { return *_inputEventChannel; }
+   inline EventChannel& eventChannel()
+   { return *_eventChannel; }
 
    /**
     * Obtain the drawing context for this engine. If the screen has not
@@ -105,7 +105,7 @@ protected:
 private:
 
    String _name;
-   Ptr<InputEventChannel> _inputEventChannel;
+   Ptr<EventChannel> _eventChannel;
 
 };
 

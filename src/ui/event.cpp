@@ -28,17 +28,17 @@
 
 namespace karen { namespace ui {
 
-class InputEventChannelImpl : public InputEventChannel
+class EventChannelImpl : public EventChannel
 {
 public:
 
-   virtual void consumeInputEvent(const InputEvent& ev)
+   virtual void consumeEvent(const Event& ev)
    {
       for (auto c : _consumers)
-         c->consumeInputEvent(ev);
+         c->consumeEvent(ev);
    }
 
-   virtual void addInputEventConsumer(InputEventConsumer* consumer)
+   virtual void addEventConsumer(EventConsumer* consumer)
    throw (utils::InvalidInputException)
    {
       if (_consumers.contains(consumer))
@@ -47,7 +47,7 @@ public:
       _consumers.toTail(consumer);
    }
 
-   virtual void removeInputEventConsumer(InputEventConsumer* consumer)
+   virtual void removeEventConsumer(EventConsumer* consumer)
    throw (utils::NotFoundException)
    {
       if (!_consumers.contains(consumer))
@@ -58,12 +58,12 @@ public:
 
 private:
 
-   List<InputEventConsumer*> _consumers;
+   List<EventConsumer*> _consumers;
 
 };
 
-Ptr<InputEventChannel>
-InputEventChannel::newInstance()
-{ return new InputEventChannelImpl(); }
+Ptr<EventChannel>
+EventChannel::newInstance()
+{ return new EventChannelImpl(); }
 
 }}; /* Namespace karen::ui */

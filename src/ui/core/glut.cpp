@@ -205,7 +205,7 @@ GlutEngine::stopLoop()
 }
 
 void
-GlutEngine::consumeInputEvent(const InputEvent& ev)
+GlutEngine::consumeEvent(const Event& ev)
 {
    if (ev.type == APPLICATION_QUIT_EVENT)
    {
@@ -219,7 +219,7 @@ GlutEngine::GlutEngine() : Engine(ENGINE_NAME)
    glutInit(&argc, argv);
    _drawingContext = new GlutDrawingContext();
    
-   inputEventChannel().addInputEventConsumer(this);
+   eventChannel().addEventConsumer(this);
 }
 
 }}}; /* Namespace karen::ui::core */
