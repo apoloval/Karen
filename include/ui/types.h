@@ -25,8 +25,9 @@
 #ifndef KAREN_UI_TYPES_H
 #define KAREN_UI_TYPES_H
 
-#include "../utils/platform.h"
-#include "../utils/types.h"
+#include "utils/platform.h"
+#include "utils/string.h"
+#include "utils/types.h"
 
 #define __max__(n1, n2) ((n1) > (n2) ? (n1) : (n2))
 #define __min__(n1, n2) ((n1) < (n2) ? (n1) : (n2))
@@ -174,6 +175,12 @@ struct KAREN_EXPORT Vector
       Vector ret(this->y, -this->x);
       return normalise ? ret.normalise() : ret;
    }
+   
+   /**
+    * Obtain a string representation of this vector.
+    */
+   inline String toString() const
+   { return String::format("[%.2f, %.2f]", x, y); };
          
 };
 
