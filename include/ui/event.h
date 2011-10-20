@@ -84,6 +84,45 @@ struct MouseButtonEvent
 };
 
 /**
+ * Key event. This struct encapsulates the properties of a key event.
+ */
+struct KeyEvent
+{
+   UInt32 unicode;
+
+   static const UInt32 LEFT_CURSOR_KEY;
+   static const UInt32 RIGHT_CURSOR_KEY;
+   static const UInt32 UP_CURSOR_KEY;
+   static const UInt32 DOWN_CURSOR_KEY;
+   static const UInt32 BACKSPACE_KEY;
+   static const UInt32 DELETE_KEY;
+   static const UInt32 TAB_KEY;
+   static const UInt32 RETURN_KEY;
+   static const UInt32 SCAPE_KEY;
+   static const UInt32 INSERT_KEY;
+   static const UInt32 HOME_KEY;
+   static const UInt32 END_KEY;
+   static const UInt32 PAGEUP_KEY;
+   static const UInt32 PAGEDOWN_KEY;
+   static const UInt32 F1_KEY;
+   static const UInt32 F2_KEY;
+   static const UInt32 F3_KEY;
+   static const UInt32 F4_KEY;
+   static const UInt32 F5_KEY;
+   static const UInt32 F6_KEY;
+   static const UInt32 F7_KEY;
+   static const UInt32 F8_KEY;
+   static const UInt32 F9_KEY;
+   static const UInt32 F10_KEY;
+   static const UInt32 F11_KEY;
+   static const UInt32 F12_KEY;
+   static const UInt32 F13_KEY;
+   static const UInt32 F14_KEY;
+   static const UInt32 F15_KEY;
+
+};
+
+/**
  * Custom event type. This struct encapsulates the properties of a custom
  * input event. It attempts to encapsulate some generic values that may
  * be useful for representing any custom event.
@@ -113,7 +152,27 @@ struct Event
    {
       MouseMotionEvent mouseMotion;
       MouseButtonEvent mouseButton;
+      KeyEvent         key;
    };
+   
+   /**
+    * Obtain the mouse button position as a Karen vector.
+    */
+   inline Vector mouseButtonPos() const
+   { return Vector(mouseButton.posX, mouseButton.posY); }
+   
+   /**
+    * Obtain the mouse motion-from position as a Karen vector.
+    */
+   inline Vector mouseMotionFromPos() const
+   { return Vector(mouseMotion.fromX, mouseMotion.fromY); }
+   
+   /**
+    * Obtain the mouse motion-to position as a Karen vector.
+    */
+   inline Vector mouseMotionToPos() const
+   { return Vector(mouseMotion.toX, mouseMotion.toY); }
+   
 };
 
 /**

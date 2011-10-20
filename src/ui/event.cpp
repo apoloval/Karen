@@ -28,6 +28,36 @@
 
 namespace karen { namespace ui {
 
+const UInt32 KeyEvent::LEFT_CURSOR_KEY       = 0xf702;
+const UInt32 KeyEvent::RIGHT_CURSOR_KEY      = 0xf703;
+const UInt32 KeyEvent::UP_CURSOR_KEY         = 0xf700;
+const UInt32 KeyEvent::DOWN_CURSOR_KEY       = 0xf701;
+const UInt32 KeyEvent::BACKSPACE_KEY         = 0x0008;
+const UInt32 KeyEvent::DELETE_KEY            = 0x007f;
+const UInt32 KeyEvent::TAB_KEY               = 0x0009;
+const UInt32 KeyEvent::RETURN_KEY            = 0x000d;
+const UInt32 KeyEvent::SCAPE_KEY             = 0x001b;
+const UInt32 KeyEvent::INSERT_KEY            = 0x0115;
+const UInt32 KeyEvent::HOME_KEY              = 0x0116;
+const UInt32 KeyEvent::END_KEY               = 0x0117;
+const UInt32 KeyEvent::PAGEUP_KEY            = 0x0118;
+const UInt32 KeyEvent::PAGEDOWN_KEY          = 0x0119;
+const UInt32 KeyEvent::F1_KEY                = 0x011a;
+const UInt32 KeyEvent::F2_KEY                = 0x011b;
+const UInt32 KeyEvent::F3_KEY                = 0x011c;
+const UInt32 KeyEvent::F4_KEY                = 0x011d;
+const UInt32 KeyEvent::F5_KEY                = 0x011e;
+const UInt32 KeyEvent::F6_KEY                = 0x011f;
+const UInt32 KeyEvent::F7_KEY                = 0x0120;
+const UInt32 KeyEvent::F8_KEY                = 0x0121;
+const UInt32 KeyEvent::F9_KEY                = 0x0122;
+const UInt32 KeyEvent::F10_KEY               = 0x0123;
+const UInt32 KeyEvent::F11_KEY               = 0x0124;
+const UInt32 KeyEvent::F12_KEY               = 0x0125;
+const UInt32 KeyEvent::F13_KEY               = 0x0126;
+const UInt32 KeyEvent::F14_KEY               = 0x0127;
+const UInt32 KeyEvent::F15_KEY               = 0x0128;
+
 class EventChannelImpl : public EventChannel
 {
 public:

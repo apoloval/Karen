@@ -51,8 +51,8 @@ class SimpleDrawing : public ui::Drawable,
 {
 public:
 
-   SimpleDrawing(ui::DrawingContext* ctx)
-    : mov(SPEED_X, SPEED_Y), frameCount(0), context(ctx)
+   SimpleDrawing(ui::Engine* en)
+    : mov(SPEED_X, SPEED_Y), frameCount(0), engine(en)
    {}
 
    inline virtual void draw(ui::Canvas& canvas)
@@ -102,7 +102,7 @@ public:
       
       mov.y += 0.5f * ms * ms * 0.001f;
 
-      context->postRedisplay();
+      engine->drawingContext().postRedisplay();
       
       return 1000.0f / FPS;
    }
@@ -112,13 +112,25 @@ public:
       switch (ev.type)
       {
          case ui::MOUSE_PRESSED_EVENT:
-            std::cerr << "Mouse pressed at " << ev.mouseButton.posX << 
-                         ", " << ev.mouseButton.posY << std::endl;
+            std::cerr << "Mouse pressed at " <<
+                         ev.mouseButtonPos().toString() << std::endl;
             break;            
          case ui::MOUSE_RELEASED_EVENT:
-            std::cerr << "Mouse relesed at " << ev.mouseButton.posX << 
-                         ", " << ev.mouseButton.posY << std::endl;
-            break;            
+            std::cerr << "Mouse relesed at " << 
+                         ev.mouseButtonPos().toString() << std::endl;
+            break;
+         case ui::MOUSE_MOTION_EVENT:
+            std::cerr << "Mouse moved from " << 
+                         ev.mouseMotionFromPos().toString() << 
+                         " to " << 
+                         ev.mouseMotionToPos().toString() << std::endl;
+            break;
+         case ui::KEY_PRESSED_EVENT:
+            std::cerr << "Key pressed: " << ev.key.unicode << std::endl;
+         case ui::KEY_RELEASED_EVENT:
+            std::cerr << "Key released: " << ev.key.unicode << std::endl;
+            if (ev.key.unicode == ui::KeyEvent::SCAPE_KEY)
+               engine->stopLoop();
          default:
             break;
       }
@@ -129,7 +141,7 @@ private:
    ui::Vector pos;
    ui::Vector mov;
    long frameCount;
-   ui::DrawingContext* context;
+   ui::Engine* engine;
 
 };
 
@@ -146,7 +158,7 @@ int main(int argc, char* argv[])
       dc.initScreen(screenProps);
       std::cerr << "Done" << std::endl;
       
-      SimpleDrawing sd(&dc);   
+      SimpleDrawing sd(&engine);   
       dc.setDrawingTarget(&sd);
       ui::Timer& timer = engine.timer();
       timer.registerCallback(&sd, 1000.0f / FPS);
