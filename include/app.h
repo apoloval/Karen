@@ -47,11 +47,43 @@ public:
    typedef Dictionary<String, String> Properties;
    
    /**
-    * Create a new application from given properties. If any property cannot
-    * be understanded or applied, a InvalidInputException is raised.
+    * The name of the UI engine property.
     */
-   Application(const Properties &props);
-
+   static const String UI_ENGINE_PROPERTY;
+   
+   /**
+    * The screen width property.
+    */
+   static const String SCREEN_WIDTH_PROPERTY;
+   
+   /**
+    * The screen height property.
+    */
+   static const String SCREEN_HEIGHT_PROPERTY;
+   
+   /**
+    * The fullscreen property.
+    */
+   static const String FULLSCREEN_PROPERTY;
+   
+   /**
+    * The double buffer property.
+    */
+   static const String DOUBLE_BUFFER_PROPERTY;
+   
+   /**
+    * Initialize an application object from given properties. If any property 
+    * cannot be understanded or applied, a InvalidInputException is raised. If
+    * application is arelady initialize, a InvalidStateException is raised.
+    */
+   static Application& init(const Properties& props) 
+         throw (utils::InvalidInputException, utils::InvalidStateException);
+         
+   /**
+    * Run this application.
+    */
+   virtual void run() = 0;
+   
 };
 
 }; /* Namespace karen */
