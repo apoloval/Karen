@@ -160,66 +160,86 @@
    if (_eventConsumer)
    {
       karen::ui::Event kev;
+      static NSPoint prevMousePos = NSMakePoint(0.0f, 0.0f);
+      NSPoint mousePos = [ev locationInWindow];
       NSRect wframe = [(NSView*)[self contentView] frame];
+      NSString* chars = nil;
       switch ([ev type])
       {
          case NSLeftMouseDown:
             kev.type = karen::ui::MOUSE_PRESSED_EVENT;
             kev.mouseButton.button = karen::ui::LEFT_MOUSE_BUTTON;
-            kev.mouseButton.posX = [ev locationInWindow].x;
-            kev.mouseButton.posY = 
-               wframe.size.height - [ev locationInWindow].y;
+            kev.mouseButton.posX = mousePos.x;
+            kev.mouseButton.posY = wframe.size.height - mousePos.y;
+            prevMousePos = mousePos;
             break;
          case NSLeftMouseUp:
             kev.type = karen::ui::MOUSE_RELEASED_EVENT;
             kev.mouseButton.button = karen::ui::LEFT_MOUSE_BUTTON;
-            kev.mouseButton.posX = [ev locationInWindow].x;
-            kev.mouseButton.posY = 
-               wframe.size.height - [ev locationInWindow].y;
+            kev.mouseButton.posX = mousePos.x;
+            kev.mouseButton.posY = wframe.size.height - mousePos.y;
+            prevMousePos = mousePos;
             break;
          case NSRightMouseDown:
             kev.type = karen::ui::MOUSE_PRESSED_EVENT;
             kev.mouseButton.button = karen::ui::RIGHT_MOUSE_BUTTON;
-            kev.mouseButton.posX = [ev locationInWindow].x;
-            kev.mouseButton.posY = 
-               wframe.size.height - [ev locationInWindow].y;
+            kev.mouseButton.posX = mousePos.x;
+            kev.mouseButton.posY = wframe.size.height - mousePos.y;
+            prevMousePos = mousePos;
             break;
          case NSRightMouseUp:
             kev.type = karen::ui::MOUSE_RELEASED_EVENT;
             kev.mouseButton.button = karen::ui::RIGHT_MOUSE_BUTTON;
-            kev.mouseButton.posX = [ev locationInWindow].x;
-            kev.mouseButton.posY =
-               wframe.size.height - [ev locationInWindow].y;
+            kev.mouseButton.posX = mousePos.x;
+            kev.mouseButton.posY = wframe.size.height - mousePos.y;
+            prevMousePos = mousePos;
             break;
          case NSMouseMoved:
+         case NSLeftMouseDragged:
+         case NSRightMouseDragged:
             kev.type = karen::ui::MOUSE_MOTION_EVENT;
-            kev.mouseMotion.fromX = 0; /* TODO: fix this value. */
-            kev.mouseMotion.fromY = 0; /* TODO: fix this value. */
+            kev.mouseMotion.fromX = prevMousePos.x;
+            kev.mouseMotion.fromY = wframe.size.height - prevMousePos.y;
             kev.mouseMotion.toX = [ev locationInWindow].x;
-            kev.mouseMotion.toY = 
-               wframe.size.height - [ev locationInWindow].y - 1;
+            kev.mouseMotion.toY = wframe.size.height - mousePos.y;
+            prevMousePos = mousePos;
             break;
+         case NSKeyUp:
+            kev.type =karen::ui::KEY_RELEASED_EVENT;
+            chars = [ev characters];
+            if ([chars length])               
+               kev.key.unicode = [chars characterAtIndex: 0];
+            break;
+         case NSKeyDown:
+            kev.type =karen::ui::KEY_PRESSED_EVENT;
+            chars = [ev characters];
+            if ([chars length])               
+               kev.key.unicode = [chars characterAtIndex: 0];
          default:
-            /* TODO: add additional handlers for keyboard events. */
             break;
       }
       
       /*
-       * Look for determined consitions to send the event to the consumer.
+       * Look for determined conditions to send the event to the consumer.
        */
+      karen::ui::Rect area(0, 0, wframe.size.width, wframe.size.height);
       switch (kev.type)
       {
          case karen::ui::MOUSE_PRESSED_EVENT:
          case karen::ui::MOUSE_RELEASED_EVENT:
-            if (kev.mouseButton.posY >= 0)
+            if (kev.mouseButtonPos().isInside(area))
                _eventConsumer->consumeEvent(kev);
             break;
          case karen::ui::MOUSE_MOTION_EVENT:
-            if (kev.mouseMotion.toY >= 0)
+            if (kev.mouseMotionToPos().isInside(area))
                _eventConsumer->consumeEvent(kev);
             break;
-         default:
+         case karen::ui::KEY_PRESSED_EVENT:
+         case karen::ui::KEY_RELEASED_EVENT:
+            _eventConsumer->consumeEvent(kev);
             break;
+         default:
+            break;            
       }
            
    }
@@ -347,7 +367,7 @@ throw (utils::InvalidInputException)
    if (fmt == nil)
       KAREN_THROW(utils::InvalidInputException, 
                "cannot init Cocoa screen: "
-               "no suitable pixel format for given screen properties");
+               "no suitable properties for current screen configuration");
 
    NSRect viewRect = NSMakeRect(
          0, 0, screenProps.dimensions.x, screenProps.dimensions.y);
