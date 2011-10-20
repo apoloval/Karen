@@ -64,7 +64,7 @@ protected:
                     const String& sourceFile,
                     long sourceLine,
                     Exception* nestedException)
-    : _cause(cause), 
+    : _cause(nestedException ? cause + "\n" + nestedException->cause() : cause), 
       _sourceFile(sourceFile),
       _sourceLine(sourceLine),
       _nestedException(nestedException)
@@ -129,7 +129,7 @@ private:
    String::format(msg, ## __VA_ARGS__), __FILE__, __LINE__);
 
 #define KAREN_THROW_NESTED(classname, nested, msg, ...) throw classname(\
-   String::format(msg, ## __VA_ARGS__), __FILE__, __LINE__, nested);
+   String::format(msg, ## __VA_ARGS__), __FILE__, __LINE__, &nested);
 
 /**
  * Internal error exception. This exception is raised when an unexpected
