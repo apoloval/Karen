@@ -142,4 +142,7 @@ private:
 
 }}; // namespace karen::utils
 
+using karen::utils::Nullable;
+using karen::utils::Tuple;
+
 #endif
