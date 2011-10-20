@@ -41,7 +41,7 @@ public:
     * interpreted in the base specified as argument. If string value cannot
     * be converted into long, a InvalidConversionException is raised. 
     */
-   static long toLong(const String &str, unsigned long base = 10) 
+   static long toLong(const String &str, unsigned int base = 10) 
          throw (InvalidConversionException);
 
 };
