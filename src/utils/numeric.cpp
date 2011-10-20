@@ -30,7 +30,7 @@
 namespace karen { namespace utils {
 
 long
-Integer::toLong(const String &str, unsigned long base)
+Integer::toLong(const String &str, unsigned int base)
 throw (InvalidConversionException)
 {
    char *end;
