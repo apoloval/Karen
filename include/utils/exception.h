@@ -27,10 +27,11 @@
 
 #include <exception>
 
-#include "platform.h"
-#include "string.h"
+#include "utils/platform.h"
 
 namespace karen { namespace utils {
+
+class String;
 
 /**
  * Abstract exception class. This class provides an abstraction for a
@@ -45,7 +46,7 @@ public:
     * Obtain exception cause.
     */
    inline const String& cause() const
-   { return _cause; }
+   { return *_cause; }
    
    /**
     * Obtain nested exception. If there is no nested exception, it returns
@@ -60,42 +61,34 @@ protected:
     * Create a new exception from given cause, source filename, source 
     * line and nested exception.
     */
-   inline Exception(const String& cause, 
-                    const String& sourceFile,
-                    long sourceLine,
-                    Exception* nestedException)
-    : _cause(nestedException ? cause + "\n" + nestedException->cause() : cause), 
-      _sourceFile(sourceFile),
-      _sourceLine(sourceLine),
-      _nestedException(nestedException)
-   {
-   }
+   Exception(const String& cause, 
+             const String& sourceFile,
+             long sourceLine,
+             Exception* nestedException);
    
    /**
     * Create a new exception from given cause, source filename and source
     * line.
     */
-   inline Exception(const String& cause,
+   Exception(const String& cause,
                     const String& sourceFile,
-                    long sourceLine) 
-    : Exception(cause, sourceFile, sourceLine, NULL) {}
+                    long sourceLine);
 
    /**
     * Create a new exception from given cause and nested exception
     */
-   inline Exception(const String& cause,
-                    Exception* nestedException) 
-    : Exception(cause, "unknown file", -1, nestedException) {}
+   Exception(const String& cause,
+             Exception* nestedException);
    
    /**
     * Virtual destructor. 
     */
-   inline virtual ~Exception() throw () {}
+   virtual ~Exception() throw ();
    
 private:
 
-   String         _cause;
-   String         _sourceFile;
+   String*        _cause;
+   String*        _sourceFile;
    long           _sourceLine;
    Exception*     _nestedException;
 
@@ -174,5 +167,7 @@ KAREN_DECL_EXCEPTION(InvalidStateException);
 KAREN_DECL_EXCEPTION(NotFoundException);
 
 }}; // namespace karen::utils
+
+#include "utils/string.h"
 
 #endif
