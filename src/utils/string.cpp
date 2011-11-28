@@ -22,6 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
+#include "utils/iterator.h"
 #include "utils/pointer.h"
 #include "utils/string.h"
 #include "utils/types.h"
@@ -29,6 +30,110 @@
 #include <sstream>
 
 namespace karen { namespace utils {
+
+/**
+ * String iterator. This class provides an implementation for a non-const-
+ * string iterator.
+ */
+class StringIterator : public AbstractIterator<char>
+{
+public:
+
+   /**
+    * Create a new iterator with given string base implementations for
+    * current iterator and end iterator. 
+    */
+   inline StringIterator(StringBase::iterator itImpl,
+                         StringBase::iterator endImpl)
+    : _itImpl(itImpl), _endImpl(endImpl)
+   {
+   }
+
+   inline virtual bool isNull() const
+   { return _itImpl == _endImpl; }
+
+   inline virtual void next() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move string iterator to next element: null iterator");
+      _itImpl++;
+   }
+   
+   inline virtual void prev() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move string iterator to previous element: null iterator");
+      _itImpl--;
+   }
+
+   virtual char& get() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot dereference string iterator: null iterator");
+      return *_itImpl;
+   }
+
+private:
+
+   StringBase::iterator _itImpl;
+   StringBase::iterator _endImpl;
+
+};
+
+/**
+ * String iterator. This class provides an implementation for a non-const-
+ * string iterator.
+ */
+class StringConstIterator : public AbstractConstIterator<char>
+{
+public:
+
+   /**
+    * Create a new iterator with given string base implementations for
+    * current iterator and end iterator. 
+    */
+   inline StringConstIterator(StringBase::const_iterator itImpl,
+                              StringBase::const_iterator endImpl)
+    : _itImpl(itImpl), _endImpl(endImpl)
+   {
+   }
+
+   inline virtual bool isNull() const
+   { return _itImpl == _endImpl; }
+
+   inline virtual void next() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move string iterator to next element: null iterator");
+      _itImpl++;
+   }
+   
+   inline virtual void prev() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move string iterator to previous element: null iterator");
+      _itImpl--;
+   }
+
+   virtual const char& get() const throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot dereference string iterator: null iterator");
+      return *_itImpl;
+   }
+
+private:
+
+   StringBase::const_iterator _itImpl;
+   StringBase::const_iterator _endImpl;
+
+};
 
 #ifndef MAX_FORMAT_LENGTH
 #define MAX_FORMAT_LENGTH 10240
@@ -88,5 +193,30 @@ String::operator [] (const Position &pos)
 const String::Element&
 String::operator [] (const Position &pos) const
 { return ((String&) *this)[pos]; }
+
+Iterator<char>
+String::begin()
+{
+   return Iterator<char>(new StringIterator(_base.begin(), _base.end()));
+}
+
+Iterator<char>
+String::end()
+{
+   return Iterator<char>(new StringIterator(_base.end(), _base.end()));
+}
+
+ConstIterator<char>
+String::begin() const
+{
+   return ConstIterator<char>(new StringConstIterator(_base.begin(), _base.end()));
+}
+
+ConstIterator<char>
+String::end() const
+{
+   return ConstIterator<char>(new StringConstIterator(_base.end(), _base.end()));
+}
+
 
 }}; // namespace karen::utils

@@ -25,12 +25,18 @@
 #ifndef KAREN_UTILS_STRING_H
 #define KAREN_UTILS_STRING_H
 
-#include "types.h"
+#include "utils/types.h"
 
 #include <string>
 #include <cctype>
 
 namespace karen { namespace utils {
+
+template <class T>
+class Iterator;
+
+template <class T>
+class ConstIterator;
 
 /**
  * String base class. This typedef redeclares a STL-based string class
@@ -364,9 +370,29 @@ public:
     */
    const Element& operator [] (const Position &pos) const;
 
+   /**
+    * Obtain an iterator pointing to the first element of the string.
+    */
+   Iterator<char> begin();
+
+   /**
+    * Obtain an iterator pointing to (beyond) the end of the string.
+    */
+   Iterator<char> end();
+
+   /**
+    * Obtain a const-iterator pointing to the first element of the string.
+    */
+   ConstIterator<char> begin() const;
+
+   /**
+    * Obtain a const-iterator pointing to (beyond) the end of the string.
+    */
+   ConstIterator<char> end() const;
+
 private:
 
-   std::string _base;
+   StringBase _base;
 
 };
 
