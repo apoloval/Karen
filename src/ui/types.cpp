@@ -50,5 +50,88 @@ KAREN_EXPORT const Color Color::CYAN    (0x00, 0xff, 0xff);
 KAREN_EXPORT const Color Color::MAGENTA (0xff, 0x00, 0xff);
 KAREN_EXPORT const Color Color::GREY    (0xc0, 0xc0, 0xc0);
 
+#if (KAREN_ENDIANNESS == KAREN_BIG_ENDIAN)
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_8BPP_GREYSCALE(
+   PixelFormat::Mask(0xff000000, 0xff000000, 0xff000000, 0x00000000), 
+   PixelFormat::Shift(24, 24, 24, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_16BPP_GREYSCALE(
+   PixelFormat::Mask(0xffff0000, 0xffff0000, 0xffff0000, 0x00000000), 
+   PixelFormat::Shift(16, 16, 16, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_24BPP_RGB(
+   PixelFormat::Mask(0xff000000, 0x00ff0000, 0x0000ff00, 0x00000000), 
+   PixelFormat::Shift(24, 16, 8, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_24BPP_BGR(
+   PixelFormat::Mask(0x0000ff00, 0x00ff0000, 0xff000000, 0x00000000),
+   PixelFormat::Shift(8, 16, 24, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_RGBX(
+   PixelFormat::Mask(0xff000000, 0x00ff0000, 0x0000ff00, 0x00000000), 
+   PixelFormat::Shift(24, 16, 8, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_XRGB(
+   PixelFormat::Mask(0x00ff0000, 0x0000ff00, 0x000000ff, 0x00000000),
+   PixelFormat::Shift(16, 8, 0, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_BGRX(
+   PixelFormat::Mask(0x0000ff00, 0x00ff0000, 0xff000000, 0x00000000), 
+   PixelFormat::Shift(8, 16, 24, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_XBGR(
+   PixelFormat::Mask(0x000000ff, 0x0000ff00, 0x00ff0000, 0x00000000), 
+   PixelFormat::Shift(0, 8, 16, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_RGBA(
+   PixelFormat::Mask(0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff), 
+   PixelFormat::Shift(24, 16, 8, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_ABGR(
+   PixelFormat::Mask(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000), 
+   PixelFormat::Shift(0, 8, 16, 24),
+   32);
+#else
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_8BPP_GREYSCALE(
+   PixelFormat::Mask(0x000000ff, 0x000000ff, 0x000000ff, 0x00000000), 
+   PixelFormat::Shift(0, 0, 0, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_16BPP_GREYSCALE(
+   PixelFormat::Mask(0x0000ffff, 0x0000ffff, 0x0000ffff, 0x00000000), 
+   PixelFormat::Shift(0, 0, 0, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_24BPP_RGB(
+   PixelFormat::Mask(0x000000ff, 0x0000ff00, 0x00ff0000, 0x00000000), 
+   PixelFormat::Shift(0, 8, 16, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_24BPP_BGR(
+   PixelFormat::Mask(0x00ff0000, 0x0000ff00, 0x000000ff, 0x00000000), 
+   PixelFormat::Shift(16, 8, 0, 0),
+   24);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_RGBX(
+   PixelFormat::Mask(0x000000ff, 0x0000ff00, 0x00ff0000, 0x00000000), 
+   PixelFormat::Shift(0, 8, 16, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_XRGB(
+   PixelFormat::Mask(0x0000ff00, 0x00ff0000, 0xff000000, 0x00000000), 
+   PixelFormat::Shift(8, 16, 24, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_BGRX(
+   PixelFormat::Mask(0x00ff0000, 0x0000ff00, 0x000000ff, 0x00000000), 
+   PixelFormat::Shift(16, 8, 0, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_XBGR(
+   PixelFormat::Mask(0xff000000, 0x00ff0000, 0x0000ff00, 0x00000000), 
+   PixelFormat::Shift(24, 16, 8, 0),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_RGBA(
+   PixelFormat::Mask(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000), 
+   PixelFormat::Shift(0, 8, 16, 24),
+   32);
+KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_ABGR(
+   PixelFormat::Mask(0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff), 
+   PixelFormat::Shift(24, 16, 8, 0),
+   32);
+#endif
 
 }} /* Namespace karen::ui */

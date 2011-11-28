@@ -119,18 +119,13 @@ throw (utils::InvalidInputException)
     * input ASAP.
     */   
    unsigned int mode = GLUT_DEPTH;
-   switch(screenProps.pixelFormat)
-   {
-      case FORMAT_32BPP_RGBA:
-         mode |= GLUT_RGBA;
-         break;
-      case FORMAT_24BPP_RGB:
-         mode |= GLUT_RGB;
-         break;
-      default:
-         KAREN_THROW(utils::InvalidInputException, 
-               "cannot initialize screen: incompatible pixel format");
-   }
+   if (screenProps.pixelFormat == PixelFormat::FORMAT_32BPP_RGBA)
+      mode |= GLUT_RGBA;
+   else if (screenProps.pixelFormat == PixelFormat::FORMAT_24BPP_RGB)
+      mode |= GLUT_RGB;
+   else
+      KAREN_THROW(utils::InvalidInputException, 
+            "cannot initialize screen: incompatible pixel format");
    mode |= screenProps.doubleBuffer ? GLUT_DOUBLE : GLUT_SINGLE;
 
    glutInitWindowSize(screenProps.dimensions.x, screenProps.dimensions.y);   

@@ -333,24 +333,23 @@ throw (utils::InvalidInputException)
       fmtAttrs[i] = 0;
       
    int attrIndex = 0;
-   switch (screenProps.pixelFormat)
+   if (screenProps.pixelFormat == PixelFormat::FORMAT_24BPP_RGB)
    {
-      case FORMAT_24BPP_RGB:
-         fmtAttrs[attrIndex++] = NSOpenGLPFAColorSize;
-         fmtAttrs[attrIndex++] = 8;
-         fmtAttrs[attrIndex++] = NSOpenGLPFAAlphaSize;
-         fmtAttrs[attrIndex++] = 0;
-         break;
-      case FORMAT_32BPP_RGBA:
-         fmtAttrs[attrIndex++] = NSOpenGLPFAColorSize;
-         fmtAttrs[attrIndex++] = 8;
-         fmtAttrs[attrIndex++] = NSOpenGLPFAAlphaSize;
-         fmtAttrs[attrIndex++] = 8;
-         break;
-      default:
+      fmtAttrs[attrIndex++] = NSOpenGLPFAColorSize;
+      fmtAttrs[attrIndex++] = 8;
+      fmtAttrs[attrIndex++] = NSOpenGLPFAAlphaSize;
+      fmtAttrs[attrIndex++] = 0;
+   }
+   else if (screenProps.pixelFormat == PixelFormat::FORMAT_32BPP_RGBA)
+   {
+      fmtAttrs[attrIndex++] = NSOpenGLPFAColorSize;
+      fmtAttrs[attrIndex++] = 8;
+      fmtAttrs[attrIndex++] = NSOpenGLPFAAlphaSize;
+      fmtAttrs[attrIndex++] = 8;
+   }
+   else
          KAREN_THROW(utils::InvalidInputException, 
                "cannot init Cocoa screen: unsupported pixel format");            
-   }
    if (screenProps.fullscreen)
       fmtAttrs[attrIndex++] = NSOpenGLPFAFullScreen;
    else

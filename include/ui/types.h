@@ -25,6 +25,7 @@
 #ifndef KAREN_UI_TYPES_H
 #define KAREN_UI_TYPES_H
 
+#include "utils/exception.h"
 #include "utils/platform.h"
 #include "utils/string.h"
 #include "utils/types.h"
@@ -779,34 +780,189 @@ struct Font
 };
 
 /**
- * Pixel format enumeration. This type enumerates the different
- * pixel formats available for an image or canvas.  
+ * Pixel format class. This class encapsulates the pixel format data. 
  */
-enum PixelFormat
+class PixelFormat
 {
-   FORMAT_24BPP_RGB,  //!< 24 bits per pixel, RGB channels.
-   FORMAT_24BPP_BGR,  //!< 24 bits per pixel, BGR channels.
-   FORMAT_32BPP_RGBX, //!< 32 bits per pixel, RGB channels, right padding.
-   FORMAT_32BPP_XRGB, //!< 32 bits per pixel, RGB channels, left padding.
-   FORMAT_32BPP_BGRX, //!< 32 bits per pixel, BGR channels, right padding.
-   FORMAT_32BPP_XBGR, //!< 32 bits per pixel, BGR channels, left padding.
-   FORMAT_32BPP_RGBA, //!< 32 bits per pixel, RGBA channels.
-   FORMAT_32BPP_ABGR, //!< 32 bits per pixel, ABGR channels.
+public:
+
+   /**
+    * Pixel format mask. This struct provides the binary mask used to
+    * obtain the RGBA values from each pixel binary representation.
+    */
+   struct Mask
+   {
+      UInt32 r;
+      UInt32 g;
+      UInt32 b;
+      UInt32 a;
+      
+      /**
+       * Create a mask object from given RGBA mask values. 
+       */
+      inline Mask(UInt32 theR, UInt32 theG, UInt32 theB, UInt32 theA)
+       : r(theR), g(theG), b(theB), a(theA)
+      {
+      }
+      
+      /**
+       * Equals to operator.
+       */
+      bool operator == (const Mask& m) const
+      { return r == m.r && g == m.g && b == m.b && a == m.a; }
+      
+      /**
+       * Not equals to operator.
+       */
+      bool operator != (const Mask& m) const
+      { return !(*this == m); }
+
+   };
+   
+   /**
+    * Pixel format shift. This struct provides the left shift of the RGBA 
+    * values of each pixel binary representation.  
+    */
+   struct Shift
+   {
+      unsigned int r;
+      unsigned int g;
+      unsigned int b;
+      unsigned int a;
+
+      /**
+       * Create a mask object from given RGBA mask values. 
+       */
+      Shift(unsigned int theR, unsigned int theG, 
+            unsigned int theB, unsigned int theA)
+       : r(theR), g(theG), b(theB), a(theA)
+      {
+      }
+      
+      /**
+       * Equals to operator.
+       */
+      bool operator == (const Shift& s) const
+      { return r == s.r && g == s.g && b == s.b && a == s.a; }
+      
+      /**
+       * Not equals to operator.
+       */
+      bool operator != (const Shift& s) const
+      { return !(*this == s); }
+
+   };
+   
+   /**
+    * 8 bits per pixel, single greyscale byte.
+    */
+   static const PixelFormat FORMAT_8BPP_GREYSCALE;
+   
+   /**
+    * 16 bits per pixel, double greyscale byte.
+    */
+   static const PixelFormat FORMAT_16BPP_GREYSCALE;
+   
+   /**
+    * 24 bits per pixel, RGB channels.
+    */
+   static const PixelFormat FORMAT_24BPP_RGB;
+   
+   /**
+    * 24 bits per pixel, BGR channels.
+    */
+   static const PixelFormat FORMAT_24BPP_BGR;
+   
+   /**
+    * 32 bits per pixel, RGB channels, right padding.
+    */
+   static const PixelFormat FORMAT_32BPP_RGBX;
+   
+   /**
+    * 32 bits per pixel, RGB channels, left padding.
+    */
+   static const PixelFormat FORMAT_32BPP_XRGB;
+   
+   /**
+    * 32 bits per pixel, BGR channels, right padding.
+    */
+   static const PixelFormat FORMAT_32BPP_BGRX;
+   
+   /**
+    * 32 bits per pixel, BGR channels, left padding.
+    */
+   static const PixelFormat FORMAT_32BPP_XBGR;
+   
+   /**
+    * 32 bits per pixel, RGBA channels.
+    */
+   static const PixelFormat FORMAT_32BPP_RGBA;
+   
+   /**
+    * 32 bits per pixel, ABGR channels.
+    */
+   static const PixelFormat FORMAT_32BPP_ABGR;
+   
+   /**
+    * Copy constructor.
+    */
+   inline PixelFormat(const PixelFormat& fmt)
+    : _mask(fmt._mask), _shift(fmt._shift), _bitsPerPixel(fmt._bitsPerPixel)
+   {
+   }
+   
+   /**
+    * Equals to operator.
+    */
+   inline bool operator == (const PixelFormat& fmt) const
+   { return _mask == fmt._mask && _bitsPerPixel != fmt._bitsPerPixel; }
+   
+   /**
+    * Not equals to operator.
+    */
+   inline bool operator != (const PixelFormat& fmt) const
+   { return !(*this == fmt); }
+   
+   /**
+    * Obtain pixel format mask.
+    */
+   inline const Mask& mask() const
+   { return _mask; }
+   
+   /**
+    * Obtain pixel format shift.
+    */
+   inline const Shift& shift() const
+   { return _shift; }
+   
+   /**
+    * Obtain the bits per pixel for this format.
+    */
+   inline unsigned int bitsPerPixel() const
+   { return _bitsPerPixel; }
+   
+   /**
+    * Obtain the bytes per pixel for this format.
+    */
+   inline unsigned int bytesPerPixel() const
+   { return _bitsPerPixel / 8; }
+   
+private:
+
+   /**
+    * Private constructor.
+    */
+   inline PixelFormat(const Mask& mask, const Shift& shift, unsigned int bpp)
+    : _mask(mask), _shift(shift), _bitsPerPixel(bpp)
+   {
+   }
+
+   Mask           _mask;
+   Shift          _shift;
+   unsigned int   _bitsPerPixel;
+   
 };
 
-/**
- * Pixel format mask. This struct provides the binary mask values
- * for a determined pixel format.
- */
-struct PixelFormatMask
-{
-   UInt32 r;
-   UInt32 g;
-   UInt32 b;
-   UInt32 a;
-   UInt8  bpp;
-};
-   
 // Here goes the inline operations which uses forward declarations.
 inline bool
 Vector::isInside(const Rect& v) const

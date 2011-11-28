@@ -32,7 +32,7 @@
 
 namespace karen { namespace ui {
 
-class Image;
+class AbstractImage;
 
 /**
  * Image lifecycle observer class. This class provides an interface for
@@ -45,32 +45,34 @@ public:
    /**
     * Callback method for image modification.
     */
-   virtual void onImageModification(const Image& img) = 0;
+   virtual void onImageModification(const AbstractImage& img) = 0;
 
    /**
     * Callback method for image destruction.
     */
-   virtual void onImageDestruction(const Image& img) = 0;
+   virtual void onImageDestruction(const AbstractImage& img) = 0;
 
 };
 
-/**
- * Image class. This abstract class represents an image that
- * may be processed by screen objects for drawing.
- */
-class Image
+class AbstractImage
 {
 public:
 
    /**
-    * Obtain the pixel format mask for given pixel format.
+    * Pixel type. This type provides color information for a pixel.
     */
-   static const PixelFormatMask& pixelFormatMask(PixelFormat format);
-   
+   struct Pixel
+   {
+      UInt8 r;
+      UInt8 g;
+      UInt8 b;
+      UInt8 a;
+   };
+
    /**
     * Virtual destructor.
     */
-   virtual ~Image();
+   virtual ~AbstractImage();
    
    /**
     * Add a new lifecycle observer. If observer is already present, a
@@ -94,7 +96,21 @@ public:
    /**
     * Obtain pixel format.
     */
-   virtual PixelFormat pixelFormat() const = 0;
+   virtual const PixelFormat& pixelFormat() const = 0;
+   
+   /**
+    * Obtain the pixel at given position. If position is not valid for
+    * this image, a InvalidInputException is thrown.
+    */
+   virtual Pixel pixelAt(const Vector& pos) const 
+         throw (utils::InvalidInputException) = 0;
+         
+   /**
+    * Set pixel for given image position. If position is not valid,
+    * a InvalidInputException is thrown.
+    */
+   virtual void setPixelAt(const Vector& pos, const Pixel& pix)
+         throw (utils::InvalidInputException) = 0;
    
    /**
     * Obtain a pointer to raw pixels on memory.
@@ -105,10 +121,81 @@ public:
     * Obtain a pointer to raw pixels on memory.
     */
    virtual const void* pixels() const = 0;
-
+   
 private:
 
    Set<ImageLifecycleObserver*> _observers;
+
+};
+
+/**
+ * Image class. This abstract class represents an image that
+ * may be processed by screen objects for drawing.
+ */
+class Image : public AbstractImage
+{
+public:
+
+   /**
+    * Create an empty image with given dimensions and format. If given
+    * dimensions are not valid, a InvalidInputException is thrown.
+    */
+   Image(const Vector& dims, const PixelFormat& format) 
+         throw (utils::InvalidInputException);
+         
+   /**
+    * Create a new image object as a copy of that one passed as argument.
+    */
+   Image(const Image& img);
+   
+   /**
+    * Virtual destructor.
+    */
+   virtual ~Image();
+   
+   /**
+    * Obtain image size.
+    */
+   inline virtual const Vector& size() const
+   { return _size; }
+   
+   /**
+    * Obtain pixel format.
+    */
+   inline virtual const PixelFormat& pixelFormat() const
+   { return _format; }
+   
+   /**
+    * Obtain the pixel at given position. If position is not valid for
+    * this image, a InvalidInputException is thrown.
+    */
+   virtual Pixel pixelAt(const Vector& pos) const 
+         throw (utils::InvalidInputException);
+   
+   /**
+    * Set pixel for given image position. If position is not valid,
+    * a InvalidInputException is thrown.
+    */
+   virtual void setPixelAt(const Vector& pos, const Pixel& pix)
+         throw (utils::InvalidInputException) = 0;
+
+   /**
+    * Obtain a pointer to raw pixels on memory.
+    */
+   inline virtual void* pixels()
+   { return _pixels; }
+
+   /**
+    * Obtain a pointer to raw pixels on memory.
+    */
+   inline virtual const void* pixels() const
+   { return _pixels; }
+
+private:
+
+   Vector      _size;
+   PixelFormat _format;
+   UInt8*      _pixels;
 
 };
 

@@ -61,7 +61,7 @@ public:
          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-         bool hasAlpha = Image::pixelFormatMask(img.pixelFormat()).a;
+         bool hasAlpha = img.pixelFormat().mask().a;
          Vector imgSize(img.size());
 
          glTexImage2D(
@@ -137,6 +137,7 @@ OpenGLCanvas::OpenGLCanvas(const Vector& size)
 {
    glEnable(GL_BLEND);
    glEnable(GL_DEPTH_TEST);
+   glDisable(GL_LIGHTING);
 
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glDepthFunc(GL_LEQUAL);
@@ -381,15 +382,16 @@ OpenGLCanvas::drawQuad(const QuadParams& quad)
    glDisable(GL_TEXTURE_2D);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glEnable((quad.fill) ? GL_POLYGON_SMOOTH : GL_LINE_SMOOTH);
+   glPolygonMode(GL_FRONT_AND_BACK, quad.fill ? GL_FILL : GL_LINE);
 
    glBegin(GL_QUADS);
       for (int i = 0; i < 4; i++)
       {
-         glVertex2f(quad.vertex[i].x, quad.vertex[i].y);
          glColor4f(quad.vertexColor[i].r / 255.0f, 
                    quad.vertexColor[i].g / 255.0f, 
                    quad.vertexColor[i].b / 255.0f, 
                    quad.vertexColor[i].a / 255.0f);
+         glVertex2f(quad.vertex[i].x, quad.vertex[i].y);
       }
    glEnd();
 }
