@@ -126,6 +126,21 @@ public:
          };          
          return params;
       }
+      
+      /**
+       * Create a new instance of QuadParams from the parameters of
+       * a rectangle.
+       */
+      inline static QuadParams createRectangle(
+            const Rect& rect,
+            const Color& color,
+            float linewidth = 1,
+            bool fill = true)
+      { 
+         return createRectangle(
+               rect.position(), rect.position() + rect.size(), 
+               color, linewidth, fill);      
+      }
    };
 
    /**
