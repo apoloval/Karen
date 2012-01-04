@@ -126,11 +126,12 @@ private:
 
 #define KAREN_UTEST_ASSERT(expr) { \
    if (!(expr)) { \
-      KAREN_THROW(InvalidAssertionException, "assertion failed: %s", #expr); \
+      KAREN_THROW(::karen::utils::InvalidAssertionException, \
+      "assertion failed: %s", #expr); \
    }\
 }
 #define KAREN_UTEST_FAILED(reason) { \
-   KAREN_THROW(TestFailedException, reason); \
+   KAREN_THROW(::karen::utils::TestFailedException, reason); \
 }
 #define KAREN_UTEST_ADD(code) { \
    Test tst = { #code, static_cast<TestCode>(&code) }; \
