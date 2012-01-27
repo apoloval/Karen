@@ -28,131 +28,91 @@
 
 namespace karen { namespace utils {
 
-const unsigned long DataBuffer::DEFAULT_LENGTH = 4096l;
-
-DataBuffer::DataBuffer(unsigned long length, bool autosize)
+Buffer::Buffer(unsigned long length)
  : _length(length),
-   _autosize(autosize),
-   _data(new UInt8[length]),
-   _readCursor(_data),
-   _writeCursor(_data)
+   _data(new UInt8[length])
 {
 }
 
-DataBuffer::DataBuffer(void* data, unsigned long length, bool autosize)
+Buffer::Buffer(void* data, unsigned long length)
  : _length(length),
-   _autosize(autosize),
-   _data((UInt8*) data),
-   _readCursor(_data),
-   _writeCursor(_data)
+   _data((UInt8*) data)
 {
 }
 
-DataBuffer::~DataBuffer()
-{
-   close();
-}
+Buffer::~Buffer()
+{ if (_data) delete _data; }
 
 void
-DataBuffer::resetForReading()
+Buffer::read(UInt8* dest, unsigned long len, unsigned long offset) const
+throw (utils::InvalidInputException)
 {
-   _readCursor = _data;
+   if (!isValidRange(offset, len))
+      KAREN_THROW(utils::InvalidInputException, 
+         "cannot read from buffer: invalid range (range: %d+%d, length: %d)",
+         offset, len, length);
+   memcpy(dest, _data, len);
 }
-
+   
 void
-DataBuffer::resetForWritting()
+Buffer::write(const UInt8* src, unsigned long len, unsigned long offset)
+throw (utils::InvalidInputException)
 {
-   _writeCursor = _data;
+   if (!isValidRange(offset, len))
+      KAREN_THROW(utils::InvalidInputException, 
+         "cannot write to buffer: invalid range (range: %d+%d, length: %d)",
+         offset, len, length);
+   memcpy(_data, src, len);
 }
 
-void
-DataBuffer::reset()
-{
-   _readCursor = _writeCursor = _data;
-}
-
-unsigned long
-DataBuffer::read(void* data, unsigned long len)
+UInt8
+BufferInputStream::read() 
 throw (InvalidStateException)
 {
-   unsigned long count = (unsigned int) (_writeCursor - _readCursor);
-   if (count > len)
-      count = len;
-   memcpy(data, _readCursor, count);
-   _readCursor += count;
-   return count;
-}
-
-unsigned long
-DataBuffer::read(OutputStream& data, unsigned long len)
-throw (InvalidStateException)
-{
-   unsigned long count = (unsigned int) (_writeCursor - _readCursor);
-   if (count > len)
-      count = len;
-   data.write(_readCursor, count);
-   _readCursor += count;
-   return count;   
-}
-
-unsigned long
-DataBuffer::write(const void* data, unsigned long len)
-throw (InvalidStateException)
-{
-   unsigned int left = (unsigned int) (_length - (_writeCursor - _data));
-   if (left < len)
+   if (bytesLeftToRead())
    {
-      if (_autosize)
-         enlarge(len + (unsigned int) (_writeCursor - _data));
-      else
-         len = left;
-   }   
-   memcpy(_writeCursor, data, len);
-   _writeCursor += len;
+      UInt8 data;
+      _buffer->read(&data, 1, _index++);
+      return data;
+   }
+   else
+      KAREN_THROW(InvalidStateException, 
+         "cannot read from data buffer: no more bytes to read");
+}
+
+unsigned long
+BufferInputStream::read(UInt8* data, unsigned long len)
+throw (InvalidStateException)
+{
+   unsigned long left = bytesLeftToRead();
+   if (left < len)
+      len = left;
+   _buffer->read(data, len, _index);
+   _index += len;
+   return len;
+}
+
+void
+BufferOutputStream::write(const UInt8& data) 
+throw (InvalidStateException)
+{
+   if (bytesLeftToWrite())
+      _buffer->write(&data, sizeof(UInt8), _index++);
+   else
+      KAREN_THROW(InvalidStateException, 
+         "cannot read from data buffer: no more bytes to read");
+}
+
+unsigned long
+BufferOutputStream::write(const UInt8* data, unsigned long len)
+throw (InvalidStateException)
+{
+   unsigned long left = bytesLeftToWrite();
+   if (left < len)
+      len = left;
+   _buffer->write(data, len, _index);
+   _index += len;
    return len;   
 }
-
-unsigned long
-DataBuffer::write(InputStream& data, unsigned long len)
-throw (InvalidStateException)
-{
-   unsigned int left = (unsigned int) (_length - (_writeCursor - _data));
-   if (left < len)
-   {
-      if (_autosize)
-         enlarge(len + (unsigned int) (_writeCursor - _data));
-      else
-         len = left;
-   }
-   data.read(_writeCursor, len);
-   _writeCursor += len;
-   return len;   
-}
-
-void
-DataBuffer::close()
-{
-   if (_data) delete _data;
-   _readCursor = _writeCursor = _data = NULL;
-   _length = 0;
-}
-
-void
-DataBuffer::enlarge(unsigned long minBytes)
-{
-   if (_length < minBytes)
-   {
-      while (_length  < minBytes)
-         _length *= 2;
-
-      UInt8* newData = new UInt8[_length];
-      memcpy(newData, _data, _length);
-      _readCursor = &(newData[_readCursor - _data]);
-      _writeCursor = &(newData[_writeCursor - _data]);
-      delete _data;
-      _data = newData;
-   }
-}
-
 
 }}; /* namespace karen::utils */

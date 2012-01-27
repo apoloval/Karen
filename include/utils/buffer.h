@@ -31,108 +31,28 @@
 namespace karen { namespace utils {
 
 /**
- * Abstract data buffer class. This class provides an abstraction for
- * a data buffer, i.e. a region of memory to store temporary data. 
+ * Dynamic data buffer class. This class provides an implementation for a
+ * dynamic data buffer. That's a data buffer which is automatically enlarged
+ * when full. 
  */
-class AbstractDataBuffer : public InputStream, public OutputStream
+class Buffer
 {
 public:
 
-   /**
-    * Obtain current buffer length.
-    */
-   virtual unsigned long length() const = 0;
-   
-   /**
-    * Obtain the amount of bytes readed.
-    */
-   virtual unsigned long bytesRead() const = 0;
-
-   /**
-    * Obtain the amount of bytes written.
-    */
-   virtual unsigned long bytesWritten() const = 0;
-   
-   /**
-    * Obtain the amount of bytes left to read.
-    */
-   virtual unsigned long bytesLeftToRead() const = 0;
-   
-   /**
-    * Reset the buffer for reading.
-    */
-   virtual void resetForReading() = 0;
-   
-   /**
-    * Reset the buffer for writing.
-    */
-   virtual void resetForWritting() = 0;
-   
-   /**
-    * Reset the buffer for both reading and writing.
-    */
-   inline virtual void reset()
-   { resetForWritting(); resetForReading(); }
-   
-   /**
-    * Read len bytes from buffer and write them in data memory region. If 
-    * there was a problem while reading, a InvalidStateException is thrown.
-    */
-   virtual unsigned long read(void* data, unsigned long len) 
-         throw (InvalidStateException) = 0;
-   
-   /**
-    * Read len bytes from buffer and write them in data output stream. If 
-    * there was a problem while reading, a InvalidStateException is thrown.
-    */
-   virtual unsigned long read(OutputStream& data, unsigned long len)
-         throw (InvalidStateException) = 0;
-   
-   /**
-    * Write len bytes stored in data memory region to this buffer and return 
-    * the number of bytes actually written. If there was a problem while 
-    * writing, a InvalidStateException is thrown.
-    */
-   virtual unsigned long write(const void* data, unsigned long len)
-         throw (InvalidStateException) = 0;
-   
-   /**
-    * Write len bytes stored in data input stream to this buffer and return 
-    * the number of bytes actually written. If there was a problem while 
-    * writing, a InvalidStateException is thrown.
-    */
-   virtual unsigned long write(InputStream& data, unsigned long len)
-         throw (InvalidStateException) = 0;
-
-};
-
-/**
- * Data buffer class. This abstract class is used to read and write bytes or 
- * raw data as an intermediate storage. 
- */
-class DataBuffer : public AbstractDataBuffer
-{
-public:
-
-   /**
-    * Default buffer length.
-    */
-   static const unsigned long DEFAULT_LENGTH;
-   
    /**
     * Create a new buffer with given properties. 
     */
-   DataBuffer(unsigned long length = DEFAULT_LENGTH, bool autosize = false);
+   Buffer(unsigned long length);
    
    /**
     * Create a new buffer from given initial data.
     */
-   DataBuffer(void* data, unsigned long length, bool autosize = false);
+   Buffer(void* data, unsigned long length);
 
    /**
     * Destroy the buffer and deallocate all its memory. 
     */
-   virtual ~DataBuffer();
+   virtual ~Buffer();
    
    /**
     * Obtain current buffer length.
@@ -141,83 +61,103 @@ public:
    { return _length; }
    
    /**
-    * Obtain the amount of bytes readed.
+    * Check whether the range defined by given offset and length is valid.
     */
-   inline unsigned long bytesRead() const
-   { return (unsigned long) (_readCursor - _data); }
+   inline bool isValidRange(unsigned long offset, unsigned long len) const
+   { return offset + len < _length; }
+   
+   /**
+    * Read bytes. Read len bytes from given offset and store them in dest. 
+    * If requested byte range is out of buffer boundaries, a 
+    * InvalidInputException is thrown. 
+    */
+   void read(UInt8* dest, unsigned long len, unsigned long offset = 0) const
+         throw (utils::InvalidInputException);
+   
+   /**
+    * Write bytes. Write len bytes from given offset and store them in dest. 
+    * If requested byte range is out of buffer boundaries, a 
+    * InvalidInputException is thrown. 
+    */
+   void write(const UInt8* src, unsigned long len, unsigned long offset = 0)
+         throw (utils::InvalidInputException);
+   
+private:
+
+   unsigned long  _length;
+   UInt8*         _data;
+   
+};
+
+class BufferInputStream : public InputStream<UInt8>
+{
+public:
 
    /**
-    * Obtain the amount of bytes written.
+    * Create a new input stream that reads bytes from a buffer.
     */
-   inline unsigned long bytesWritten() const
-   { return (unsigned long) (_writeCursor - _data); }
+   inline BufferInputStream(const Buffer* buff) : _buffer(buff), _index(0) {}
    
-   //! Obtain the amount of bytes left to read
+   /**
+    * Obtain the number of byte elements left to read from buffer.
+    */
    inline unsigned long bytesLeftToRead() const
-   { return (unsigned long) (_writeCursor - _readCursor); }
-   
-   //! Obtain the amount of bytes left to write
-   inline unsigned long bytesLeftToWrite() const
-   { return (unsigned long) ((_data + _length) - _writeCursor); }
-   
-   //! Obtain a pointer to internal data
-   inline operator void* ()
-   { return _data; }
+   { return _buffer->length() - _index; }
 
-   //! Reset the buffer for reading
-   void resetForReading();
-   
-   //! Reset the buffer for writing
-   void resetForWritting();
-   
-   //! Reset the buffer for both reading and writing
-   void reset();
-   
+   /**
+    * Read one element from the stream and return it. If there was a problem
+    * while reading, a InvalidStateException is thrown.
+    */
+   virtual UInt8 read() throw (InvalidStateException);
+
    /**
     * Read len bytes from buffer and write them in data memory region. If 
     * there was a problem while reading, a InvalidStateException is thrown.
     */
-   virtual unsigned long read(void* data, unsigned long len) 
+   virtual unsigned long read(UInt8* data, unsigned long len) 
          throw (InvalidStateException);
+
+private:
+
+   const Buffer*        _buffer;
+   unsigned long  _index;
    
+};
+
+class BufferOutputStream : public OutputStream<UInt8>
+{
+public:
+
    /**
-    * Read len bytes from buffer and write them in data output stream. If 
-    * there was a problem while reading, a InvalidStateException is thrown.
+    * Create a new output stream that writes bytes to a buffer.
     */
-   virtual unsigned long read(OutputStream& data, unsigned long len)
-         throw (InvalidStateException);
-   
+   inline BufferOutputStream(Buffer* buff) : _buffer(buff), _index(0) {}
+
+   /**
+    * Obtain the number of byte elements left to write into buffer.
+    */
+   inline unsigned long bytesLeftToWrite() const
+   { return _buffer->length() - _index; }
+
+   /**
+    * Write one element to the stream. If there was a problem
+    * while reading, a InvalidStateException is thrown.
+    */
+   virtual void write(const UInt8& data) throw (InvalidStateException);
+
    /**
     * Write len bytes stored in data memory region to this buffer and return 
     * the number of bytes actually written. If there was a problem while 
     * writing, a InvalidStateException is thrown.
     */
-   virtual unsigned long write(const void* data, unsigned long len)
+   virtual unsigned long write(const UInt8* data, unsigned long len)
          throw (InvalidStateException);
    
-   /**
-    * Write len bytes stored in data input stream to this buffer and return 
-    * the number of bytes actually written. If there was a problem while 
-    * writing, a InvalidStateException is thrown.
-    */
-   virtual unsigned long write(InputStream& data, unsigned long len)
-         throw (InvalidStateException);
-   
-   /**
-    * Close the buffer and release any associated system resources.
-    */
-   virtual void close();
-
 private:
 
-   unsigned long  _length;
-   bool           _autosize;
-   UInt8*         _data;
-   UInt8*         _readCursor;
-   UInt8*         _writeCursor;
-   
-   void enlarge(unsigned long minBytes);
-   
+   Buffer*        _buffer;
+   unsigned long  _index;
+
 };
 
 }}; /* namespace karen::utils */
