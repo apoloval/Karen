@@ -55,6 +55,18 @@ public:
    virtual ~Buffer();
    
    /**
+    * Copy the contents of given buffer to this one. Copy len bytes from src
+    * starting from srcOffset into this buffer starting at dstOffset. If
+    * source or destination ranges are not valid, a InvalidInputException
+    * is thrown. 
+    */
+   void copyFromBuffer(
+         const Buffer& src, 
+         unsigned long srcOffset, 
+         unsigned long dstOffset, 
+         unsigned long len) throw (utils::OutOfBoundsException);
+   
+   /**
     * Obtain current buffer length.
     */
    inline unsigned long length() const
@@ -69,18 +81,18 @@ public:
    /**
     * Read bytes. Read len bytes from given offset and store them in dest. 
     * If requested byte range is out of buffer boundaries, a 
-    * InvalidInputException is thrown. 
+    * OutOfBoundsException is thrown. 
     */
    void read(UInt8* dest, unsigned long len, unsigned long offset = 0) const
-         throw (utils::InvalidInputException);
+         throw (utils::OutOfBoundsException);
    
    /**
     * Write bytes. Write len bytes from given offset and store them in dest. 
     * If requested byte range is out of buffer boundaries, a 
-    * InvalidInputException is thrown. 
+    * OutOfBoundsException is thrown. 
     */
    void write(const UInt8* src, unsigned long len, unsigned long offset = 0)
-         throw (utils::InvalidInputException);
+         throw (utils::OutOfBoundsException);
    
 private:
 

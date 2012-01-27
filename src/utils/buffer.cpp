@@ -44,11 +44,28 @@ Buffer::~Buffer()
 { if (_data) delete _data; }
 
 void
+Buffer::copyFromBuffer(
+      const Buffer& src, 
+      unsigned long srcOffset, 
+      unsigned long dstOffset, 
+      unsigned long len)
+throw (utils::OutOfBoundsException)
+{
+   if (_length < dstOffset + len)
+      KAREN_THROW(utils::InvalidInputException,
+         "cannot copy contents from buffer: destination range is not valid");
+   if (src._length < srcOffset + len)
+      KAREN_THROW(utils::InvalidInputException,
+         "cannot copy contents from buffer: source range is not valid");
+   memcpy(&(_data[dstOffset]), &(src._data[srcOffset]), len);
+}
+
+void
 Buffer::read(UInt8* dest, unsigned long len, unsigned long offset) const
-throw (utils::InvalidInputException)
+throw (utils::OutOfBoundsException)
 {
    if (!isValidRange(offset, len))
-      KAREN_THROW(utils::InvalidInputException, 
+      KAREN_THROW(utils::OutOfBoundsException, 
          "cannot read from buffer: invalid range (range: %d+%d, length: %d)",
          offset, len, length);
    memcpy(dest, _data, len);
@@ -56,10 +73,10 @@ throw (utils::InvalidInputException)
    
 void
 Buffer::write(const UInt8* src, unsigned long len, unsigned long offset)
-throw (utils::InvalidInputException)
+throw (utils::OutOfBoundsException)
 {
    if (!isValidRange(offset, len))
-      KAREN_THROW(utils::InvalidInputException, 
+      KAREN_THROW(utils::OutOfBoundsException, 
          "cannot write to buffer: invalid range (range: %d+%d, length: %d)",
          offset, len, length);
    memcpy(_data, src, len);
