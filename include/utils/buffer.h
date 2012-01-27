@@ -62,9 +62,9 @@ public:
     */
    void copyFromBuffer(
          const Buffer& src, 
-         unsigned long srcOffset, 
-         unsigned long dstOffset, 
-         unsigned long len) throw (utils::OutOfBoundsException);
+         unsigned long len,
+         unsigned long srcOffset = 0, 
+         unsigned long dstOffset = 0) throw (utils::OutOfBoundsException);
    
    /**
     * Obtain current buffer length.

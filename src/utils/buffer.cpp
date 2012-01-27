@@ -46,9 +46,9 @@ Buffer::~Buffer()
 void
 Buffer::copyFromBuffer(
       const Buffer& src, 
+      unsigned long len,
       unsigned long srcOffset, 
-      unsigned long dstOffset, 
-      unsigned long len)
+      unsigned long dstOffset)
 throw (utils::OutOfBoundsException)
 {
    if (_length < dstOffset + len)
