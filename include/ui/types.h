@@ -355,12 +355,12 @@ struct KAREN_EXPORT Rect
 {
 
    /**
-    * X position of left corner of rectangle.
+    * X position of top-left corner of rectangle.
     */
    double x;
 
    /**
-    * Y position of left corner of rectangle.
+    * Y position of top-left corner of rectangle.
     */
    double y;
    
@@ -398,10 +398,34 @@ struct KAREN_EXPORT Rect
    inline Rect(const Vector& s) : Rect(Vector(0.0, 0.0), s) {}
 
    /**
-    * Obtain rectangle position.
+    * Obtain (top-left) rectangle position.
     */
    inline Vector position() const
+   { return topLeft(); }
+   
+   /**
+    * Obtain top-left rectangle position.
+    */
+   inline Vector topLeft() const
    { return Vector(x, y); }
+   
+   /**
+    * Obtain top-right rectangle position.
+    */
+   inline Vector topRight() const
+   { return Vector(x + w, y); }
+   
+   /**
+    * Obtain bottom-left rectangle position.
+    */
+   inline Vector bottomLeft() const
+   { return Vector(x, y + h); }
+   
+   /**
+    * Obtain bottom-right rectangle position.
+    */
+   inline Vector bottomRight() const
+   { return Vector(x + w, y + h); }
    
    /**
     * Obtain rectangle size.
@@ -524,10 +548,10 @@ struct KAREN_EXPORT Rect
    /**
     * Check whether given rectangle is contained inside this one.
     */
-   inline bool inside(const Rect& v) const
+   inline bool isInside(const Rect& v) const
    {
       Rect sub = (*this - v);
-      return sub.w == v.w && sub.h == v.h;
+      return *this == sub;
    }
    
    /**
@@ -561,6 +585,51 @@ struct KAREN_EXPORT Rect
 struct KAREN_EXPORT Color
 {
 
+   /**
+    * Predefined opaque black color.
+    */
+   static const Color BLACK;
+
+   /**
+    * Predefined opaque white color.
+    */
+   static const Color WHITE;
+
+   /**
+    * Predefined opaque red color.
+    */
+   static const Color RED;
+
+   /**
+    * Predefined opaque green color.
+    */
+   static const Color GREEN;
+
+   /**
+    * Predefined opaque blue color.
+    */
+   static const Color BLUE;
+
+   /**
+    * Predefined opaque yellow color.
+    */
+   static const Color YELLOW;
+
+   /**
+    * Predefined opaque cyan color.
+    */
+   static const Color CYAN;
+
+   /**
+    * Predefined opaque magenta color.
+    */
+   static const Color MAGENTA;
+
+   /**
+    * Predefined opaque grey color.
+    */
+   static const Color GREY;
+   
    /**
     * Red channel value. 
     */
@@ -617,14 +686,17 @@ struct KAREN_EXPORT Color
     */
    inline Color(UInt8 val, UInt8 alpha) : Color(val, val, val, alpha) {}
    
-   /** 
-    * Copy color and set a new alpha value for that copy. 
-    * @param alpha Desired alpha value for the new color.
-    * @return New color object with RGB values of this one and
-    *         new alpha value passed as argument.
+   /**
+    * Equals to operator.
     */
-   inline Color withAlpha(unsigned int alpha) const
-   { return Color(this->r, this->g, this->b, alpha); }
+   inline bool operator == (const Color& col) const
+   { return r == col.r && g == col.g && b == col.b && a == col.a; }
+   
+   /**
+    * Not equals to operator.
+    */
+   inline bool operator != (const Color& col) const
+   { return !(*this == col); }
    
    /**
     * Add operator. Perform an addition of two colors using the
@@ -705,50 +777,14 @@ struct KAREN_EXPORT Color
    inline Color operator * (double val) const
    { return Color(r * val, g * val, b * val, a); }
 
-   /**
-    * Predefined opaque black color.
+   /** 
+    * Copy color and set a new alpha value for that copy. 
+    * @param alpha Desired alpha value for the new color.
+    * @return New color object with RGB values of this one and
+    *         new alpha value passed as argument.
     */
-   static const Color BLACK;
-
-   /**
-    * Predefined opaque white color.
-    */
-   static const Color WHITE;
-
-   /**
-    * Predefined opaque red color.
-    */
-   static const Color RED;
-
-   /**
-    * Predefined opaque green color.
-    */
-   static const Color GREEN;
-
-   /**
-    * Predefined opaque blue color.
-    */
-   static const Color BLUE;
-
-   /**
-    * Predefined opaque yellow color.
-    */
-   static const Color YELLOW;
-
-   /**
-    * Predefined opaque cyan color.
-    */
-   static const Color CYAN;
-
-   /**
-    * Predefined opaque magenta color.
-    */
-   static const Color MAGENTA;
-
-   /**
-    * Predefined opaque grey color.
-    */
-   static const Color GREY;
+   inline Color withAlpha(unsigned int alpha) const
+   { return Color(this->r, this->g, this->b, alpha); }
    
 };
 
@@ -788,7 +824,8 @@ public:
 
    /**
     * Pixel format mask. This struct provides the binary mask used to
-    * obtain the RGBA values from each pixel binary representation.
+    * retrieve the RGBA values from each pixel in a 32-bit length binary 
+    * representation.
     */
    struct Mask
    {
@@ -821,7 +858,7 @@ public:
    
    /**
     * Pixel format shift. This struct provides the left shift of the RGBA 
-    * values of each pixel binary representation.  
+    * values of each pixel in a 32-bit length binary representation.  
     */
    struct Shift
    {
@@ -915,7 +952,7 @@ public:
     * Equals to operator.
     */
    inline bool operator == (const PixelFormat& fmt) const
-   { return _mask == fmt._mask && _bitsPerPixel != fmt._bitsPerPixel; }
+   { return _mask == fmt._mask && _bitsPerPixel == fmt._bitsPerPixel; }
    
    /**
     * Not equals to operator.
