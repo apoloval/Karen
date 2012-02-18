@@ -153,7 +153,7 @@ sleepMillis(unsigned long millis)
 #if KAREN_TIMING == KAREN_TIMING_SDL
    SDL_Delay((Uint32) millis);
 #elif KAREN_TIMING == KAREN_TIMING_POSIX
-   usleep(millis * 1000l);
+   usleep((useconds_t) millis * 1000l);
 #endif
 }
 
