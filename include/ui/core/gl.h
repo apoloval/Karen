@@ -25,7 +25,7 @@
 #ifndef KAREN__UI_CORE_GL_H
 #define KAREN__UI_CORE_GL_H
 
-#include "ui/image.h"
+#include "ui/bitmap.h"
 #include "ui/draw.h"
 #include "ui/types.h"
 #include "utils/collection.h"

@@ -28,7 +28,7 @@
 #include "../utils/collection.h"
 #include "../utils/platform.h"
 
-#include "image.h"
+#include "bitmap.h"
 #include "types.h"
 
 namespace karen { namespace ui {
@@ -172,7 +172,7 @@ public:
     */
    struct ImageParams
    {
-      Image*            image;
+      Bitmap*           image;
       Rect              imageRect;
       Rect              canvasRect;
       ImageDisplayMode  displayMode;
