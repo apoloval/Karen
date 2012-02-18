@@ -63,6 +63,12 @@ public:
    Ptr(const Ptr &p) { copy(p); }
    
    /**
+    * Move constructor. Move the content of pointer passed as argument
+    * to a new instance of pointer.
+    */
+   Ptr(Ptr&& p) { move(p); }
+   
+   /**
     * Cast and copy constructor. This constructor accepts a smart pointer
     * instance of another type Other and attempts to cast it into type T.
     * If casting fails, the constructed smart pointer is null.
@@ -84,7 +90,7 @@ public:
     * object (if any) and creates a new association with the object pointed
     * by p argument.
     */
-   Ptr &operator = (const Ptr &p)
+   Ptr& operator = (const Ptr &p)
    { release(); copy(p); return *this; }
 
    /**
@@ -93,10 +99,19 @@ public:
     * the object pointed by p to T. If such casting fails, the this pointer
     * is set to null.
     */
-   //! Cast and assign operator
    template <class Other>
-   Ptr &operator = (const Ptr<Other> &p)
+   Ptr& operator = (const Ptr<Other> &p)
    { release(); copy(p); return *this; }
+
+   /**
+    * Cast and move operator. This assign operator accepts a smart pointer
+    * intsntiated for another template type Other. It attempts to cast
+    * the object pointed by p to T. If such casting fails, the this pointer
+    * is set to null.
+    */
+   template <class Other>
+   Ptr& operator = (Ptr<Other>&& p)
+   { release(); move(p); return *this; }
    
    /**
     * Compare operator. Two smart pointers are considered equal if they are
@@ -236,6 +251,15 @@ private:
       this->obj  = p.obj;
       if (this->refc)
          (*this->refc)++;
+   }
+   
+   template <class Other>
+   void move(Ptr<Other>& p)
+   {
+      this->refc  = p.refc;
+      this->obj   = p.obj;
+      p.refc      = NULL;
+      p.obj       = NULL;
    }
 
    template <class Other, class Obj>

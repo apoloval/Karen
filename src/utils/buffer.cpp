@@ -46,10 +46,37 @@ Buffer::Buffer(const Buffer& buf)
 Buffer::Buffer(Buffer&& buf)
  : _length(buf._length), _dirty(false), _data(buf._data)
 {
+   buf._data = NULL;
 }
 
 Buffer::~Buffer()
 { if (_data) delete _data; }
+
+Buffer&
+Buffer::operator = (const Buffer& buf)
+{
+   if (_data) delete _data;
+   
+   _length  = buf._length;
+   _data    = buf._data;
+   _dirty   = false;
+   
+   return *this;
+}
+   
+Buffer&
+Buffer::operator = (Buffer&& buf)
+{
+   if (_data) delete _data;
+   
+   _length  = buf._length;
+   _data    = buf._data;
+   _dirty   = false;
+   
+   buf._data = NULL;
+   
+   return *this;
+}
 
 void
 Buffer::copyFromBuffer(

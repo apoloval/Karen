@@ -159,10 +159,35 @@ Bitmap::Bitmap(Bitmap&& bmp)
  : _size(bmp._size), _pitch(bmp._pitch), 
    _format(bmp._format), _pixels(bmp._pixels)
 {
+   bmp._pixels = NULL;
 }
    
 Bitmap::~Bitmap()
 {
+}
+
+Bitmap&
+Bitmap::operator = (const Bitmap& bmp)
+{
+   _size    = bmp._size;
+   _pitch   = bmp._pitch;
+   _format  = bmp._format;
+   _pixels  = bmp._pixels;      
+
+   return *this;
+}
+   
+Bitmap&
+Bitmap::operator = (Bitmap&& bmp)
+{
+   _size    = bmp._size;
+   _pitch   = bmp._pitch;
+   _format  = bmp._format;
+   _pixels  = bmp._pixels;      
+   
+   bmp._pixels = NULL;
+
+   return *this;
 }
 
 void
