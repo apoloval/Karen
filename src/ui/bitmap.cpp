@@ -154,6 +154,12 @@ Bitmap::Bitmap(const Bitmap& bmp)
 {
    _pixels->copyFromBuffer(*bmp._pixels, bmp._pixels->length());
 }
+
+Bitmap::Bitmap(Bitmap&& bmp)
+ : _size(bmp._size), _pitch(bmp._pitch), 
+   _format(bmp._format), _pixels(bmp._pixels)
+{
+}
    
 Bitmap::~Bitmap()
 {

@@ -61,6 +61,11 @@ public:
    Bitmap(const Bitmap& bmp);
    
    /**
+    * Move the contents of bitmap object into a new bitmap instance.
+    */
+   Bitmap(Bitmap&& bmp);
+   
+   /**
     * Virtual destructor.
     */
    virtual ~Bitmap();

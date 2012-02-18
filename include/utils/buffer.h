@@ -50,6 +50,17 @@ public:
     * not be allocated in stack, and its deallocation is managed by the buffer.
     */
    Buffer(void* data, unsigned long length);
+   
+   /**
+    * Create a new buffer as a copy of the one passed as argument.
+    */
+   Buffer(const Buffer& buf);
+   
+   /**
+    * Move the contents of buffer passed as argument to the new instance of
+    * buffer.
+    */
+   Buffer(Buffer&& buf);
 
    /**
     * Destroy the buffer and deallocate all its memory. 

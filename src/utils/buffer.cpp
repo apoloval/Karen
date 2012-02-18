@@ -37,6 +37,17 @@ Buffer::Buffer(void* data, unsigned long length)
 {
 }
 
+Buffer::Buffer(const Buffer& buf)
+ : Buffer(new UInt8[buf._length], buf._length)
+{
+   memcpy(_data, buf._data, _length);
+}
+
+Buffer::Buffer(Buffer&& buf)
+ : _length(buf._length), _dirty(false), _data(buf._data)
+{
+}
+
 Buffer::~Buffer()
 { if (_data) delete _data; }
 
