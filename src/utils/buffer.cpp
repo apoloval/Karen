@@ -28,15 +28,12 @@
 
 namespace karen { namespace utils {
 
-Buffer::Buffer(unsigned long length)
- : _length(length),
-   _data(new UInt8[length])
+Buffer::Buffer(unsigned long length) : Buffer(new UInt8[length], length)
 {
 }
 
 Buffer::Buffer(void* data, unsigned long length)
- : _length(length),
-   _data((UInt8*) data)
+ : _length(length), _data((UInt8*) data), _dirty(false)
 {
 }
 
@@ -58,6 +55,7 @@ throw (utils::OutOfBoundsException)
       KAREN_THROW(utils::InvalidInputException,
          "cannot copy contents from buffer: source range is not valid");
    memcpy(&(_data[dstOffset]), &(src._data[srcOffset]), len);
+   _dirty = true;
 }
 
 void
@@ -66,9 +64,9 @@ throw (utils::OutOfBoundsException)
 {
    if (!isValidRange(offset, len))
       KAREN_THROW(utils::OutOfBoundsException, 
-         "cannot read from buffer: invalid range (range: %d+%d, length: %d)",
-         offset, len, length);
-   memcpy(dest, _data, len);
+         "cannot read from buffer: invalid range %d+%d",
+         offset, len);
+   memcpy(dest, _data + offset, len);
 }
    
 void
@@ -77,9 +75,10 @@ throw (utils::OutOfBoundsException)
 {
    if (!isValidRange(offset, len))
       KAREN_THROW(utils::OutOfBoundsException, 
-         "cannot write to buffer: invalid range (range: %d+%d, length: %d)",
-         offset, len, length);
-   memcpy(_data, src, len);
+         "cannot write to buffer: invalid range %d+%d",
+         offset, len);
+   memcpy(_data + offset, src, len);
+   _dirty = true;
 }
 
 UInt8
@@ -113,11 +112,10 @@ void
 BufferOutputStream::write(const UInt8& data) 
 throw (InvalidStateException)
 {
-   if (bytesLeftToWrite())
-      _buffer->write(&data, sizeof(UInt8), _index++);
-   else
+   if (!bytesLeftToWrite())
       KAREN_THROW(InvalidStateException, 
          "cannot read from data buffer: no more bytes to read");
+   _buffer->write(&data, sizeof(UInt8), _index++);
 }
 
 unsigned long

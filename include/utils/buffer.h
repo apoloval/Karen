@@ -45,7 +45,9 @@ public:
    Buffer(unsigned long length);
    
    /**
-    * Create a new buffer from given initial data.
+    * Create a new buffer from given initial data. The ownership of data is
+    * passed to the buffer object after its creation. This memory area should
+    * not be allocated in stack, and its deallocation is managed by the buffer.
     */
    Buffer(void* data, unsigned long length);
 
@@ -67,16 +69,48 @@ public:
          unsigned long dstOffset = 0) throw (utils::OutOfBoundsException);
    
    /**
+    * Get a T-type object from buffer. Obtain the object of type T
+    * located at buffer position determined by offset. This method performs a
+    * unchecked cast to the object located at offset. If offset is outside 
+    * buffer boundaries, a OutOfBoundsException is thrown.     
+    */
+   template <class T> 
+   const T& get(unsigned long offset) const throw (utils::OutOfBoundsException)
+   {
+      if (!isValidRange(offset, sizeof(T)))
+         KAREN_THROW(utils::OutOfBoundsException,
+            "cannot get data from buffer: invalid range %d+%d",
+            offset, sizeof(T));
+      return *(const T*) &_data[offset];
+   }
+   
+   /**
     * Obtain current buffer length.
     */
    inline unsigned long length() const
    { return _length; }
    
    /**
+    * Check whether this buffer is dirty. A buffer is marked as dirty on each
+    * write or set operation. This method may be used in combination with
+    * markAsCleaned() as a basic mechanism to track updates on the buffer. 
+    */
+   inline bool isDirty() const
+   { return _dirty; }
+   
+   /**
     * Check whether the range defined by given offset and length is valid.
     */
    inline bool isValidRange(unsigned long offset, unsigned long len) const
-   { return offset + len < _length; }
+   { return offset < _length && offset + len <= _length; }
+   
+   /**
+    * Mark this buffer as cleaned. A buffer is marked as dirty on each
+    * write or set operation. This method may be used in combination with
+    * isDirty() as a basic mechanism to track updates on the buffer. 
+    */
+   inline void markAsClean()
+   { _dirty = false; }
    
    /**
     * Read bytes. Read len bytes from given offset and store them in dest. 
@@ -85,6 +119,25 @@ public:
     */
    void read(UInt8* dest, unsigned long len, unsigned long offset = 0) const
          throw (utils::OutOfBoundsException);
+   
+   /**
+    * Set a T-type object into buffer. Set the value of object of type T
+    * located at buffer position determined by offset. This method performs a
+    * unchecked cast to the object located at offset. If offset is outside 
+    * buffer boundaries, a OutOfBoundsException is thrown.
+    */
+   template <class T>
+   void set(const T& obj, unsigned long offset)
+   throw (utils::OutOfBoundsException)
+   {
+      if (!isValidRange(offset, sizeof(T)))
+         KAREN_THROW(utils::OutOfBoundsException,
+            "cannot set data into buffer: invalid range %d+%d",
+            offset, sizeof(T));
+      T* dst = (T*) &_data[offset];
+      *dst = obj;      
+      _dirty = true;
+   }
    
    /**
     * Write bytes. Write len bytes from given offset and store them in dest. 
@@ -98,6 +151,7 @@ private:
 
    unsigned long  _length;
    UInt8*         _data;
+   bool           _dirty;
    
 };
 
