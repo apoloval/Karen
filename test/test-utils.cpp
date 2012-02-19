@@ -1672,7 +1672,7 @@ public:
          bis.read<UInt8>();
          KAREN_UTEST_FAILED("expected invalid state exception not raised");
       }
-      catch (InvalidStateException& e) {}
+      catch (IOException& e) {}
    }
    
    void shouldWriteToOutputStream()
@@ -1702,7 +1702,7 @@ public:
       {
          bos.write<UInt8>(7);
          KAREN_UTEST_FAILED("expected invalid state exception not raised");
-      } catch (InvalidStateException&) {}
+      } catch (IOException&) {}
    }
    
 private:

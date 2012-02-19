@@ -39,10 +39,10 @@ public:
 
    /**
     * Read one element of template class T from the stream. If the element
-    * cannot be read, a InvalidStateException is thrown.
+    * cannot be read, a IOException is thrown.
     */
    template <class T>
-   T read() throw (InvalidStateException)
+   T read() throw (IOException)
    {
       UInt8 dat[sizeof(T)];
       UInt8* ptr = dat;
@@ -54,18 +54,18 @@ public:
          left -= nread;
       }
       if (left)
-         KAREN_THROW(InvalidStateException, 
-            "cannot read element from input stream: no more bytes left");
+         KAREN_THROW(IOException, 
+            "cannot read element from input stream: no more bytes left in device");
       return *((T*) dat);
    }
 
    /**
     * Read len bytes from stream and store them in dst, returning the number
     * of bytes read or zero if there is no more data. If stream source
-    * cannot be read, a InvalidStateException is thrown.
+    * cannot be read, a IOException is thrown.
     */
    virtual unsigned long readBytes(void* dst, unsigned long len) 
-         throw (InvalidStateException) = 0;
+         throw (IOException) = 0;
 
 };
 
@@ -79,10 +79,10 @@ public:
 
    /**
     * Write one element of template class T to the stream. If there was a 
-    * problem while writing, a InvalidStateException is thrown.
+    * problem while writing, a IOException is thrown.
     */
    template <class T>
-   void write(const T& data) throw (InvalidStateException)
+   void write(const T& data) throw (IOException)
    {
       UInt8* ptr = (UInt8*) &data;
       unsigned long left = sizeof(T), nwrite;
@@ -92,17 +92,17 @@ public:
          left -= nwrite;
       }
       if (left)
-         KAREN_THROW(InvalidStateException,
-            "cannot write element into stream: no more space left in stream");
+         KAREN_THROW(IOException,
+            "cannot write element into stream: no more space left in device");
    }
 
    /**
     * Write len bytes stored in data to this stream and return the number of
     * bytes actually written. If there was a problem while writing, a 
-    * InvalidStateException is thrown.
+    * IOException is thrown.
     */
    virtual unsigned long writeBytes(const void* data, unsigned long len) 
-      throw (InvalidStateException) = 0;
+      throw (IOException) = 0;
 
 };
 

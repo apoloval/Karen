@@ -121,7 +121,7 @@ throw (utils::OutOfBoundsException)
 
 unsigned long
 BufferInputStream::readBytes(void* data, unsigned long len)
-throw (InvalidStateException)
+throw (IOException)
 {
    unsigned long left = bytesLeftToRead();
    if (left < len)
@@ -133,7 +133,7 @@ throw (InvalidStateException)
 
 unsigned long
 BufferOutputStream::writeBytes(const void* data, unsigned long len)
-throw (InvalidStateException)
+throw (IOException)
 {
    unsigned long left = bytesLeftToWrite();
    if (left < len)

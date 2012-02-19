@@ -193,10 +193,10 @@ public:
 
    /**
     * Read len bytes from buffer and write them in data memory region. If 
-    * there was a problem while reading, a InvalidStateException is thrown.
+    * there was a problem while reading, a IOException is thrown.
     */
    virtual unsigned long readBytes(void* data, unsigned long len) 
-         throw (InvalidStateException);
+         throw (IOException);
 
 private:
 
@@ -223,10 +223,10 @@ public:
    /**
     * Write len bytes stored in data memory region to this buffer and return 
     * the number of bytes actually written. If there was a problem while 
-    * writing, a InvalidStateException is thrown.
+    * writing, a IOException is thrown.
     */
    virtual unsigned long writeBytes(const void* data, unsigned long len)
-         throw (InvalidStateException);
+         throw (IOException);
    
 private:
 
