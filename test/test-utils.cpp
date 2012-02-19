@@ -23,6 +23,8 @@
  */
 
 #include "utils/buffer.h"
+#include "utils/file.h"
+#include "utils/file-posix.h"
 #include "utils/numeric.h"
 #include "utils/parsing.h"
 #include "utils/string.h"
@@ -1401,16 +1403,12 @@ public:
    
    void shouldInitiateBuffer()
    {
-      using namespace karen::utils;
-      
       Buffer buf(1024);
       KAREN_UTEST_ASSERT(buf.length() == 1024);
    }
    
    void shouldInitiateFromMemoryRegion()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       KAREN_UTEST_ASSERT(buf.length() == 64);
@@ -1420,8 +1418,6 @@ public:
    
    void shouldIndicateRightBoundaries()
    {
-      using namespace karen::utils;
-      
       Buffer buf(1024);
       KAREN_UTEST_ASSERT(buf.isValidRange(0, 1024));
       KAREN_UTEST_ASSERT(buf.isValidRange(0, 512));
@@ -1435,8 +1431,6 @@ public:
    
    void shouldReadWholeBuffer() 
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       UInt8 dst[64];
@@ -1448,8 +1442,6 @@ public:
    
    void shouldReadFirstPartOfBuffer() 
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       UInt8 dst[16];
@@ -1461,8 +1453,6 @@ public:
    
    void shouldReadLastPartOfBuffer() 
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       UInt8 dst[16];
@@ -1474,8 +1464,6 @@ public:
    
    void shouldReadFromTheMiddleOfBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       UInt8 dst[32];
@@ -1487,8 +1475,6 @@ public:
    
    void shouldFailWhileReadingBeyondBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
       UInt8 dst[32];
@@ -1501,8 +1487,6 @@ public:
    
    void shouldWriteWholeBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(64);
       Buffer buf(64);
       buf.write(data, 64);
@@ -1514,8 +1498,6 @@ public:
    
    void shouldWriteToFirstPartOfBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(16);
       Buffer buf(64);
       buf.write(data, 16);
@@ -1527,8 +1509,6 @@ public:
    
    void shouldWriteToLastPartOfBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(16);
       Buffer buf(64);
       buf.write(data, 16, 48);
@@ -1540,8 +1520,6 @@ public:
    
    void shouldFailWhileWritingBeyondBuffer()
    {
-      using namespace karen::utils;
-      
       UInt8* data = allocRawBuffer(32);
       Buffer buf(64);
       try
@@ -1554,8 +1532,6 @@ public:
    
    void shouldSetData()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       buf.set<UInt8>(7, 32);
       buf.set<UInt32>(9, 16);
@@ -1565,16 +1541,12 @@ public:
    
    void shouldSetLastElement()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       buf.set<UInt8>(7, 63);
    }
    
    void shouldFailWhileSettingBeyondBuffer()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       try
       {
@@ -1585,16 +1557,12 @@ public:
    
    void shouldBeCleanAfterInitialization()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       KAREN_UTEST_ASSERT(!buf.isDirty());
    }
    
    void shouldBeDirtyAfterWrite()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       UInt8* data = allocRawBuffer(32);
       buf.write(data, 32);
@@ -1604,8 +1572,6 @@ public:
    
    void shouldBeDirtyAfterSet()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       buf.set<UInt8>(32, 7);
       KAREN_UTEST_ASSERT(buf.isDirty());
@@ -1613,8 +1579,6 @@ public:
    
    void shouldBeCleanAfterMarkedAsClean()
    {
-      using namespace karen::utils;
-
       Buffer buf(64);
       buf.set<UInt8>(32, 7);
       buf.markAsClean();
@@ -1648,8 +1612,6 @@ public:
    
    void shouldReadFromInputStream()
    {
-      using namespace karen::utils;
-      
       Ptr<Buffer> buf = allocBuffer(64);
       BufferInputStream bis(buf);
       for (int i = 0; i < 64; i++)
@@ -1661,8 +1623,6 @@ public:
    
    void shouldFailWhileReadingBeyondInputStream()
    {
-      using namespace karen::utils;
-      
       Ptr<Buffer> buf = allocBuffer(64);
       BufferInputStream bis(buf);
       while (bis.bytesLeftToRead())
@@ -1677,8 +1637,6 @@ public:
    
    void shouldWriteToOutputStream()
    {
-      using namespace karen::utils;
-      
       Buffer buf(64);
       BufferOutputStream bos(&buf);
       for (int i = 0; i < 64; i++)
@@ -1692,8 +1650,6 @@ public:
    
    void shouldFailWhileWritingBeyondOutputStream()
    {
-      using namespace karen::utils;
-      
       Buffer buf(64);
       BufferOutputStream bos(&buf);
       for (int i = 0; i < 64; i++)
@@ -1715,6 +1671,74 @@ private:
       return new Buffer(data, len);
    }
    
+};
+
+class FileTestSuite : public UnitTestSuite
+{
+public:
+
+   FileTestSuite()
+      : UnitTestSuite("File")
+   {
+      FileFactory::setActiveFileFactory(new PosixFileFactory());
+   
+      KAREN_UTEST_ADD(FileTestSuite::shouldCreateFile);
+      KAREN_UTEST_ADD(FileTestSuite::shouldWriteAndWriteFile);
+      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenNotCreatingAndFileDoesNotExist);
+      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenReadingNotReadableFile);
+      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenWritingNotWriteableFile);
+   }
+   
+   void shouldCreateFile()
+   {
+      File f("/tmp/foobar1", FileOpenMode::CREATE_AND_WRITE_MODE);      
+   }
+   
+   void shouldWriteAndWriteFile()
+   {
+      const String masterMessage("Hello World!");
+      {
+         File f("/tmp/foobar1", FileOpenMode::WRITE_ONLY_MODE);
+         f.write<String>(masterMessage);
+      }
+      {
+         File f("/tmp/foobar1", FileOpenMode::READ_ONLY_MODE);
+         String msg = f.read<String>();
+         KAREN_UTEST_ASSERT(msg == masterMessage);
+      }
+   }
+   
+   void shouldFailWhenNotCreatingAndFileDoesNotExist()
+   {
+      try
+      { 
+         File f("/tmp/foobar2", FileOpenMode::WRITE_ONLY_MODE);
+         KAREN_UTEST_FAILED("Expected IOException not thrown");
+      }
+      catch (IOException&) {}
+   }
+   
+   void shouldFailWhenReadingNotReadableFile()
+   {
+      try
+      { 
+         File f("/tmp/foobar1", FileOpenMode::WRITE_ONLY_MODE);
+         UInt8 num = f.read<UInt8>();
+         KAREN_UTEST_FAILED("Expected IOException not thrown");
+      }
+      catch (IOException&) {}
+   }
+
+   void shouldFailWhenWritingNotWriteableFile()
+   {
+      try
+      { 
+         File f("/tmp/foobar1", FileOpenMode::READ_ONLY_MODE);
+         f.write<UInt8>(7);
+         KAREN_UTEST_FAILED("Expected IOException not thrown");
+      }
+      catch (IOException&) {}
+   }
 };
 
 int main(int argc, char* argv[])
@@ -1750,6 +1774,10 @@ int main(int argc, char* argv[])
    }
    {
       BufferStreamsTestSuite suite;
+      suite.run(&rep, NULL, 0);
+   }
+   {
+      FileTestSuite suite;
       suite.run(&rep, NULL, 0);
    }
 }
