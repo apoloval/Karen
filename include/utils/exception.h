@@ -166,6 +166,11 @@ KAREN_DECL_EXCEPTION(InvalidStateException);
  */
 KAREN_DECL_EXCEPTION(NotFoundException);
 
+/**
+ * I/O exception. This exception is raised when an I/O error takes place.
+ */
+KAREN_DECL_EXCEPTION(IOException);
+
 }}; // namespace karen::utils
 
 #include "utils/string.h"
