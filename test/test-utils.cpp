@@ -1427,7 +1427,7 @@ public:
       KAREN_UTEST_ASSERT(buf.isValidRange(0, 512));
       KAREN_UTEST_ASSERT(buf.isValidRange(1, 512));
       KAREN_UTEST_ASSERT(buf.isValidRange(512, 0));
-      KAREN_UTEST_ASSERT(!buf.isValidRange(1024, 0));
+      KAREN_UTEST_ASSERT(buf.isValidRange(1024, 0));
       KAREN_UTEST_ASSERT(!buf.isValidRange(1025, 0));
       KAREN_UTEST_ASSERT(!buf.isValidRange(1024, 64));
       KAREN_UTEST_ASSERT(!buf.isValidRange(512, 1024));
@@ -1655,7 +1655,7 @@ public:
       for (int i = 0; i < 64; i++)
       {
          KAREN_UTEST_ASSERT(bis.bytesLeftToRead() == (64 - i));
-         KAREN_UTEST_ASSERT(bis.read() == i);
+         KAREN_UTEST_ASSERT(bis.read<UInt8>() == i);
       }
    }
    
@@ -1666,10 +1666,10 @@ public:
       Ptr<Buffer> buf = allocBuffer(64);
       BufferInputStream bis(buf);
       while (bis.bytesLeftToRead())
-         bis.read();
+         bis.read<UInt8>();
       try
       {
-         bis.read();
+         bis.read<UInt8>();
          KAREN_UTEST_FAILED("expected invalid state exception not raised");
       }
       catch (InvalidStateException& e) {}
@@ -1684,7 +1684,7 @@ public:
       for (int i = 0; i < 64; i++)
       {
          KAREN_UTEST_ASSERT(bos.bytesLeftToWrite() == 64 - i);
-         bos.write(i);
+         bos.write<UInt8>(i);
       }
       for (int i = 0; i < 64; i++)
          KAREN_UTEST_ASSERT(buf.get<UInt8>(i) == i);
@@ -1697,10 +1697,10 @@ public:
       Buffer buf(64);
       BufferOutputStream bos(&buf);
       for (int i = 0; i < 64; i++)
-         bos.write(i);
+         bos.write<UInt8>(i);
       try
       {
-         bos.write(7);
+         bos.write<UInt8>(7);
          KAREN_UTEST_FAILED("expected invalid state exception not raised");
       } catch (InvalidStateException&) {}
    }

@@ -66,6 +66,16 @@ public:
     * Destroy the buffer and deallocate all its memory. 
     */
    virtual ~Buffer();
+
+   /**
+    * Copy assigment operator.
+    */
+   Buffer& operator = (const Buffer& buf);
+   
+   /**
+    * Move assignment operator.
+    */
+   Buffer& operator = (Buffer&& buf);
    
    /**
     * Copy the contents of given buffer to this one. Copy len bytes from src
@@ -113,7 +123,7 @@ public:
     * Check whether the range defined by given offset and length is valid.
     */
    inline bool isValidRange(unsigned long offset, unsigned long len) const
-   { return offset < _length && offset + len <= _length; }
+   { return offset <= _length && offset + len <= _length; }
    
    /**
     * Mark this buffer as cleaned. A buffer is marked as dirty on each
@@ -166,7 +176,7 @@ private:
    
 };
 
-class BufferInputStream : public InputStream<UInt8>
+class BufferInputStream : public InputStream
 {
 public:
 
@@ -182,16 +192,10 @@ public:
    { return _buffer->length() - _index; }
 
    /**
-    * Read one element from the stream and return it. If there was a problem
-    * while reading, a InvalidStateException is thrown.
-    */
-   virtual UInt8 read() throw (InvalidStateException);
-
-   /**
     * Read len bytes from buffer and write them in data memory region. If 
     * there was a problem while reading, a InvalidStateException is thrown.
     */
-   virtual unsigned long read(UInt8* data, unsigned long len) 
+   virtual unsigned long readBytes(void* data, unsigned long len) 
          throw (InvalidStateException);
 
 private:
@@ -201,7 +205,7 @@ private:
    
 };
 
-class BufferOutputStream : public OutputStream<UInt8>
+class BufferOutputStream : public OutputStream
 {
 public:
 
@@ -217,17 +221,11 @@ public:
    { return _buffer->length() - _index; }
 
    /**
-    * Write one element to the stream. If there was a problem
-    * while reading, a InvalidStateException is thrown.
-    */
-   virtual void write(const UInt8& data) throw (InvalidStateException);
-
-   /**
     * Write len bytes stored in data memory region to this buffer and return 
     * the number of bytes actually written. If there was a problem while 
     * writing, a InvalidStateException is thrown.
     */
-   virtual unsigned long write(const UInt8* data, unsigned long len)
+   virtual unsigned long writeBytes(const void* data, unsigned long len)
          throw (InvalidStateException);
    
 private:

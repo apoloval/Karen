@@ -119,51 +119,26 @@ throw (utils::OutOfBoundsException)
    _dirty = true;
 }
 
-UInt8
-BufferInputStream::read() 
-throw (InvalidStateException)
-{
-   if (bytesLeftToRead())
-   {
-      UInt8 data;
-      _buffer->read(&data, 1, _index++);
-      return data;
-   }
-   else
-      KAREN_THROW(InvalidStateException, 
-         "cannot read from data buffer: no more bytes to read");
-}
-
 unsigned long
-BufferInputStream::read(UInt8* data, unsigned long len)
+BufferInputStream::readBytes(void* data, unsigned long len)
 throw (InvalidStateException)
 {
    unsigned long left = bytesLeftToRead();
    if (left < len)
       len = left;
-   _buffer->read(data, len, _index);
+   _buffer->read((UInt8*) data, len, _index);
    _index += len;
    return len;
 }
 
-void
-BufferOutputStream::write(const UInt8& data) 
-throw (InvalidStateException)
-{
-   if (!bytesLeftToWrite())
-      KAREN_THROW(InvalidStateException, 
-         "cannot read from data buffer: no more bytes to read");
-   _buffer->write(&data, sizeof(UInt8), _index++);
-}
-
 unsigned long
-BufferOutputStream::write(const UInt8* data, unsigned long len)
+BufferOutputStream::writeBytes(const void* data, unsigned long len)
 throw (InvalidStateException)
 {
    unsigned long left = bytesLeftToWrite();
    if (left < len)
       len = left;
-   _buffer->write(data, len, _index);
+   _buffer->write((UInt8*) data, len, _index);
    _index += len;
    return len;   
 }
