@@ -108,8 +108,6 @@
 		B509479E142B8AC800F3449C /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exception.h; path = include/utils/exception.h; sourceTree = "<group>"; };
 		B50947A2142B978B00F3449C /* string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string.cpp; path = src/utils/string.cpp; sourceTree = "<group>"; };
 		B50947A4142B9A9400F3449C /* string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = string.h; path = include/utils/string.h; sourceTree = "<group>"; };
-		B50947A7142BA3CE00F3449C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
-		B50947A9142BA6D300F3449C /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/GLUT.framework; sourceTree = DEVELOPER_DIR; };
 		B50947AC142BA93100F3449C /* collection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = collection.h; path = include/utils/collection.h; sourceTree = "<group>"; };
 		B50947AE142C85CD00F3449C /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = include/utils/test.h; sourceTree = "<group>"; };
 		B50947B0142C87C300F3449C /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test.cpp; path = src/utils/test.cpp; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 		B5E8FF911444C333007AE498 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = include/ui/timer.h; sourceTree = "<group>"; };
 		B5FE5512144AEA7000EFD75F /* cocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocoa.h; path = include/ui/core/cocoa.h; sourceTree = "<group>"; };
 		B5FE5516144AEB9000EFD75F /* cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = cocoa.mm; path = src/ui/core/cocoa.mm; sourceTree = "<group>"; };
-		B5FE551D144B4BA200EFD75F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		B5FE5528144C762100EFD75F /* test-cocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-cocoa.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5FE552C144C762200EFD75F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		B5FE552D144C762200EFD75F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -196,10 +193,6 @@
 		B509476B142B86AF00F3449C = {
 			isa = PBXGroup;
 			children = (
-				B5080E701521A06B00DC495A /* FreeType.framework */,
-				B5080E6E15219F0A00DC495A /* Cocoa.framework */,
-				B5080E6C15219F0000DC495A /* GLUT.framework */,
-				B5080E6A15219EF700DC495A /* OpenGL.framework */,
 				B5094788142B873200F3449C /* Headers */,
 				B5094774142B86CB00F3449C /* Sources */,
 				B50947B2142C8CCD00F3449C /* Tests */,
@@ -264,9 +257,10 @@
 		B50947A6142BA3A400F3449C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B5FE551D144B4BA200EFD75F /* Cocoa.framework */,
-				B50947A9142BA6D300F3449C /* GLUT.framework */,
-				B50947A7142BA3CE00F3449C /* OpenGL.framework */,
+				B5080E701521A06B00DC495A /* FreeType.framework */,
+				B5080E6E15219F0A00DC495A /* Cocoa.framework */,
+				B5080E6C15219F0000DC495A /* GLUT.framework */,
+				B5080E6A15219EF700DC495A /* OpenGL.framework */,
 				B5FE552B144C762200EFD75F /* Other Frameworks */,
 			);
 			name = Frameworks;
