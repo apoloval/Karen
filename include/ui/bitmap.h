@@ -71,6 +71,16 @@ public:
    virtual ~Bitmap();
    
    /**
+    * Assign operator.
+    */
+   Bitmap& operator = (const Bitmap& bmp);
+   
+   /**
+    * Move operator.
+    */
+   Bitmap& operator = (Bitmap&& bmp);
+   
+   /**
     * Fill this bitmap with given color. 
     */
    void fillWithColor(const Color& col);

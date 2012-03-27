@@ -59,6 +59,11 @@ public:
     */
    static Engine& instance()
          throw (utils::InvalidStateException);
+
+   /**
+    * Virtual destructor.
+    */
+   inline virtual ~Engine() {}
          
    /**
     * Obtain engine name.

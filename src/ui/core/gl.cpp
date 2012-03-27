@@ -224,7 +224,7 @@ OpenGLCanvas::drawBezier(const BezierParams& line)
          c.ctrl2 - (c.dest - c.ctrl1).perpendicular() * halfWidth,
       };
 
-      GLfloat cp[2][4][3] = { 
+      GLdouble cp[2][4][3] = { 
          {
             { c1.orig.x,    c1.orig.y,   0.0f }, 
             { c1.ctrl1.x,   c1.ctrl1.y,  0.0f },
@@ -239,7 +239,7 @@ OpenGLCanvas::drawBezier(const BezierParams& line)
          },
       };
       
-      glMap2f(GL_MAP2_VERTEX_3, 
+      glMap2d(GL_MAP2_VERTEX_3, 
               0.0f, 1.0f, 3, 4, 
               0.0f, 1.0f, 12, 2,
               &cp[0][0][0]);

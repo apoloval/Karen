@@ -204,6 +204,11 @@ public:
     * Create a new instance of this class. 
     */
    static Ptr<EventChannel> newInstance();
+   
+   /**
+    * Virtual destructor.
+    */
+   inline virtual ~EventChannel() {}
 
    /**
     * Consume an input event, sending it to all registered consumers. 

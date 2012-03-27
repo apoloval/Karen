@@ -38,11 +38,11 @@ using namespace karen;
 
 ui::ScreenProperties screenProps =
 {
-   ui::Vector(SCREEN_W, SCREEN_H),  // dimensions
-   ui::FORMAT_32BPP_RGBA,           // pixel format
-   false,                           // fullscreen
-   true,                            // double buffered
-   "Karen GLUT Test"                // caption
+   ui::Vector(SCREEN_W, SCREEN_H),     // dimensions
+   ui::PixelFormat::FORMAT_32BPP_RGBA, // pixel format
+   false,                              // fullscreen
+   true,                               // double buffered
+   "Karen GLUT Test"                   // caption
 };
 
 class SimpleDrawing : public ui::Drawable, public ui::TimerCallback

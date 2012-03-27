@@ -179,6 +179,11 @@ public:
    { _activeFactory = factory; }
    
    /**
+    * Virtual destructor.
+    */
+   inline virtual ~FileFactory() {}
+   
+   /**
     * Create a concrete implementation of AbstractFile that may be used by
     * File class as delegate.
     */

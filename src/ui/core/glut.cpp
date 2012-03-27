@@ -68,7 +68,7 @@ private:
    struct TimerInfo
    {
       TimerCallback* cb;
-      unsigned long  ms;
+      double         ms;
       double         timestamp;      
    };
    
