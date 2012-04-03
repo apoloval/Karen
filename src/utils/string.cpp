@@ -52,34 +52,25 @@ public:
    inline virtual bool isNull() const
    { return _itImpl == _endImpl; }
 
-   inline virtual void next() throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot move string iterator to next element: null iterator");
-      _itImpl++;
-   }
-   
-   inline virtual void prev() throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot move string iterator to previous element: null iterator");
-      _itImpl--;
-   }
-
-   virtual char& get() throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot dereference string iterator: null iterator");
-      return *_itImpl;
-   }
-
 private:
 
    StringBase::iterator _itImpl;
    StringBase::iterator _endImpl;
+
+   inline virtual void nextAfterNullCheck()
+   {
+      _itImpl++;
+   }
+   
+   inline virtual void prevAfterNullCheck()
+   {
+      _itImpl--;
+   }
+
+   virtual char& getAfterNullCheck()
+   {
+      return *_itImpl;
+   }
 
 };
 
@@ -104,34 +95,25 @@ public:
    inline virtual bool isNull() const
    { return _itImpl == _endImpl; }
 
-   inline virtual void next() throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot move string iterator to next element: null iterator");
-      _itImpl++;
-   }
-   
-   inline virtual void prev() throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot move string iterator to previous element: null iterator");
-      _itImpl--;
-   }
-
-   virtual const char& get() const throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot dereference string iterator: null iterator");
-      return *_itImpl;
-   }
-
 private:
 
    StringBase::const_iterator _itImpl;
    StringBase::const_iterator _endImpl;
+
+   inline virtual void nextAfterNullCheck()
+   {
+      _itImpl++;
+   }
+   
+   inline virtual void prevAfterNullCheck()
+   {
+      _itImpl--;
+   }
+
+   virtual const char& getAfterNullCheck() const
+   {
+      return *_itImpl;
+   }
 
 };
 

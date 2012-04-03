@@ -78,17 +78,41 @@ public:
    /**
     * Move forward iterator to the next element
     */
-   virtual void next() throw (NullIteratorException) = 0;
+   inline virtual void next() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move iterator to the next element: null iterator");
+      nextAfterNullCheck();
+   }
    
    /**
     * Move backward iterator to the previous element
     */
-   virtual void prev() throw (NullIteratorException) = 0;
+   inline virtual void prev() throw (NullIteratorException)
+   {
+      if (isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot move iterator to the previous element: null iterator");
+      prevAfterNullCheck();
+   }
    
    /**
     * Cast operator to boolean type
     */
    inline operator bool() { return !this->isNull(); }
+   
+private:
+
+   /**
+    * Move forward iterator after check that it is not null.
+    */
+   virtual void nextAfterNullCheck() = 0;
+   
+   /**
+    * Move backward iterator after check that it is not null.
+    */
+   virtual void prevAfterNullCheck() = 0;
    
 };
 
@@ -104,7 +128,13 @@ public:
    /**
     * Obtain collection element pointed by iterator.
     */
-   virtual T& get() throw (NullIteratorException) = 0;
+   inline virtual T& get() throw (NullIteratorException)
+   {
+      if (AbstractIteratorBase<T>::isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot get element from iterator: null iterator");
+      return getAfterNullCheck();
+   }
    
    /**
     * Dereference operator
@@ -119,6 +149,13 @@ public:
    inline T* operator -> ()
    { return &get(); }
    
+private:
+
+   /**
+    * Obtain the element pointed by iterator after a null check.
+    */
+   virtual T& getAfterNullCheck() = 0;
+
 };
 
 /** 
@@ -133,7 +170,13 @@ public:
    /**
     * Obtain collection element pointed by iterator.
     */
-   virtual const T& get() const throw (NullIteratorException) = 0;
+   inline virtual const T& get() const throw (NullIteratorException)
+   {
+      if (AbstractIteratorBase<T>::isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot get element from iterator: null iterator");
+      return getAfterNullCheck();
+   }
 
    /**
     * Dereference operator.
@@ -148,6 +191,11 @@ public:
    inline const T* operator -> () const
    { return &get(); }
    
+   /**
+    * Obtain the element pointed by iterator after a null check.
+    */
+   virtual const T& getAfterNullCheck() const = 0;
+
 };
 
 /** 
@@ -179,42 +227,6 @@ public:
     */
    inline virtual bool isNull() const
    { return _impl.isNull() || _impl->isNull(); }
-   
-   /**
-    * Move forward iterator to the next element.
-    */
-   inline virtual void next()
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of increment a null iterator");
-      return _impl->next();
-   }
-   
-   /**
-    * Move backward iterator to the previous element.
-    */
-   inline virtual void prev()
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of decrement a null iterator");
-      return _impl->prev();
-   }
-   
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual T& get()
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of dereference a null iterator");
-      return _impl->get();
-   }
    
    /**
     * Obtain iterator implementation.
@@ -250,6 +262,30 @@ private:
 
    Ptr<AbstractIterator<T>> _impl;
 
+   /**
+    * Move forward iterator to the next element.
+    */
+   inline virtual void nextAfterNullCheck()
+   {
+      return _impl->next();
+   }
+   
+   /**
+    * Move backward iterator to the previous element.
+    */
+   inline virtual void prevAfterNullCheck()
+   {
+      return _impl->prev();
+   }
+   
+   /**
+    * Obtain collection element pointed by iterator.
+    */
+   inline virtual T& getAfterNullCheck()
+   {
+      return _impl->get();
+   }
+   
 };
 
 /** 
@@ -283,42 +319,6 @@ public:
    { return _impl.isNull() || _impl->isNull(); }
    
    /**
-    * Move forward iterator to the next element.
-    */
-   inline virtual void next()
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of increment a null iterator");
-      return _impl->next();
-   }
-   
-   /**
-    * Move backward iterator to the previous element.
-    */
-   inline virtual void prev()
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of decrement a null iterator");
-      return _impl->prev();
-   }
-   
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual const T& get() const
-   throw (NullIteratorException)
-   {
-      if (isNull())
-         KAREN_THROW(NullIteratorException,
-            "atempt of dereference a null iterator");
-      return _impl->get();
-   }
-
-   /**
     * Obtain iterator implementation.
     */
    inline AbstractConstIterator<T>* impl()
@@ -351,6 +351,30 @@ public:
 private:
 
    Ptr<AbstractConstIterator<T>> _impl;
+
+   /**
+    * Move forward iterator to the next element.
+    */
+   inline virtual void nextAfterNullCheck()
+   {
+      return _impl->next();
+   }
+   
+   /**
+    * Move backward iterator to the previous element.
+    */
+   inline virtual void prevAfterNullCheck()
+   {
+      return _impl->prev();
+   }
+   
+   /**
+    * Obtain collection element pointed by iterator.
+    */
+   inline virtual const T& getAfterNullCheck() const
+   {
+      return _impl->get();
+   }
 
 };
 
