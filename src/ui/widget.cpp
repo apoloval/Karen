@@ -77,7 +77,7 @@ throw (utils::InvalidInputException)
          "cannot add widget to container: widget already added");
    
    ChildInfo child = { widget, coordinates };
-   _children.toTail(child);
+   _children.insertBack(child);
    setAsParentOfWidget(*widget);
    setFrameForChild(*widget, coordinates);
    requestRedraw();
@@ -89,14 +89,16 @@ GridContainer::activateWidgetAtPos(const Vector& localPos)
    for (auto it = _children.begin(); it; it++)
       if (localPos.isInside(it->coord))
       {
-         Widget* result = it->widget;
+         ChildInfo ci = *it;
+         Widget* result = ci.widget;
          Vector childPos(localPos - it->coord.position());
          
          /*
           * For this container, the activation consists in moving
           * this widget to the head of the children list.
           */
-         _children.moveToHead(it);         
+         _children.remove(it);
+         _children.insertFront(ci);
                            
          return result->activateWidgetAtPos(childPos);
       }

@@ -124,7 +124,7 @@ public:
    
 private:
 
-   Set<ImageLifecycleObserver*> _observers;
+   utils::TreeSet<ImageLifecycleObserver*> _observers;
 
 };
 

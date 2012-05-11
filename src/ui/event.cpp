@@ -71,24 +71,24 @@ public:
    virtual void addEventConsumer(EventConsumer* consumer)
    throw (utils::InvalidInputException)
    {
-      if (_consumers.contains(consumer))
+      if (_consumers.hasElement(consumer))
          KAREN_THROW(utils::InvalidInputException, 
                      "cannot add input event consumer: already registered");
-      _consumers.toTail(consumer);
+      _consumers.insertBack(consumer);
    }
 
    virtual void removeEventConsumer(EventConsumer* consumer)
    throw (utils::NotFoundException)
    {
-      if (!_consumers.contains(consumer))
+      if (!_consumers.hasElement(consumer))
          KAREN_THROW(utils::NotFoundException, 
                      "cannot remove consumer: not found");
-      _consumers.remove(consumer);
+      _consumers.removeAll(consumer);
    }
 
 private:
 
-   List<EventConsumer*> _consumers;
+   utils::LinkedList<EventConsumer*> _consumers;
 
 };
 

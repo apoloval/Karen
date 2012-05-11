@@ -139,7 +139,7 @@ public:
    /**
     * Indicate whether string is empty (zero-length).
     */
-   inline bool empty() const { return _base.empty(); }
+   inline bool isEmpty() const { return _base.empty(); }
    
    /**
     * Clear the string, removing all characters and setting it to
@@ -392,7 +392,7 @@ public:
 
 private:
 
-   StringBase _base;
+   mutable StringBase _base;
 
 };
 

@@ -89,8 +89,14 @@ public:
    /**
     * Value constructor.
     */
-   Tuple(const T1 &t1, const T2 &t2) : _first(t1), _second(t2) {}
+   inline Tuple(const T1 &t1, const T2 &t2) : _first(t1), _second(t2) {}
    
+   /**
+    * Copy constructor.
+    */
+   inline Tuple(const Tuple& value)
+    : _first(value._first), _second(value._second) {}
+    
    /**
     * Obtain the first element of the tuple.
     */

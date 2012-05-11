@@ -31,6 +31,8 @@
 #include "bitmap.h"
 #include "types.h"
 
+using karen::utils::DynArray;
+
 namespace karen { namespace ui {
 
 /**
@@ -75,7 +77,7 @@ public:
     */
    struct BezierParams
    {
-      Array<Vector>  points;     //!< Line points
+      DynArray<Vector>  points;  //!< Line points
       float          lineWidth;  //!< Bezier line width
       float          curvature;  //!< Bezier curvature
       float          precision;  //!< Number of segments that comprise the line

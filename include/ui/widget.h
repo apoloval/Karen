@@ -166,10 +166,10 @@ private:
    struct ChildInfo
    {
       Ptr<Widget> widget;
-      Rect        coord;
+      Rect        coord;      
    };
 
-   List<ChildInfo> _children;
+   utils::LinkedList<ChildInfo> _children;
 
 };
 

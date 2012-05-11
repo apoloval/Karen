@@ -168,9 +168,13 @@ OpenGLCanvas::drawBezier(const BezierParams& line)
       Vector dest;
       Vector ctrl1;
       Vector ctrl2;
+      
+      inline bool operator == (const BezierCurve& bc) const
+      { return orig == bc.orig && dest == bc.dest && 
+               ctrl1 == bc.ctrl1 && ctrl2 == bc.ctrl2; }
    };
    
-   Array<BezierCurve> curves(numPoints - 1);
+   DynArray<BezierCurve> curves(numPoints - 1);
    for (int i = 0; i < numPoints - 1; i++)
    {
       curves[i].orig = line.points[i];

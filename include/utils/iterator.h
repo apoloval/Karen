@@ -115,49 +115,6 @@ private:
    virtual void prevAfterNullCheck() = 0;
    
 };
-
-/**
- * Abstract iterator class. This class provides an abstraction for a 
- * collection iterator that is able to alter the state of pointed element.
- */
-template <class T>
-class AbstractIterator : public virtual AbstractIteratorBase<T>
-{
-public:
-
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual T& get() throw (NullIteratorException)
-   {
-      if (AbstractIteratorBase<T>::isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot get element from iterator: null iterator");
-      return getAfterNullCheck();
-   }
-   
-   /**
-    * Dereference operator
-    */
-   inline T& operator * ()
-   throw (NullIteratorException)
-   { return get(); }
-
-   /**
-    * Field-access operator
-    */
-   inline T* operator -> ()
-   { return &get(); }
-   
-private:
-
-   /**
-    * Obtain the element pointed by iterator after a null check.
-    */
-   virtual T& getAfterNullCheck() = 0;
-
-};
-
 /** 
  * Abstract constant iterator class. This class provides an abstraction 
  * for a collection iterator unable to modify collection elements. 
@@ -172,7 +129,7 @@ public:
     */
    inline virtual const T& get() const throw (NullIteratorException)
    {
-      if (AbstractIteratorBase<T>::isNull())
+      if (this->isNull())
          KAREN_THROW(NullIteratorException, 
             "cannot get element from iterator: null iterator");
       return getAfterNullCheck();
@@ -198,93 +155,48 @@ public:
 
 };
 
-/** 
- * Iterator class. This class is used by any collection to wrap an actual
- * iterator implementation. 
+
+/**
+ * Abstract iterator class. This class provides an abstraction for a 
+ * collection iterator that is able to alter the state of pointed element.
  */
 template <class T>
-class Iterator : public AbstractIterator<T>
+class AbstractIterator : public virtual AbstractIteratorBase<T>
 {
 public:
 
    /**
-    * Create a new null iterator.
+    * Obtain collection element pointed by iterator.
     */
-   inline Iterator() : _impl(NULL) {}
-
-   /**
-    * Create a new iterator by wrapping an actual implementation.
-    */
-   inline Iterator(AbstractIterator<T>* impl) : _impl(impl) {}
-
-   /**
-    * Virtual destructor.
-    */
-   inline virtual ~Iterator() {}
-
-   /**
-    * Check whether iterator is null.
-    */
-   inline virtual bool isNull() const
-   { return _impl.isNull() || _impl->isNull(); }
+   inline virtual T& get() throw (NullIteratorException)
+   {
+      if (this->isNull())
+         KAREN_THROW(NullIteratorException, 
+            "cannot get element from iterator: null iterator");
+      return getAfterNullCheck();
+   }
    
    /**
-    * Obtain iterator implementation.
+    * Dereference operator
     */
-   inline AbstractIterator<T>* impl()
-   { return _impl; }
+   inline T& operator * ()
+   throw (NullIteratorException)
+   { return get(); }
 
    /**
-    * Increment operator.
+    * Field-access operator
     */
-   inline Iterator& operator ++ ()
-   { this->next(); return *this; }
+   inline T* operator -> ()
+   { return &get(); }
    
-   /**
-    * Increment operator.
-    */
-   inline Iterator& operator ++ (int n)
-   { this->next(); return *this; }
-   
-   /**
-    * Decrement operator.
-    */
-   inline Iterator& operator -- ()
-   { this->prev(); return *this; }
-   
-   /**
-    * Decrement operator.
-    */
-   inline Iterator& operator -- (int n)
-   { this->prev(); return *this; }
+   virtual Ptr<AbstractConstIterator<T> > toConstIterator() = 0;
    
 private:
 
-   Ptr<AbstractIterator<T>> _impl;
-
    /**
-    * Move forward iterator to the next element.
+    * Obtain the element pointed by iterator after a null check.
     */
-   inline virtual void nextAfterNullCheck()
-   {
-      return _impl->next();
-   }
-   
-   /**
-    * Move backward iterator to the previous element.
-    */
-   inline virtual void prevAfterNullCheck()
-   {
-      return _impl->prev();
-   }
-   
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual T& getAfterNullCheck()
-   {
-      return _impl->get();
-   }
+   virtual T& getAfterNullCheck() = 0;
    
 };
 
@@ -305,7 +217,7 @@ public:
    /**
     * Create a new const iterator by wrapping an actual implementation.
     */
-   inline ConstIterator(AbstractConstIterator<T>* impl) : _impl(impl) {}
+   inline ConstIterator(Ptr<AbstractConstIterator<T> >& impl) : _impl(impl) {}
 
    /**
     * Virtual destructor.
@@ -376,6 +288,108 @@ private:
       return _impl->get();
    }
 
+};
+
+/** 
+ * Iterator class. This class is used by any collection to wrap an actual
+ * iterator implementation. 
+ */
+template <class T>
+class Iterator : public AbstractIterator<T>
+{
+public:
+
+   /**
+    * Create a new null iterator.
+    */
+   inline Iterator() : _impl(NULL) {}
+
+   /**
+    * Create a new iterator by wrapping an actual implementation.
+    */
+   inline Iterator(Ptr<AbstractIterator<T> >& impl) : _impl(impl) {}
+
+   /**
+    * Virtual destructor.
+    */
+   inline virtual ~Iterator() {}
+   
+   inline operator ConstIterator<T> ()
+   { 
+      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
+      return ConstIterator<T>(it);
+   }
+
+   /**
+    * Check whether iterator is null.
+    */
+   inline virtual bool isNull() const
+   { return _impl.isNull() || _impl->isNull(); }
+   
+   /**
+    * Obtain iterator implementation.
+    */
+   inline AbstractIterator<T>* impl()
+   { return _impl; }
+
+   /**
+    * Increment operator.
+    */
+   inline Iterator& operator ++ ()
+   { this->next(); return *this; }
+   
+   /**
+    * Increment operator.
+    */
+   inline Iterator& operator ++ (int n)
+   { this->next(); return *this; }
+   
+   /**
+    * Decrement operator.
+    */
+   inline Iterator& operator -- ()
+   { this->prev(); return *this; }
+   
+   /**
+    * Decrement operator.
+    */
+   inline Iterator& operator -- (int n)
+   { this->prev(); return *this; }
+   
+   inline virtual Ptr<AbstractConstIterator<T> > toConstIterator()
+   { 
+      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
+      return new ConstIterator<T>(it);
+   }
+   
+private:
+
+   Ptr<AbstractIterator<T>> _impl;
+
+   /**
+    * Move forward iterator to the next element.
+    */
+   inline virtual void nextAfterNullCheck()
+   {
+      return _impl->next();
+   }
+   
+   /**
+    * Move backward iterator to the previous element.
+    */
+   inline virtual void prevAfterNullCheck()
+   {
+      return _impl->prev();
+   }
+   
+   /**
+    * Obtain collection element pointed by iterator.
+    */
+   inline virtual T& getAfterNullCheck()
+   {
+      return _impl->get();
+   }
+   
 };
 
 }} /* namespace karen::utils */

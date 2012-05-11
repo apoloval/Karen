@@ -124,6 +124,7 @@
 		B53669AA14482CD5001374A8 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = src/ui/image.cpp; sourceTree = "<group>"; };
 		B53669B414487826001374A8 /* test-glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test-glut"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53669BF14487848001374A8 /* test-glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-glut.cpp"; path = "test/test-glut.cpp"; sourceTree = "<group>"; };
+		B5BEB8771526F4A100BD1F7F /* collection-inl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "collection-inl.h"; path = "include/utils/collection-inl.h"; sourceTree = "<group>"; };
 		B5E8FF71143C95E1007AE498 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = app.h; path = include/app.h; sourceTree = "<group>"; };
 		B5E8FF75143C983F007AE498 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = engine.h; path = include/ui/engine.h; sourceTree = "<group>"; };
 		B5E8FF77143C9935007AE498 /* draw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = draw.h; path = include/ui/draw.h; sourceTree = "<group>"; };
@@ -244,6 +245,7 @@
 				B509479E142B8AC800F3449C /* exception.h */,
 				B50947A4142B9A9400F3449C /* string.h */,
 				B50947AC142BA93100F3449C /* collection.h */,
+				B5BEB8771526F4A100BD1F7F /* collection-inl.h */,
 				B50947AE142C85CD00F3449C /* test.h */,
 				B50947CA1430B39600F3449C /* pointer.h */,
 				B50947CD1430C4B700F3449C /* numeric.h */,

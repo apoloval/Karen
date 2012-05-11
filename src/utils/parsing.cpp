@@ -26,11 +26,14 @@
 
 namespace karen { namespace utils {
 
-Array<String>
-StringTokenizer::tokenize(const String& str, String::Element separator)
+void
+tokenizeString(
+      const String& str, 
+      Array<String>& tokens,
+      String::Element separator)
 {
-   Array<String> res;
-   if (!str.empty())
+   tokens.clear();
+   if (!str.isEmpty())
    {
       const char *p = str, *b;
       int c;
@@ -53,11 +56,9 @@ StringTokenizer::tokenize(const String& str, String::Element separator)
          while (p && (*p == separator))
             p++;
 
-         res.pushBack(String(b, c));
+         tokens.append(String(b, c));
       }
    }
-   
-   return res;
 }
 
 }}; // namespace karen::utils

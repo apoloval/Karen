@@ -31,22 +31,13 @@
 namespace karen { namespace utils {
 
 /**
- * String tokenizer class. This class provides functionality to tokenize
- * a string (i.e., split a string in tokens by searching for certain 
- * separator).
+ * String tokenizer. Tokenizes a string, spliting it in tokens by searching 
+ * for certain separator.
  */
-class StringTokenizer
-{
-public:
-
-   /**
-    * Split this string in tokens considering given separator.
-    */
-   static Array<String> tokenize(
-         const String& str, 
-         String::Element separator = ' '); 
-   
-};
+void tokenizeString(
+      const String& str, 
+      Array<String>& tokens,
+      String::Element separator = ' '); 
 
 }}; // namespace karen::utils
 

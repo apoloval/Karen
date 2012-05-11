@@ -105,14 +105,14 @@ public:
    {
       String s;
       KAREN_UTEST_ASSERT(s.length() == 0);
-      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.isEmpty());
    }
 
    void createStringFromNullTerminatedCharPointer()
    {
       String s("foobar");
       KAREN_UTEST_ASSERT(s.length() == 6);
-      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(!s.isEmpty());
       KAREN_UTEST_ASSERT(s == "foobar");
       KAREN_UTEST_ASSERT(s != "foo");
    }
@@ -273,7 +273,7 @@ public:
       String s("Welcome Foobar");
       s.removeFromHead(255);
       KAREN_UTEST_ASSERT(s == "");
-      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.isEmpty());
    }
 
    void removeFromTail()
@@ -295,13 +295,14 @@ public:
       String s("Welcome Foobar");
       s.removeFromTail(255);
       KAREN_UTEST_ASSERT(s == "");
-      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.isEmpty());
    }
    
    void tokenizeString()
    {
       String s("Welcome to the jungle");
-      Array<String> tokens = StringTokenizer::tokenize(s);
+      DynArray<String> tokens;
+      karen::utils::tokenizeString(s, tokens);
       KAREN_UTEST_ASSERT(tokens.size() == 4);
       KAREN_UTEST_ASSERT(tokens[0] == "Welcome");
       KAREN_UTEST_ASSERT(tokens[1] == "to");
@@ -312,7 +313,8 @@ public:
    void tokenizeOneTokenString()
    {
       String s("Welcome");
-      Array<String> tokens = StringTokenizer::tokenize(s);
+      DynArray<String> tokens;
+      karen::utils::tokenizeString(s, tokens);
       KAREN_UTEST_ASSERT(tokens.size() == 1);
       KAREN_UTEST_ASSERT(tokens[0] == "Welcome");
    }
@@ -320,7 +322,8 @@ public:
    void tokenizeZeroLengthString()
    {
       String s("");
-      Array<String> tokens = StringTokenizer::tokenize(s);
+      DynArray<String> tokens;
+      karen::utils::tokenizeString(s, tokens);
       KAREN_UTEST_ASSERT(tokens.size() == 0);
    }
    
@@ -654,14 +657,14 @@ public:
    
    void shouldCreateEmptyArray()
    {
-      Array<int> a;
-      KAREN_UTEST_ASSERT(a.empty());
+      DynArray<int> a;
+      KAREN_UTEST_ASSERT(a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 0);
    }
    
    void shouldNotIndexWhenEmpty()
    {
-      Array<int> a;
+      DynArray<int> a;
       try
       {
          a[0];
@@ -673,24 +676,24 @@ public:
    void shouldCreateFromRawArray()
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
-      Array<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.empty());
+      DynArray<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 6);
    }
    
    void shouldPushBackItems()
    {
-      Array<int> a;
-      a.pushBack(10);
-      KAREN_UTEST_ASSERT(!a.empty());
+      DynArray<int> a;
+      a.append(10);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 1);
       KAREN_UTEST_ASSERT(a[0] == 10);
-      a.pushBack(11);
-      KAREN_UTEST_ASSERT(!a.empty());
+      a.append(11);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 2);
       KAREN_UTEST_ASSERT(a[1] == 11);
-      a.pushBack(12);
-      KAREN_UTEST_ASSERT(!a.empty());
+      a.append(12);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 3);
       KAREN_UTEST_ASSERT(a[2] == 12);   
    }
@@ -698,8 +701,8 @@ public:
    void shouldIndexWhenNotEmpty()
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
-      Array<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.empty());
+      DynArray<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 6);
       for (int i = 0; i < a.size(); i++)
          KAREN_UTEST_ASSERT(a[i] == raw[i]);
@@ -708,8 +711,8 @@ public:
    void shouldIterateArray()
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
-      Array<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.empty());
+      DynArray<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 6);
       int i = 0;
       for (Iterator<int> it = a.begin(), end = a.end(); it != end; it++)
@@ -719,8 +722,8 @@ public:
    void shouldIterateArrayUsingForRange()
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
-      Array<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.empty());
+      DynArray<int> a(raw, 6);
+      KAREN_UTEST_ASSERT(!a.isEmpty());
       KAREN_UTEST_ASSERT(a.size() == 6);
       int i = 0;
       for (int n : a)
@@ -735,12 +738,11 @@ public:
    ListTestSuite() : UnitTestSuite("Collections - List")
    {
       KAREN_UTEST_ADD(ListTestSuite::createEmptyList);
-      KAREN_UTEST_ADD(ListTestSuite::insertOneElementToHead);
-      KAREN_UTEST_ADD(ListTestSuite::insertOneElementToTail);
-      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsToHead);
-      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsToTail);
+      KAREN_UTEST_ADD(ListTestSuite::insertOneElementinsertFront);
+      KAREN_UTEST_ADD(ListTestSuite::insertOneElementinsertBack);
+      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsinsertFront);
+      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsinsertBack);
       KAREN_UTEST_ADD(ListTestSuite::iterateFromHead);
-      KAREN_UTEST_ADD(ListTestSuite::iterateFromTail);
       KAREN_UTEST_ADD(ListTestSuite::contains);
       KAREN_UTEST_ADD(ListTestSuite::removeIterator);
       KAREN_UTEST_ADD(ListTestSuite::removeWithInvalidIterator);
@@ -755,156 +757,136 @@ public:
    
    void createEmptyList()
    {
-      List<int> l;
-      KAREN_UTEST_ASSERT(l.empty());
+      LinkedList<int> l;
+      KAREN_UTEST_ASSERT(l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 0);      
    }
    
-   void insertOneElementToHead()
+   void insertOneElementinsertFront()
    {
-      List<int> l;
-      l.toHead(11);
-      KAREN_UTEST_ASSERT(!l.empty());
+      LinkedList<int> l;
+      l.insertFront(11);
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 1);
-      KAREN_UTEST_ASSERT(l.head() == 11);
-      KAREN_UTEST_ASSERT(l.tail() == 11);
+      KAREN_UTEST_ASSERT(l.first() == 11);
+      KAREN_UTEST_ASSERT(l.last() == 11);
    }
 
-   void insertOneElementToTail()
+   void insertOneElementinsertBack()
    {
-      List<int> l;
-      l.toTail(10);
-      KAREN_UTEST_ASSERT(!l.empty());
+      LinkedList<int> l;
+      l.insertBack(10);
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 1);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 10);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 10);
    }
 
-   void insertSeveralElementsToHead()
+   void insertSeveralElementsinsertFront()
    {
-      List<int> l;
-      l.toHead(11);
-      l.toHead(12);
-      l.toHead(13);
-      KAREN_UTEST_ASSERT(!l.empty());
+      LinkedList<int> l;
+      l.insertFront(11);
+      l.insertFront(12);
+      l.insertFront(13);
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 3);
-      KAREN_UTEST_ASSERT(l.head() == 13);
-      KAREN_UTEST_ASSERT(l.tail() == 11);
+      KAREN_UTEST_ASSERT(l.first() == 13);
+      KAREN_UTEST_ASSERT(l.last() == 11);
    }
 
-   void insertSeveralElementsToTail()
+   void insertSeveralElementsinsertBack()
    {
-      List<int> l;
-      l.toTail(11);
-      l.toTail(12);
-      l.toTail(13);
-      KAREN_UTEST_ASSERT(!l.empty());
+      LinkedList<int> l;
+      l.insertBack(11);
+      l.insertBack(12);
+      l.insertBack(13);
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 3);
-      KAREN_UTEST_ASSERT(l.head() == 11);
-      KAREN_UTEST_ASSERT(l.tail() == 13);
+      KAREN_UTEST_ASSERT(l.first() == 11);
+      KAREN_UTEST_ASSERT(l.last() == 13);
    }
 
    void iterateFromHead()
    {
-      List<int> l;
+      LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
-         l.toTail(i);
+         l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 19);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 19);
       Iterator<int> it = l.begin();
       KAREN_UTEST_ASSERT(it);
       for (; it; it++)
          KAREN_UTEST_ASSERT(*it == j++);
    }
 
-   void iterateFromTail()
-   {
-      List<int> l;
-      int j = 10;
-      for (int i = j; i < 20; i++)
-         l.toTail(i);
-            
-      KAREN_UTEST_ASSERT(!l.empty());
-      KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 19);
-      j = 19;
-      Iterator<int> it = l.begin(BEGIN_AT_BACK);
-      KAREN_UTEST_ASSERT(it);
-      for (; it; it--)
-         KAREN_UTEST_ASSERT(*it == j--);
-   }
-   
    void contains()
    {
-      List<int> l;
+      LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
-         l.toTail(i);
+         l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 19);
-      KAREN_UTEST_ASSERT(l.contains(15));
-      KAREN_UTEST_ASSERT(!l.contains(25));
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 19);
+      KAREN_UTEST_ASSERT(l.hasElement(15));
+      KAREN_UTEST_ASSERT(!l.hasElement(25));
    }
 
    void removeIterator()
    {
-      List<int> l;
+      LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
-         l.toTail(i);
+         l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 19);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 19);
 
       Iterator<int> it = l.begin();
       for (int i = 0; i < 5; i++)
          it++;
       l.remove(it);
       KAREN_UTEST_ASSERT(*it == 16);
-      KAREN_UTEST_ASSERT(!l.contains(15));
+      KAREN_UTEST_ASSERT(!l.hasElement(15));
    }
 
    void removeFirst()
    {
-      List<int> l;
+      LinkedList<int> l;
       for (int i = 10; i < 20; i++)
-         l.toTail(i);
-      Iterator<int> it = l.begin();
-      l.remove(it);
-      KAREN_UTEST_ASSERT(!l.empty());
+         l.insertBack(i);
+      l.removeFirst();
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 9);
-      KAREN_UTEST_ASSERT(l.head() == 11);
-      KAREN_UTEST_ASSERT(l.tail() == 19);
+      KAREN_UTEST_ASSERT(l.first() == 11);
+      KAREN_UTEST_ASSERT(l.last() == 19);
    }
    
    void removeLast()
    {
-      List<int> l;
+      LinkedList<int> l;
       for (int i = 10; i < 20; i++)
-         l.toTail(i);
-      Iterator<int> it = l.begin(BEGIN_AT_BACK);
-      l.remove(it);
-      KAREN_UTEST_ASSERT(!l.empty());
+         l.insertBack(i);
+      l.removeLast();
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 9);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 18);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 18);
    }
    
    void removeWithInvalidIterator()
    {
-      List<int> l;
+      LinkedList<int> l;
       for (int i = 10; i < 20; i++)
-         l.toTail(i);
+         l.insertBack(i);
       
       try
       {
@@ -915,7 +897,7 @@ public:
       catch (InvalidInputException&) {}
       try
       {
-         List<int> ll;
+         LinkedList<int> ll;
          Iterator<int> it = ll.begin();
          l.remove(it);
          KAREN_UTEST_FAILED("expected exception not raised");
@@ -925,35 +907,36 @@ public:
    
    void clearNotEmpty()
    {
-      List<int> l;
+      LinkedList<int> l;
       for (int i = 10; i < 20; i++)
-         l.toTail(i);
+         l.insertBack(i);
       l.clear();
-      KAREN_UTEST_ASSERT(l.empty());
+      KAREN_UTEST_ASSERT(l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 0);
    }
    
    void clearEmpty()
    {
-      List<int> l;
+      LinkedList<int> l;
       l.clear();
-      KAREN_UTEST_ASSERT(l.empty());
+      KAREN_UTEST_ASSERT(l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 0);
    }
    
    void insertBefore()
    {
-      List<int> l;
-      l.toTail(10);
-      l.toTail(11);
-      l.toTail(12);
-      l.toTail(14);
-      Iterator<int> it = l.begin(BEGIN_AT_BACK);
+      LinkedList<int> l;
+      l.insertBack(10);
+      l.insertBack(11);
+      l.insertBack(12);
+      l.insertBack(14);
+      Iterator<int> it = l.begin();
+      for (int i = 0; i < 4; i++) it++;
       l.insertBefore(13, it);
-      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 5);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 14);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 14);
       KAREN_UTEST_ASSERT(*it == 14);
       int j = 10;
       it = l.begin();
@@ -964,17 +947,17 @@ public:
 
    void insertAfter()
    {
-      List<int> l;
-      l.toTail(10);
-      l.toTail(12);
-      l.toTail(13);
-      l.toTail(14);
+      LinkedList<int> l;
+      l.insertBack(10);
+      l.insertBack(12);
+      l.insertBack(13);
+      l.insertBack(14);
       Iterator<int> it = l.begin();
       l.insertAfter(11, it);
-      KAREN_UTEST_ASSERT(!l.empty());
+      KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 5);
-      KAREN_UTEST_ASSERT(l.head() == 10);
-      KAREN_UTEST_ASSERT(l.tail() == 14);
+      KAREN_UTEST_ASSERT(l.first() == 10);
+      KAREN_UTEST_ASSERT(l.last() == 14);
       KAREN_UTEST_ASSERT(*it == 10);
       int j = 10;
       it = l.begin();
@@ -985,11 +968,11 @@ public:
    
    void iterateForRange()
    {
-      List<int> l;
-      l.toTail(10);
-      l.toTail(12);
-      l.toTail(13);
-      l.toTail(14);
+      LinkedList<int> l;
+      l.insertBack(10);
+      l.insertBack(12);
+      l.insertBack(13);
+      l.insertBack(14);
       int i = 0;
       int values[] = { 10, 12, 13, 14 };
       for (int num : l)
@@ -1020,56 +1003,56 @@ public:
    
    void createEmptySet()
    {
-      Set<int> s;
-      KAREN_UTEST_ASSERT(s.empty());
+      TreeSet<int> s;
+      KAREN_UTEST_ASSERT(s.isEmpty());
       KAREN_UTEST_ASSERT(s.size() == 0);
    }
    
    void insertOneElement()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
-      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(!s.isEmpty());
       KAREN_UTEST_ASSERT(s.size() == 1);
    }
    
    void insertSeveralElements()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
-      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(!s.isEmpty());
       KAREN_UTEST_ASSERT(s.size() == 3);
    }
    
    void insertDuplicatedElements()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
       s.insert(10);
       s.insert(15);
-      KAREN_UTEST_ASSERT(!s.empty());
+      KAREN_UTEST_ASSERT(!s.isEmpty());
       KAREN_UTEST_ASSERT(s.size() == 3);
    }
    
    void containsElement()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
       s.insert(10);
       s.insert(15);
-      KAREN_UTEST_ASSERT(s.contains(7));
-      KAREN_UTEST_ASSERT(!s.contains(13));
+      KAREN_UTEST_ASSERT(s.hasElement(7));
+      KAREN_UTEST_ASSERT(!s.hasElement(13));
    }
    
    void iterate()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
@@ -1081,7 +1064,7 @@ public:
       
       int seq[] = { 2, 7, 10, 15, 17, 20 };
       int i = 0;
-      ConstIterator<int> it = s.begin();
+      Iterator<int> it = s.begin();
       KAREN_UTEST_ASSERT(it);
       for (; it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
@@ -1089,7 +1072,7 @@ public:
    
    void removeElement()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
@@ -1099,17 +1082,17 @@ public:
       s.insert(17);
       s.insert(2);
 
-      s.remove(10);
+      s.removeAll(10);
       
       int seq[] = { 2, 7, 15, 17, 20 };
       int i = 0;
-      for (ConstIterator<int> it = s.begin(); it; it++)
+      for (Iterator<int> it = s.begin(); it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
    }
    
    void clear()
    {
-      Set<int> s;
+      TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
@@ -1120,7 +1103,7 @@ public:
       s.insert(2);
       
       s.clear();
-      KAREN_UTEST_ASSERT(s.empty());
+      KAREN_UTEST_ASSERT(s.isEmpty());
       KAREN_UTEST_ASSERT(s.size() == 0);
    }
    
@@ -1130,9 +1113,9 @@ class DictTestSuite : public UnitTestSuite
 {
 public:
 
-   DictTestSuite() : UnitTestSuite("Collections - Dictionary")
+   DictTestSuite() : UnitTestSuite("Collections - TreeMap")
    {
-      KAREN_UTEST_ADD(DictTestSuite::shouldCreateAnEmptyDictionary);
+      KAREN_UTEST_ADD(DictTestSuite::shouldCreateAnEmptyTreeMap);
       KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElement);
       KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElementUsingIndexingOperator);
       KAREN_UTEST_ADD(DictTestSuite::shouldUpdateAnExistingElement);
@@ -1141,81 +1124,81 @@ public:
       KAREN_UTEST_ADD(DictTestSuite::shouldIterate);
    }
    
-   void shouldCreateAnEmptyDictionary()
+   void shouldCreateAnEmptyTreeMap()
    {
-      Dictionary<String, int> d;
-      KAREN_UTEST_ASSERT(d.empty());
+      TreeMap<String, int> d;
+      KAREN_UTEST_ASSERT(d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 0);
    }
    
    void shouldInsertOneElement()
    {
-      Dictionary<String, int> d;
-      d.insert("Mark", 45);
-      KAREN_UTEST_ASSERT(!d.empty());
+      TreeMap<String, int> d;
+      d.put("Mark", 45);
+      KAREN_UTEST_ASSERT(!d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
       KAREN_UTEST_ASSERT(d["Mark"] == 45);
    }
    
    void shouldInsertOneElementUsingIndexingOperator()
    {
-      Dictionary<String, int> d;
+      TreeMap<String, int> d;
       d["Mark"] = 45;
-      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(!d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
       KAREN_UTEST_ASSERT(d["Mark"] == 45);
    }
       
    void shouldUpdateAnExistingElement()
    {
-      Dictionary<String, int> d;
-      d.insert("Mark", 45);
+      TreeMap<String, int> d;
+      d.put("Mark", 45);
       d["Mark"] = 40;
-      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(!d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.defined("Mark"));
+      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
       KAREN_UTEST_ASSERT(d["Mark"] == 40);
    }
       
    void shouldRemoveAnExistingElement()
    {
-      Dictionary<String, int> d;
-      d.insert("Mark", 45);
-      d.insert("John", 35);
+      TreeMap<String, int> d;
+      d.put("Mark", 45);
+      d.put("John", 35);
       d.remove("Mark");
-      KAREN_UTEST_ASSERT(!d.empty());
+      KAREN_UTEST_ASSERT(!d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.defined("John"));
+      KAREN_UTEST_ASSERT(d.hasKey("John"));
    }
       
    void shouldClear()
    {
-      Dictionary<String, int> d;
-      d.insert("Mark", 45);
-      d.insert("John", 35);
+      TreeMap<String, int> d;
+      d.put("Mark", 45);
+      d.put("John", 35);
       d.clear();
-      KAREN_UTEST_ASSERT(d.empty());
+      KAREN_UTEST_ASSERT(d.isEmpty());
       KAREN_UTEST_ASSERT(d.size() == 0);
    }
    
    void shouldIterate()
    {
-      KeyValuePair<String, int> elems[] =
+      Tuple<String, int> elems[] =
       {
-         KeyValuePair<String, int>("John",   12 ),
-         KeyValuePair<String, int>("Laura",  33 ),
-         KeyValuePair<String, int>("Mark",   45 ),
-         KeyValuePair<String, int>("Patty",  18 ),
+         Tuple<String, int>("John",   12 ),
+         Tuple<String, int>("Laura",  33 ),
+         Tuple<String, int>("Mark",   45 ),
+         Tuple<String, int>("Patty",  18 ),
       };
-      Dictionary<String, int> d(elems, 4);
-      ConstIterator<KeyValuePair<String, int> > it;
+      TreeMap<String, int> d(elems, 4);
+      ConstIterator<Tuple<String, int> > it;
       int i = 0;
       for (it = d.begin(); it; it++)
       {
-         KAREN_UTEST_ASSERT(it->key == elems[i].key);
-         KAREN_UTEST_ASSERT(it->value == elems[i].value);
+         KAREN_UTEST_ASSERT(it->first() == elems[i].first());
+         KAREN_UTEST_ASSERT(it->second() == elems[i].second());
          i++;
       }
    }
@@ -1253,54 +1236,54 @@ public:
    void createEmptyQueue()
    {
       PriorityQueue<int> q;
-      KAREN_UTEST_ASSERT(q.empty());
+      KAREN_UTEST_ASSERT(q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 0);
    }
    
    void insertOneElement()
    {
       PriorityQueue<int> q;
-      q.push(10);
-      KAREN_UTEST_ASSERT(!q.empty());
+      q.put(10);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 1);
-      KAREN_UTEST_ASSERT(q.contains(10));
+      KAREN_UTEST_ASSERT(q.hasElement(10));
    }
    
    void insertSeveralElements()
    {
       PriorityQueue<int> q;
-      q.push(10);
-      q.push(4);
-      q.push(15);
-      q.push(1);
-      q.push(3);
-      KAREN_UTEST_ASSERT(!q.empty());
+      q.put(10);
+      q.put(4);
+      q.put(15);
+      q.put(1);
+      q.put(3);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 5);
-      KAREN_UTEST_ASSERT(q.contains(1));
-      KAREN_UTEST_ASSERT(q.contains(3));
-      KAREN_UTEST_ASSERT(q.contains(4));
-      KAREN_UTEST_ASSERT(q.contains(10));
-      KAREN_UTEST_ASSERT(q.contains(15));
-      KAREN_UTEST_ASSERT(q.next() == 15);
+      KAREN_UTEST_ASSERT(q.hasElement(1));
+      KAREN_UTEST_ASSERT(q.hasElement(3));
+      KAREN_UTEST_ASSERT(q.hasElement(4));
+      KAREN_UTEST_ASSERT(q.hasElement(10));
+      KAREN_UTEST_ASSERT(q.hasElement(15));
+      KAREN_UTEST_ASSERT(q.head() == 15);
    }
    
    void removeElement()
    {
       PriorityQueue<int> q;
-      q.push(10);
-      q.push(4);
-      q.push(15);
-      q.push(1);
-      q.push(3);
-      q.remove(15);
-      KAREN_UTEST_ASSERT(!q.empty());
+      q.put(10);
+      q.put(4);
+      q.put(15);
+      q.put(1);
+      q.put(3);
+      q.removeAll(15);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 4);
-      KAREN_UTEST_ASSERT(q.contains(1));
-      KAREN_UTEST_ASSERT(q.contains(3));
-      KAREN_UTEST_ASSERT(q.contains(4));
-      KAREN_UTEST_ASSERT(q.contains(10));
-      KAREN_UTEST_ASSERT(!q.contains(15));
-      KAREN_UTEST_ASSERT(q.next() == 10);
+      KAREN_UTEST_ASSERT(q.hasElement(1));
+      KAREN_UTEST_ASSERT(q.hasElement(3));
+      KAREN_UTEST_ASSERT(q.hasElement(4));
+      KAREN_UTEST_ASSERT(q.hasElement(10));
+      KAREN_UTEST_ASSERT(!q.hasElement(15));
+      KAREN_UTEST_ASSERT(q.head() == 10);
    }
    
    void insertDuplicatedElements()
@@ -1313,8 +1296,8 @@ public:
          { 15, "Stephen" },
       };
       for (int i = 0; i < 4; i++)
-         q.push(ent[i]);
-      KAREN_UTEST_ASSERT(!q.empty());
+         q.put(ent[i]);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 4);
    }
    
@@ -1334,10 +1317,10 @@ public:
          ent[3],
       };
       for (int i = 0; i < 4; i++)
-         q.push(ent[i]);
-      KAREN_UTEST_ASSERT(!q.empty());
+         q.put(ent[i]);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 4);
-      PriorityQueue<Entry, EntryLessThan>::ConstIterator it = q.begin();
+      ConstIterator<Entry> it = q.begin();
       for (int i = 0; i < 4; i++)
       {
          const Entry &e = *it;
@@ -1362,12 +1345,12 @@ public:
          ent[0],
       };
       for (int i = 0; i < 4; i++)
-         q.push(ent[i]);
-      KAREN_UTEST_ASSERT(!q.empty());
+         q.put(ent[i]);
+      KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 4);
       for (int i = 0; i < 4; i++)
       {
-         Entry e = q.pull();
+         Entry e = q.poll();
          KAREN_UTEST_ASSERT(e.name == ord[i].name);
       }
    }

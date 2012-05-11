@@ -35,7 +35,8 @@ namespace karen { namespace utils {
  * String iterator. This class provides an implementation for a non-const-
  * string iterator.
  */
-class StringIterator : public AbstractIterator<char>
+class StringIterator : public AbstractIterator<char>,
+                       public AbstractConstIterator<char>
 {
 public:
 
@@ -50,12 +51,15 @@ public:
    }
 
    inline virtual bool isNull() const
-   { return _itImpl == _endImpl; }
+   { return _itImpl == _endImpl; }      
+   
+   inline virtual Ptr<AbstractConstIterator> toConstIterator()
+   { return new StringIterator(*this); }
 
 private:
 
-   StringBase::iterator _itImpl;
-   StringBase::iterator _endImpl;
+   mutable StringBase::iterator _itImpl;
+   mutable StringBase::iterator _endImpl;
 
    inline virtual void nextAfterNullCheck()
    {
@@ -70,44 +74,6 @@ private:
    virtual char& getAfterNullCheck()
    {
       return *_itImpl;
-   }
-
-};
-
-/**
- * String iterator. This class provides an implementation for a non-const-
- * string iterator.
- */
-class StringConstIterator : public AbstractConstIterator<char>
-{
-public:
-
-   /**
-    * Create a new iterator with given string base implementations for
-    * current iterator and end iterator. 
-    */
-   inline StringConstIterator(StringBase::const_iterator itImpl,
-                              StringBase::const_iterator endImpl)
-    : _itImpl(itImpl), _endImpl(endImpl)
-   {
-   }
-
-   inline virtual bool isNull() const
-   { return _itImpl == _endImpl; }
-
-private:
-
-   StringBase::const_iterator _itImpl;
-   StringBase::const_iterator _endImpl;
-
-   inline virtual void nextAfterNullCheck()
-   {
-      _itImpl++;
-   }
-   
-   inline virtual void prevAfterNullCheck()
-   {
-      _itImpl--;
    }
 
    virtual const char& getAfterNullCheck() const
@@ -179,25 +145,33 @@ String::operator [] (const Position &pos) const
 Iterator<char>
 String::begin()
 {
-   return Iterator<char>(new StringIterator(_base.begin(), _base.end()));
+   Ptr<AbstractIterator<char> > it = 
+      new StringIterator(_base.begin(), _base.end());
+   return Iterator<char>(it);
 }
 
 Iterator<char>
 String::end()
 {
-   return Iterator<char>(new StringIterator(_base.end(), _base.end()));
+   Ptr<AbstractIterator<char> > it = 
+      new StringIterator(_base.end(), _base.end());
+   return Iterator<char>(it);
 }
 
 ConstIterator<char>
 String::begin() const
 {
-   return ConstIterator<char>(new StringConstIterator(_base.begin(), _base.end()));
+   Ptr<AbstractConstIterator<char> > it = 
+      new StringIterator(_base.begin(), _base.end());
+   return ConstIterator<char>(it);
 }
 
 ConstIterator<char>
 String::end() const
 {
-   return ConstIterator<char>(new StringConstIterator(_base.end(), _base.end()));
+   Ptr<AbstractConstIterator<char> > it = 
+      new StringIterator(_base.end(), _base.end());
+   return ConstIterator<char>(it);
 }
 
 

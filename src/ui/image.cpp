@@ -39,7 +39,7 @@ void
 AbstractImage::addLifecycleObserver(ImageLifecycleObserver* obs)
 throw (utils::InvalidInputException)
 {
-   if (_observers.contains(obs))
+   if (_observers.hasElement(obs))
       KAREN_THROW(utils::InvalidInputException, 
             "cannot add image lifecycle observer: already present");
    _observers.insert(obs);
@@ -49,10 +49,10 @@ void
 AbstractImage::removeLifecycleObserver(ImageLifecycleObserver* obs)
 throw (utils::NotFoundException)
 {
-   if (!_observers.contains(obs))
+   if (!_observers.hasElement(obs))
       KAREN_THROW(utils::NotFoundException, 
             "cannot remove image lifecycle observer: not present");
-   _observers.remove(obs);
+   _observers.removeAll(obs);
 }
 
 Image::Image(const Vector& dims, const PixelFormat& format)

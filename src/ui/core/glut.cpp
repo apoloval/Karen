@@ -48,7 +48,7 @@ public:
                         "cannot register timer callback: already registered");
       }
       TimerInfo info = { callback, ms, utils::getTimeSinceLaunched() };
-      _callbacks.push(info);
+      _callbacks.put(info);
       glutTimerFunc(ms, glutHandler, 0);
    }
    
@@ -81,7 +81,7 @@ private:
    static void glutHandler(int val)
    {
       GlutTimer& inst = instance();
-      TimerInfo next = inst._callbacks.pull();
+      TimerInfo next = inst._callbacks.poll();
       double now = utils::getTimeSinceLaunched();
       double elapsed = now - next.timestamp;
       if (elapsed >= 0.0)
@@ -97,7 +97,7 @@ private:
    }
    
    static GlutTimer* _instance;
-   PriorityQueue<TimerInfo, TimerInfoLessThan> _callbacks;
+   utils::PriorityQueue<TimerInfo, TimerInfoLessThan> _callbacks;
 
 };
 
