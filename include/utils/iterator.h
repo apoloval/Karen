@@ -125,6 +125,11 @@ class AbstractConstIterator : public virtual AbstractIteratorBase<T>
 public:
 
    /**
+    * Clone this iterator, returning a copy of it.
+    */
+   virtual AbstractConstIterator* clone() const = 0;
+
+   /**
     * Obtain collection element pointed by iterator.
     */
    inline virtual const T& get() const throw (NullIteratorException)
@@ -164,6 +169,11 @@ template <class T>
 class AbstractIterator : public virtual AbstractIteratorBase<T>
 {
 public:
+
+   /**
+    * Clone this iterator, returning a copy of it.
+    */
+   virtual AbstractIterator* clone() const = 0;
 
    /**
     * Obtain collection element pointed by iterator.
@@ -220,6 +230,11 @@ public:
    inline ConstIterator(Ptr<AbstractConstIterator<T> >& impl) : _impl(impl) {}
 
    /**
+    * Copy constructor. 
+    */
+   inline ConstIterator(const ConstIterator& it) : _impl(it._impl->clone()) {}
+   
+   /**
     * Virtual destructor.
     */
    inline virtual ~ConstIterator() {}
@@ -230,6 +245,12 @@ public:
    inline virtual bool isNull() const
    { return _impl.isNull() || _impl->isNull(); }
    
+   /**
+    * Clone this iterator, returning a copy of it.
+    */
+   inline virtual ConstIterator* clone() const
+   { return new ConstIterator(*this); }
+
    /**
     * Obtain iterator implementation.
     */
@@ -309,24 +330,35 @@ public:
     * Create a new iterator by wrapping an actual implementation.
     */
    inline Iterator(Ptr<AbstractIterator<T> >& impl) : _impl(impl) {}
-
+   
+   /**
+    * Copy constructor. 
+    */
+   inline Iterator(const Iterator& it) : _impl(it._impl->clone()) {}
+   
    /**
     * Virtual destructor.
     */
    inline virtual ~Iterator() {}
    
-   inline operator ConstIterator<T> ()
-   { 
-      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
-      return ConstIterator<T>(it);
-   }
-
    /**
     * Check whether iterator is null.
     */
    inline virtual bool isNull() const
    { return _impl.isNull() || _impl->isNull(); }
    
+   /**
+    * Clone this iterator, returning a copy of it.
+    */
+   inline virtual Iterator* clone() const
+   { return new Iterator(*this); }
+
+   inline operator ConstIterator<T> ()
+   { 
+      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
+      return ConstIterator<T>(it);
+   }
+
    /**
     * Obtain iterator implementation.
     */

@@ -108,6 +108,21 @@ template <class T, class CollectionClass, class ImplementationClass>
 bool
 IteratorImpl<T, CollectionClass, ImplementationClass>::isNull() const
 { return _impl == _end; }
+
+template <class T, class CollectionClass, class ImplementationClass>
+IteratorImpl<T, CollectionClass, ImplementationClass>*
+IteratorImpl<T, CollectionClass, ImplementationClass>::clone() const
+{ return new IteratorImpl(*_collection, _impl, _end); }
+   
+template <class T, class CollectionClass, class ImplementationClass>
+typename ImplementationClass::iterator
+IteratorImpl<T, CollectionClass, ImplementationClass>::impl()
+{ return _impl; }
+   
+template <class T, class CollectionClass, class ImplementationClass>
+const CollectionClass*
+IteratorImpl<T, CollectionClass, ImplementationClass>::collection()
+{ return _collection; }
    
 template <class T, class CollectionClass, class ImplementationClass>
 void
@@ -193,7 +208,15 @@ DynArray<T>::end() const
 template <class T>
 void
 DynArray<T>::remove(Iterator<T>& it)
-{}
+{
+   DynArrayIterator* nit = it.template impl<DynArrayIterator>();
+   if (nit && (nit->collection() == this))
+      _impl.erase(nit->impl());
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot remove element from dynamic array from given iterator:"
+            " the iterator does not belongs to this collection");
+}
    
 template <class T>
 const T&
@@ -252,27 +275,51 @@ LinkedList<T>::clear()
 template <class T>
 Iterator<T>
 LinkedList<T>::begin()
-{}
+{
+   Ptr<AbstractIterator<T> > it = new LinkedListIterator(
+         *this, _impl.begin(), _impl.end());
+   return Iterator<T>(it);
+}
    
 template <class T>
 Iterator<T>
 LinkedList<T>::end()
-{}
+{
+   Ptr<AbstractIterator<T> > it = new LinkedListIterator(
+         *this, _impl.end(), _impl.end());
+   return Iterator<T>(it);
+}
    
 template <class T>
 ConstIterator<T>
 LinkedList<T>::begin() const
-{}
+{
+   Ptr<AbstractConstIterator<T> > it = new LinkedListIterator(
+         *this, _impl.begin(), _impl.end());
+   return ConstIterator<T>(it);
+}
    
 template <class T>
 ConstIterator<T>
 LinkedList<T>::end() const
-{}
+{
+   Ptr<AbstractConstIterator<T> > it = new LinkedListIterator(
+         *this, _impl.end(), _impl.end());
+   return ConstIterator<T>(it);
+}
    
 template <class T>
 void
 LinkedList<T>::remove(Iterator<T>& it)
-{}
+{
+   LinkedListIterator *nit = it.template impl<LinkedListIterator>();
+   if (nit && (nit->collection() == this))
+      _impl.erase(nit->impl());
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot remove element from linked list from given iterator:"
+            " the iterator does not belongs to this collection");
+}
    
 template <class T>
 const T&
@@ -310,15 +357,33 @@ LinkedList<T>::insertBack(const T& t)
 
 template <class T>
 void
-LinkedList<T>::insertBefore(const T& t, const Iterator<T>& it)
+LinkedList<T>::insertBefore(const T& t, Iterator<T>& it)
 throw (InvalidInputException)
-{}
+{
+   LinkedListIterator *nit = it.template impl<LinkedListIterator>();
+   if (nit && (nit->collection() == this))   
+      _impl.insert(nit->impl(), t);
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot insert element to linked list from given iterator:"
+            " the iterator does not belongs to this collection");
+}
    
 template <class T>
 void
-LinkedList<T>::insertAfter(const T& t, const Iterator<T>& it)
+LinkedList<T>::insertAfter(const T& t, Iterator<T>& it)
 throw (InvalidInputException)
-{}
+{
+   Iterator<T> itc(it);
+   itc++;
+   LinkedListIterator *nit = itc.template impl<LinkedListIterator>();
+   if (nit && (nit->collection() == this))   
+      _impl.insert(nit->impl(), t);
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot insert element to linked list from given iterator:"
+            " the iterator does not belongs to this collection");
+}
 
 template <class T>
 void
@@ -347,7 +412,8 @@ throw (NotFoundException)
 template <class T, class Compare>
 unsigned long
 TreeSet<T, Compare>::size() const
-{}
+{
+}
    
 template <class T, class Compare>
 void

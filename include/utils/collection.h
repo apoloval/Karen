@@ -246,14 +246,14 @@ public:
     * Insert a new element before that one pointed by given iterator.
     * It throws a InvalidInputException if given iterator is not valid.
     */
-   virtual void insertBefore(const T& t, const Iterator<T>& it)
+   virtual void insertBefore(const T& t, Iterator<T>& it)
       throw (InvalidInputException) = 0;
    
    /**
     * Insert a new element after that one pointed by given iterator.
     * It throws a InvalidInputException if given iterator is not valid.
     */
-   virtual void insertAfter(const T& t, const Iterator<T>& it)
+   virtual void insertAfter(const T& t, Iterator<T>& it)
       throw (InvalidInputException) = 0;
    
    /**
@@ -368,6 +368,12 @@ public:
    
    inline virtual bool isNull() const;
    
+   inline virtual IteratorImpl* clone() const;
+
+   inline typename ImplementationClass::iterator impl();
+   
+   inline const CollectionClass* collection();
+   
 private:
 
    mutable const CollectionClass*                  _collection;
@@ -468,10 +474,10 @@ public:
    
    inline virtual void insertBack(const T& t);
 
-   inline virtual void insertBefore(const T& t, const Iterator<T>& it)
+   inline virtual void insertBefore(const T& t, Iterator<T>& it)
       throw (InvalidInputException);
    
-   inline virtual void insertAfter(const T& t, const Iterator<T>& it)
+   inline virtual void insertAfter(const T& t, Iterator<T>& it)
       throw (InvalidInputException);
 
    inline virtual void removeFirst() throw (NotFoundException);
@@ -480,32 +486,8 @@ public:
 
 private:
 
-   class _Iterator : public AbstractIterator<T>, 
-                     public AbstractConstIterator<T>
-   {
-   public:
+   typedef IteratorImpl<T, LinkedList, std::list<T>> LinkedListIterator;
    
-      inline _Iterator(const LinkedList& list,
-                       const typename std::list<T>::iterator& impl,
-                       const typename std::list<T>::iterator& end);
-   
-      inline virtual bool isNull() const;
-      
-   private:
-   
-      mutable const LinkedList*                  _list;
-      mutable typename std::list<T>::iterator    _impl;
-      mutable typename std::list<T>::iterator    _end;
-   
-      inline virtual void nextAfterNullCheck();
-      
-      inline virtual void prevAfterNullCheck();
-      
-      inline virtual const T& getAfterNullCheck() const;
-      
-      inline virtual T& getAfterNullCheck();
-   };
-
    mutable std::list<T> _impl;
 };
 

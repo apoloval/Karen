@@ -53,6 +53,9 @@ public:
    inline virtual bool isNull() const
    { return _itImpl == _endImpl; }      
    
+   inline virtual StringIterator* clone() const
+   { return new StringIterator(_itImpl, _endImpl); }
+
    inline virtual Ptr<AbstractConstIterator> toConstIterator()
    { return new StringIterator(*this); }
 
