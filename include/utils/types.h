@@ -25,6 +25,8 @@
 #ifndef KAREN_UTILS_TYPES_H
 #define KAREN_UTILS_TYPES_H
 
+#include <utility>
+
 namespace karen { namespace utils {
 
 /**
@@ -84,12 +86,18 @@ private:
 template <class T1, class T2>
 class Tuple
 {
-public:
+public:   
 
    /**
     * Value constructor.
     */
    inline Tuple(const T1 &t1, const T2 &t2) : _first(t1), _second(t2) {}
+   
+   /**
+    * Create a new tuple from an STL pair object.
+    */
+   inline Tuple(const std::pair<T1, T2>& value)
+    : _first(value.first), _second(value.second) {}
    
    /**
     * Copy constructor.
