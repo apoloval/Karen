@@ -497,9 +497,13 @@ TreeSet<T, Compare>::remove(Iterator<const T>& it)
 }
    
 template <class T, class Compare>
-void
+Iterator<const T>
 TreeSet<T, Compare>::insert(const T& t)
-{ _impl.insert(t); }
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetIterator(
+         *this, _impl.insert(t).first, _impl.end());
+   return Iterator<const T>(it);
+}
    
 template <class T, class Compare>
 void
@@ -588,29 +592,48 @@ TreeMap<K, T, Compare>::end() const
 template <class K, class T, class Compare>
 bool
 TreeMap<K, T, Compare>::hasKey(const K& k) const
-{}
+{ return _impl.find(Tuple<const K, T>(k, T())) != _impl.end(); }
 
 template <class K, class T, class Compare>
-void
+Iterator<Tuple<const K, T>>
 TreeMap<K, T, Compare>::put(const K& k, const T& t)
-{}
+{
+   Ptr<AbstractIterator<Tuple<const K, T> > > it = new TreeMapIterator(
+         *this, _impl.insert(Tuple<const K, T>(k, t)).first, _impl.end());
+   return it;
+}
 
 template <class K, class T, class Compare>
 const T&
 TreeMap<K, T, Compare>::get(const K& k) const
 throw (NotFoundException)
-{}
+{
+   typename std::set<Tuple<const K, T>, KeyCompare>::const_iterator it = 
+         _impl.find(Tuple<const K, T>(k, T()));
+   if (it != _impl.end())
+      return it->second();
+   else
+      KAREN_THROW(NotFoundException,
+         "cannot find element in tree map with such a key");
+}
 
 template <class K, class T, class Compare>
 T&
 TreeMap<K, T, Compare>::get(const K& k)
 throw (NotFoundException)
-{}
+{
+   typename std::set<Tuple<const K, T>, KeyCompare>::iterator it = 
+         _impl.find(Tuple<const K, T>(k, T()));
+   if (it != _impl.end())
+      return const_cast<T&>(it->second());
+   else
+      return put(k, T())->second();
+}
 
 template <class K, class T, class Compare>
 void
 TreeMap<K, T, Compare>::remove(const K& k)
-{}
+{ _impl.erase(Tuple<const K, T>(k, T())); }
 
 template <class T, class Backend>
 const T&

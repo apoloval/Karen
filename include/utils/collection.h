@@ -286,9 +286,10 @@ class Set : public AssociativeCollection<const T>
 public:
 
    /**
-    * Inserts a new element in the set.
+    * Inserts a new element in the set. It returns an iterator to the
+    * newly inserted element. 
     */
-   virtual void insert(const T& t) = 0;
+   virtual Iterator<const T> insert(const T& t) = 0;
    
    /**
     * Removes all ocurrences of given element (if any). 
@@ -326,7 +327,7 @@ public:
    /**
     * Put a new element in the map with given key. 
     */
-   virtual void put(const K& k, const T& t) = 0;
+   virtual Iterator<Tuple<const K, T>> put(const K& k, const T& t) = 0;
    
    /**
     * Put a new element in the map with given key from its wrapping tuple.
@@ -515,7 +516,7 @@ public:
 
    inline void remove(Iterator<const T>& it);
 
-   inline void insert(const T& t);
+   inline Iterator<const T> insert(const T& t);
    
    inline void removeAll(const T& t);
 
@@ -554,15 +555,13 @@ public:
 
    inline virtual bool hasKey(const K& k) const;
 
-   inline virtual void put(const K& k, const T& t);
+   inline virtual Iterator<Tuple<const K, T>> put(const K& k, const T& t);
    
    inline virtual const T& get(const K& k) const throw (NotFoundException);
    
    inline virtual T& get(const K& k) throw (NotFoundException);
    
    inline virtual void remove(const K& k);
-
-private:
 
 private:
 
