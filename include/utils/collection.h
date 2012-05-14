@@ -103,7 +103,7 @@ public:
     * Remove the element pointed by given iterator. The iterator is updated
     * to point to the element that followed the removed one. 
     */
-   virtual void remove(Iterator<T>& it) = 0;
+   virtual void remove(ConstIterator<T>& it) = 0;
    
    /**
     * Obtain a const iterator to the beginning of the collection.
@@ -295,7 +295,7 @@ public:
     * Removes all ocurrences of given element (if any). 
     */
    virtual void removeAll(const T& t) = 0;
-
+   
 };
 
 /**
@@ -428,7 +428,7 @@ public:
    
    inline virtual ConstIterator<T> end() const;
 
-   inline void remove(Iterator<T>& it);
+   inline void remove(ConstIterator<T>& it);
 
    inline virtual const T& get(unsigned long pos) const 
       throw (OutOfBoundsException);
@@ -468,7 +468,7 @@ public:
    
    inline virtual ConstIterator<T> end() const;
    
-   inline void remove(Iterator<T>& it);
+   inline void remove(ConstIterator<T>& it);
 
    inline virtual const T& first() const throw (NotFoundException);
 
@@ -510,7 +510,7 @@ public:
    
    inline virtual ConstIterator<T> end() const;
 
-   inline void remove(Iterator<T>& it);
+   inline void remove(ConstIterator<T>& it);
 
    inline void insert(const T& t);
    
@@ -531,13 +531,15 @@ public:
 
    inline TreeMap(const Compare& cmp = Compare());
    
-   inline TreeMap(const Tuple<K, T>* elems, unsigned long nelems);
+   inline TreeMap(const Tuple<K, T>* elems, 
+                  unsigned long nelems,
+                  const Compare& cmp = Compare());
 
    inline virtual unsigned long size() const;
    
    inline virtual void clear();
    
-   inline virtual void remove(Iterator<Tuple<K, T> >& it);
+   inline virtual void remove(ConstIterator<Tuple<K, T> >& it);
    
    inline virtual ConstIterator<Tuple<K, T> > begin() const;
    
@@ -557,9 +559,20 @@ private:
 
 private:
 
-   typedef IteratorImpl<T, TreeMap, std::map<K, T, Compare> > TreeMapIterator;
+   struct KeyCompare
+   {
+      Compare cmp;
+      
+      inline KeyCompare(const Compare& c = Compare()) : cmp(c) {}
+   
+      inline bool operator () (const Tuple<K, T>& lhs, const Tuple<K, T>& rhs) const
+      { return cmp(lhs.first(), rhs.first()); }
+   };
 
-   mutable std::map<K, T, Compare> _impl;
+   typedef IteratorImpl<Tuple<K, T>, TreeMap, 
+                        std::set<Tuple<K, T>, KeyCompare> > TreeMapIterator;
+   
+   mutable std::set<Tuple<K, T>, KeyCompare> _impl;
 
 };
 
@@ -610,15 +623,11 @@ public:
    
    inline void clear();
 
-   inline virtual Iterator<T> begin();
-   
-   inline virtual Iterator<T> end();
-   
    inline virtual ConstIterator<T> begin() const;
    
    inline virtual ConstIterator<T> end() const;
 
-   inline void remove(Iterator<T>& it);
+   inline void remove(ConstIterator<T>& it);
 
    inline virtual const T& head() const;
 

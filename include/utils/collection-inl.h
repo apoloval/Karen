@@ -68,7 +68,7 @@ template <class Equals>
 void
 List<T>::removeAll(const T& t, Equals eq)
 {
-   Iterator<T> it = this->begin(), end = this->end();
+   ConstIterator<T> it = this->begin(), end = this->end();
    for (; it != end; it++)
       if (eq(*it, t))
          this->remove(it);
@@ -217,7 +217,7 @@ DynArray<T>::end() const
 
 template <class T>
 void
-DynArray<T>::remove(Iterator<T>& it)
+DynArray<T>::remove(ConstIterator<T>& it)
 {
    DynArrayIterator* nit = it.template impl<DynArrayIterator>();
    if (nit && (nit->collection() == this))
@@ -320,7 +320,7 @@ LinkedList<T>::end() const
    
 template <class T>
 void
-LinkedList<T>::remove(Iterator<T>& it)
+LinkedList<T>::remove(ConstIterator<T>& it)
 {
    LinkedListIterator *nit = it.template impl<LinkedListIterator>();
    if (nit && (nit->collection() == this))
@@ -455,7 +455,7 @@ TreeSet<T, Compare>::end() const
    
 template <class T, class Compare>
 void
-TreeSet<T, Compare>::remove(Iterator<T>& it)
+TreeSet<T, Compare>::remove(ConstIterator<T>& it)
 {
    TreeSetIterator *nit = it.template impl<TreeSetIterator>();
    if (nit && (nit->collection() == this))   
@@ -478,11 +478,15 @@ TreeSet<T, Compare>::removeAll(const T& t)
 
 template <class K, class T, class Compare>
 TreeMap<K, T, Compare>::TreeMap(const Compare& cmp)
- : _impl(cmp)
+ : _impl(KeyCompare(cmp))
 {}
 
 template <class K, class T, class Compare>
-TreeMap<K, T, Compare>::TreeMap(const Tuple<K, T>* elems, unsigned long nelems)
+TreeMap<K, T, Compare>::TreeMap(
+      const Tuple<K, T>* elems, 
+      unsigned long nelems, 
+      const Compare& cmp)
+ : _impl(KeyCompare(cmp))
 {
    for (unsigned long i = 0; i < nelems; i++)
       Map<K, T>::put(elems[i]);
@@ -491,27 +495,43 @@ TreeMap<K, T, Compare>::TreeMap(const Tuple<K, T>* elems, unsigned long nelems)
 template <class K, class T, class Compare>
 unsigned long
 TreeMap<K, T, Compare>::size() const
-{}
+{ return _impl.size(); }
 
 template <class K, class T, class Compare>
 void
 TreeMap<K, T, Compare>::clear()
-{}
+{ _impl.clear(); }
 
 template <class K, class T, class Compare>
 void
-TreeMap<K, T, Compare>::remove(Iterator<Tuple<K, T> >& it)
-{}
+TreeMap<K, T, Compare>::remove(ConstIterator<Tuple<K, T> >& it)
+{
+   TreeMapIterator* nit = it.template impl<TreeMapIterator>();
+   if (nit && (nit->collection() == this))
+      _impl.erase(nit->impl());
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot remove element from tree map from given iterator:"
+            " the iterator does not belongs to this collection");
+}
 
 template <class K, class T, class Compare>
 ConstIterator<Tuple<K, T> >
 TreeMap<K, T, Compare>::begin() const
-{}
+{
+   Ptr<AbstractConstIterator<Tuple<K, T> > > it =
+         new TreeMapIterator(*this, _impl.begin(), _impl.end());
+   return ConstIterator<Tuple<K, T> >(it);
+}
 
 template <class K, class T, class Compare>
 ConstIterator<Tuple<K, T> >
 TreeMap<K, T, Compare>::end() const
-{}
+{
+   Ptr<AbstractConstIterator<Tuple<K, T> > > it =
+         new TreeMapIterator(*this, _impl.end(), _impl.end());
+   return ConstIterator<Tuple<K, T> >(it);
+}
 
 template <class K, class T, class Compare>
 bool
@@ -538,7 +558,7 @@ throw (NotFoundException)
 template <class K, class T, class Compare>
 void
 TreeMap<K, T, Compare>::remove(const K& k)
-{ _impl.erase(k); }
+{}
 
 template <class T, class Backend>
 const T&
@@ -575,52 +595,47 @@ PriorityQueue<T, Compare, Backend>::PriorityQueue(const Compare& cmp)
 template <class T, class Compare, class Backend>
 unsigned long
 PriorityQueue<T, Compare, Backend>::size() const
-{}
+{ return _backend.size(); }
    
 template <class T, class Compare, class Backend>
 void
 PriorityQueue<T, Compare, Backend>::clear()
-{}
+{ _backend.clear(); }
 
-template <class T, class Compare, class Backend>
-Iterator<T>
-PriorityQueue<T, Compare, Backend>::begin()
-{}
-   
-template <class T, class Compare, class Backend>
-Iterator<T>
-PriorityQueue<T, Compare, Backend>::end()
-{}
-   
 template <class T, class Compare, class Backend>
 ConstIterator<T>
 PriorityQueue<T, Compare, Backend>::begin() const
-{}
+{ return _backend.begin(); }
    
 template <class T, class Compare, class Backend>
 ConstIterator<T>
 PriorityQueue<T, Compare, Backend>::end() const
-{}
+{ return _backend.end(); }
    
 template <class T, class Compare, class Backend>
 void
-PriorityQueue<T, Compare, Backend>::remove(Iterator<T>& it)
-{}
+PriorityQueue<T, Compare, Backend>::remove(ConstIterator<T>& it)
+{ return _backend.remove(it); }
    
 template <class T, class Compare, class Backend>
 const T&
 PriorityQueue<T, Compare, Backend>::head() const
-{}
+{ return *_backend.begin(); }
 
 template <class T, class Compare, class Backend>
 void
 PriorityQueue<T, Compare, Backend>::put(const T& t)
-{}
+{ _backend.insert(t); }
    
 template <class T, class Compare, class Backend>
 T
 PriorityQueue<T, Compare, Backend>::poll()
-{}
+{
+   T t = head();
+   ConstIterator<T> it = _backend.begin();
+   _backend.remove(it);
+   return t;
+}
 
 template <class T, class Compare, class Backend>
 void

@@ -86,7 +86,7 @@ throw (utils::InvalidInputException)
 Widget*
 GridContainer::activateWidgetAtPos(const Vector& localPos)
 {
-   for (auto it = _children.begin(); it; it++)
+   for (utils::ConstIterator<ChildInfo> it = _children.begin(); it; it++)
       if (localPos.isInside(it->coord))
       {
          ChildInfo ci = *it;

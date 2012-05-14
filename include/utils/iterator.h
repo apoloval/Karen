@@ -256,7 +256,7 @@ public:
     */
    template <class Impl = AbstractConstIterator<T> >
    inline Impl* impl()
-   { return dynamic_cast<Impl>((AbstractConstIterator<T>*) _impl); }
+   { return dynamic_cast<Impl*>((AbstractConstIterator<T>*) _impl); }
 
    /**
     * Increment operator.

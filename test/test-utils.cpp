@@ -850,7 +850,7 @@ public:
       KAREN_UTEST_ASSERT(l.first() == 10);
       KAREN_UTEST_ASSERT(l.last() == 19);
 
-      Iterator<int> it = l.begin();
+      ConstIterator<int> it = l.begin();
       for (int i = 0; i < 5; i++)
          it++;
       l.remove(it);
@@ -890,7 +890,7 @@ public:
       
       try
       {
-         Iterator<int> it;
+         ConstIterator<int> it;
          l.remove(it);
          KAREN_UTEST_FAILED("expected exception not raised");
       }
@@ -898,7 +898,7 @@ public:
       try
       {
          LinkedList<int> ll;
-         Iterator<int> it = ll.begin();
+         ConstIterator<int> it = ll.begin();
          l.remove(it);
          KAREN_UTEST_FAILED("expected exception not raised");
       }
