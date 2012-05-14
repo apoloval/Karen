@@ -221,7 +221,11 @@ DynArray<T>::remove(Iterator<T>& it)
 {
    DynArrayIterator* nit = it.template impl<DynArrayIterator>();
    if (nit && (nit->collection() == this))
-      _impl.erase(nit->impl());
+   {
+      Ptr<AbstractIterator<T>> newIt = 
+         new DynArrayIterator(*this, _impl.erase(nit->impl()), _impl.end());
+      it = newIt;
+   }
    else
       KAREN_THROW(InvalidInputException, 
             "cannot remove element from dynamic array from given iterator:"
@@ -324,7 +328,11 @@ LinkedList<T>::remove(Iterator<T>& it)
 {
    LinkedListIterator *nit = it.template impl<LinkedListIterator>();
    if (nit && (nit->collection() == this))
-      _impl.erase(nit->impl());
+   {
+      Ptr<AbstractIterator<T>> newIt = 
+         new LinkedListIterator(*this, _impl.erase(nit->impl()), _impl.end());
+      it = newIt;
+   }
    else
       KAREN_THROW(InvalidInputException, 
             "cannot remove element from linked list from given iterator:"
@@ -475,9 +483,13 @@ template <class T, class Compare>
 void
 TreeSet<T, Compare>::remove(Iterator<const T>& it)
 {
-   TreeSetIterator *nit = it.template impl<TreeSetIterator>();
+   Iterator<const T> itCopy = it;
+   TreeSetIterator *nit = itCopy.template impl<TreeSetIterator>();
    if (nit && (nit->collection() == this))   
+   {
+      it++;
       _impl.erase(nit->impl());
+   }
    else
       KAREN_THROW(InvalidInputException, 
             "cannot remove element from tree set from given iterator:"
@@ -524,9 +536,13 @@ template <class K, class T, class Compare>
 void
 TreeMap<K, T, Compare>::remove(Iterator<Tuple<const K, T> >& it)
 {
-   TreeMapIterator* nit = it.template impl<TreeMapIterator>();
+   Iterator<Tuple<const K, T>> itCopy = it;
+   TreeMapIterator* nit = itCopy.template impl<TreeMapIterator>();
    if (nit && (nit->collection() == this))
+   {
+      it++;
       _impl.erase(nit->impl());
+   }
    else
       KAREN_THROW(InvalidInputException, 
             "cannot remove element from tree map from given iterator:"

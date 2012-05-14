@@ -230,6 +230,12 @@ public:
       Ptr<AbstractIterator<const T>> it = _impl->toConstIterator();
       return Iterator<const T>(it);
    }
+   
+   /**
+    * Asignment operator.
+    */
+   inline Iterator& operator = (Ptr<AbstractIterator<T> >& impl)
+   { _impl = impl; return *this; }
 
    /**
     * Increment operator.
