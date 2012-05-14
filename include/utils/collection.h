@@ -351,7 +351,7 @@ public:
     * it has no effect. 
     */
    virtual void remove(const K& k) = 0;
-
+   
 };
 
 
@@ -500,6 +500,8 @@ class TreeSet : public Set<T>
 {
 public:
 
+   inline TreeSet(const Compare& cmp = Compare());
+
    inline virtual unsigned long size() const;
    
    inline void clear();
@@ -516,18 +518,18 @@ public:
 
 private:
 
-   typedef IteratorImpl<T, TreeSet, std::set<T> > TreeSetIterator;
+   typedef IteratorImpl<T, TreeSet, std::set<T, Compare> > TreeSetIterator;
    
-   mutable std::set<T> _impl;
+   mutable std::set<T, Compare> _impl;
    
 };
 
-template <class K, class T>
+template <class K, class T, class Compare = DefaultLessThan<K> >
 class TreeMap : public Map<K, T>
 {
 public:
 
-   inline TreeMap();
+   inline TreeMap(const Compare& cmp = Compare());
    
    inline TreeMap(const Tuple<K, T>* elems, unsigned long nelems);
 
@@ -553,7 +555,11 @@ public:
 
 private:
 
-   mutable std::map<K, T> _impl;
+private:
+
+   typedef IteratorImpl<T, TreeMap, std::map<K, T, Compare> > TreeMapIterator;
+
+   mutable std::map<K, T, Compare> _impl;
 
 };
 
@@ -598,6 +604,8 @@ class PriorityQueue : public CollectionAdaptor<T, Backend>
 {
 public:
 
+   inline PriorityQueue(const Compare& cmp = Compare());
+
    inline virtual unsigned long size() const;
    
    inline void clear();
@@ -622,6 +630,10 @@ public:
     * Remove all ocurrences of given element from the queue.
     */
    inline void removeAll(const T& t);
+
+private:
+
+   Backend _backend;
 
 };
 

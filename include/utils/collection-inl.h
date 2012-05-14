@@ -420,6 +420,12 @@ throw (NotFoundException)
 }
 
 template <class T, class Compare>
+TreeSet<T, Compare>::TreeSet(const Compare& cmp)
+ : _impl(cmp)
+{
+}
+
+template <class T, class Compare>
 unsigned long
 TreeSet<T, Compare>::size() const
 { return _impl.size(); }
@@ -441,84 +447,97 @@ TreeSet<T, Compare>::begin() const
 template <class T, class Compare>
 ConstIterator<T>
 TreeSet<T, Compare>::end() const
-{}
+{
+   Ptr<AbstractConstIterator<T> > it = new TreeSetIterator(
+         *this, _impl.end(), _impl.end());
+   return ConstIterator<T>(it);
+}
    
 template <class T, class Compare>
 void
 TreeSet<T, Compare>::remove(Iterator<T>& it)
-{}
+{
+   TreeSetIterator *nit = it.template impl<TreeSetIterator>();
+   if (nit && (nit->collection() == this))   
+      _impl.erase(nit->impl());
+   else
+      KAREN_THROW(InvalidInputException, 
+            "cannot remove element from tree set from given iterator:"
+            " the iterator does not belongs to this collection");
+}
    
 template <class T, class Compare>
 void
 TreeSet<T, Compare>::insert(const T& t)
-{}
+{ _impl.insert(t); }
    
 template <class T, class Compare>
 void
 TreeSet<T, Compare>::removeAll(const T& t)
+{ _impl.erase(t); }
+
+template <class K, class T, class Compare>
+TreeMap<K, T, Compare>::TreeMap(const Compare& cmp)
+ : _impl(cmp)
 {}
 
-template <class K, class T>
-TreeMap<K, T>::TreeMap()
-{}
-
-template <class K, class T>
-TreeMap<K, T>::TreeMap(const Tuple<K, T>* elems, unsigned long nelems)
+template <class K, class T, class Compare>
+TreeMap<K, T, Compare>::TreeMap(const Tuple<K, T>* elems, unsigned long nelems)
 {
    for (unsigned long i = 0; i < nelems; i++)
       Map<K, T>::put(elems[i]);
 }
 
-template <class K, class T>
+template <class K, class T, class Compare>
 unsigned long
-TreeMap<K, T>::size() const
+TreeMap<K, T, Compare>::size() const
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 void
-TreeMap<K, T>::clear()
+TreeMap<K, T, Compare>::clear()
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 void
-TreeMap<K, T>::remove(Iterator<Tuple<K, T> >& it)
+TreeMap<K, T, Compare>::remove(Iterator<Tuple<K, T> >& it)
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 ConstIterator<Tuple<K, T> >
-TreeMap<K, T>::begin() const
+TreeMap<K, T, Compare>::begin() const
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 ConstIterator<Tuple<K, T> >
-TreeMap<K, T>::end() const
+TreeMap<K, T, Compare>::end() const
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 bool
-TreeMap<K, T>::hasKey(const K& k) const
+TreeMap<K, T, Compare>::hasKey(const K& k) const
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 void
-TreeMap<K, T>::put(const K& k, const T& t)
+TreeMap<K, T, Compare>::put(const K& k, const T& t)
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 const T&
-TreeMap<K, T>::get(const K& k) const
+TreeMap<K, T, Compare>::get(const K& k) const
 throw (NotFoundException)
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 T&
-TreeMap<K, T>::get(const K& k)
+TreeMap<K, T, Compare>::get(const K& k)
 throw (NotFoundException)
 {}
 
-template <class K, class T>
+template <class K, class T, class Compare>
 void
-TreeMap<K, T>::remove(const K& k)
+TreeMap<K, T, Compare>::remove(const K& k)
 { _impl.erase(k); }
 
 template <class T, class Backend>
@@ -547,6 +566,11 @@ template <class Equals>
 void
 Queue<T, Backend>::removeAll(const T& t, Equals eq)
 { this->_backend.removeAll<Backend>(t, eq); }
+
+template <class T, class Compare, class Backend>
+PriorityQueue<T, Compare, Backend>::PriorityQueue(const Compare& cmp)
+ : _backend(cmp)
+{}
 
 template <class T, class Compare, class Backend>
 unsigned long
