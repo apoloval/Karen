@@ -115,51 +115,6 @@ private:
    virtual void prevAfterNullCheck() = 0;
    
 };
-/** 
- * Abstract constant iterator class. This class provides an abstraction 
- * for a collection iterator unable to modify collection elements. 
- */
-template <class T>
-class AbstractConstIterator : public virtual AbstractIteratorBase<T>
-{
-public:
-
-   /**
-    * Clone this iterator, returning a copy of it.
-    */
-   virtual AbstractConstIterator* clone() const = 0;
-
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual const T& get() const throw (NullIteratorException)
-   {
-      if (this->isNull())
-         KAREN_THROW(NullIteratorException, 
-            "cannot get element from iterator: null iterator");
-      return getAfterNullCheck();
-   }
-
-   /**
-    * Dereference operator.
-    */
-   inline const T& operator * () const
-   throw (NullIteratorException)
-   { return get(); }
-
-   /**
-    * Field-access operator.
-    */
-   inline const T* operator -> () const
-   { return &get(); }
-   
-   /**
-    * Obtain the element pointed by iterator after a null check.
-    */
-   virtual const T& getAfterNullCheck() const = 0;
-
-};
-
 
 /**
  * Abstract iterator class. This class provides an abstraction for a 
@@ -187,6 +142,11 @@ public:
    }
    
    /**
+    * Obtain a const iterator from given one.
+    */
+   virtual Ptr<AbstractIterator<const T>> toConstIterator() = 0;
+   
+   /**
     * Dereference operator
     */
    inline T& operator * ()
@@ -199,8 +159,6 @@ public:
    inline T* operator -> ()
    { return &get(); }
    
-   virtual Ptr<AbstractConstIterator<T> > toConstIterator() = 0;
-   
 private:
 
    /**
@@ -208,108 +166,6 @@ private:
     */
    virtual T& getAfterNullCheck() = 0;
    
-};
-
-/** 
- * Constant iterator class. This class is used by any collection to wrap an 
- * actual constant iterator implementation. 
- */
-template <class T>
-class ConstIterator : public AbstractConstIterator<T>
-{
-public:
-
-   /**
-    * Create a new null const iterator.
-    */
-   inline ConstIterator() : _impl(NULL) {}
-
-   /**
-    * Create a new const iterator by wrapping an actual implementation.
-    */
-   inline ConstIterator(Ptr<AbstractConstIterator<T> >& impl) : _impl(impl) {}
-
-   /**
-    * Copy constructor. 
-    */
-   inline ConstIterator(const ConstIterator& it) : _impl(it._impl->clone()) {}
-   
-   /**
-    * Virtual destructor.
-    */
-   inline virtual ~ConstIterator() {}
-
-   /**
-    * Check whether iterator is null.
-    */
-   inline virtual bool isNull() const
-   { return _impl.isNull() || _impl->isNull(); }
-   
-   /**
-    * Clone this iterator, returning a copy of it.
-    */
-   inline virtual ConstIterator* clone() const
-   { return new ConstIterator(*this); }
-
-   /**
-    * Obtain iterator implementation.
-    */
-   template <class Impl = AbstractConstIterator<T> >
-   inline Impl* impl()
-   { return dynamic_cast<Impl*>((AbstractConstIterator<T>*) _impl); }
-
-   /**
-    * Increment operator.
-    */
-   inline ConstIterator& operator ++ (int n)
-   { this->next(); return *this; }
-   
-   /**
-    * Increment operator.
-    */
-   inline ConstIterator& operator ++ ()
-   { this->next(); return *this; }
-   
-   /**
-    * Decrement operator.
-    */
-   inline ConstIterator& operator -- (int n)
-   { this->prev(); return *this; }
-   
-   /**
-    * Decrement operator.
-    */
-   inline ConstIterator& operator -- ()
-   { this->prev(); return *this; }
-   
-private:
-
-   Ptr<AbstractConstIterator<T>> _impl;
-
-   /**
-    * Move forward iterator to the next element.
-    */
-   inline virtual void nextAfterNullCheck()
-   {
-      return _impl->next();
-   }
-   
-   /**
-    * Move backward iterator to the previous element.
-    */
-   inline virtual void prevAfterNullCheck()
-   {
-      return _impl->prev();
-   }
-   
-   /**
-    * Obtain collection element pointed by iterator.
-    */
-   inline virtual const T& getAfterNullCheck() const
-   {
-      return _impl->get();
-   }
-
 };
 
 /** 
@@ -351,12 +207,12 @@ public:
     * Clone this iterator, returning a copy of it.
     */
    inline virtual Iterator* clone() const
-   { return new Iterator(*this); }
+   { return new Iterator(*this); }      
 
-   inline operator ConstIterator<T> ()
+   inline virtual Ptr<AbstractIterator<const T>> toConstIterator()
    { 
-      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
-      return ConstIterator<T>(it);
+      Ptr<AbstractIterator<const T>> it = _impl->toConstIterator();
+      return new Iterator<const T>(it);
    }
 
    /**
@@ -365,6 +221,15 @@ public:
    template <class Impl = AbstractIterator<T> >
    inline Impl* impl()
    { return dynamic_cast<Impl*>((AbstractIterator<T>*) _impl); }
+   
+   /**
+    * Cast to const operator.
+    */
+   inline operator Iterator<const T> ()
+   {
+      Ptr<AbstractIterator<const T>> it = _impl->toConstIterator();
+      return Iterator<const T>(it);
+   }
 
    /**
     * Increment operator.
@@ -389,12 +254,6 @@ public:
     */
    inline Iterator& operator -- (int n)
    { this->prev(); return *this; }
-   
-   inline virtual Ptr<AbstractConstIterator<T> > toConstIterator()
-   { 
-      Ptr<AbstractConstIterator<T> > it = _impl->toConstIterator();
-      return new ConstIterator<T>(it);
-   }
    
 private:
 

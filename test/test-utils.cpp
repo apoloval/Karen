@@ -850,7 +850,7 @@ public:
       KAREN_UTEST_ASSERT(l.first() == 10);
       KAREN_UTEST_ASSERT(l.last() == 19);
 
-      ConstIterator<int> it = l.begin();
+      Iterator<int> it = l.begin();
       for (int i = 0; i < 5; i++)
          it++;
       l.remove(it);
@@ -890,7 +890,7 @@ public:
       
       try
       {
-         ConstIterator<int> it;
+         Iterator<int> it;
          l.remove(it);
          KAREN_UTEST_FAILED("expected exception not raised");
       }
@@ -898,7 +898,7 @@ public:
       try
       {
          LinkedList<int> ll;
-         ConstIterator<int> it = ll.begin();
+         Iterator<int> it = ll.begin();
          l.remove(it);
          KAREN_UTEST_FAILED("expected exception not raised");
       }
@@ -1064,7 +1064,7 @@ public:
       
       int seq[] = { 2, 7, 10, 15, 17, 20 };
       int i = 0;
-      ConstIterator<int> it = s.begin();
+      Iterator<const int> it = s.begin();
       KAREN_UTEST_ASSERT(it);
       for (; it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
@@ -1086,7 +1086,7 @@ public:
       
       int seq[] = { 2, 7, 15, 17, 20 };
       int i = 0;
-      for (ConstIterator<int> it = s.begin(); it; it++)
+      for (Iterator<const int> it = s.begin(); it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
    }
    
@@ -1185,15 +1185,15 @@ public:
    
    void shouldIterate()
    {
-      Tuple<String, int> elems[] =
+      Tuple<const String, int> elems[] =
       {
-         Tuple<String, int>("John",   12 ),
-         Tuple<String, int>("Laura",  33 ),
-         Tuple<String, int>("Mark",   45 ),
-         Tuple<String, int>("Patty",  18 ),
+         Tuple<const String, int>("John",   12 ),
+         Tuple<const String, int>("Laura",  33 ),
+         Tuple<const String, int>("Mark",   45 ),
+         Tuple<const String, int>("Patty",  18 ),
       };
       TreeMap<String, int> d(elems, 4);
-      ConstIterator<Tuple<String, int> > it;
+      Iterator<Tuple<const String, int> > it;
       int i = 0;
       for (it = d.begin(); it; it++)
       {
@@ -1320,7 +1320,7 @@ public:
          q.put(ent[i]);
       KAREN_UTEST_ASSERT(!q.isEmpty());
       KAREN_UTEST_ASSERT(q.size() == 4);
-      ConstIterator<Entry> it = q.begin();
+      Iterator<const Entry> it = q.begin();
       for (int i = 0; i < 4; i++)
       {
          const Entry &e = *it;

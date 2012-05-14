@@ -383,12 +383,12 @@ public:
    /**
     * Obtain a const-iterator pointing to the first element of the string.
     */
-   ConstIterator<char> begin() const;
+   Iterator<const char> begin() const;
 
    /**
     * Obtain a const-iterator pointing to (beyond) the end of the string.
     */
-   ConstIterator<char> end() const;
+   Iterator<const char> end() const;
 
 private:
 

@@ -36,7 +36,7 @@ namespace karen { namespace utils {
  * string iterator.
  */
 class StringIterator : public AbstractIterator<char>,
-                       public AbstractConstIterator<char>
+                       public AbstractIterator<const char>
 {
 public:
 
@@ -56,7 +56,7 @@ public:
    inline virtual StringIterator* clone() const
    { return new StringIterator(_itImpl, _endImpl); }
 
-   inline virtual Ptr<AbstractConstIterator> toConstIterator()
+   inline virtual Ptr<AbstractIterator<const char>> toConstIterator()
    { return new StringIterator(*this); }
 
 private:
@@ -161,20 +161,20 @@ String::end()
    return Iterator<char>(it);
 }
 
-ConstIterator<char>
+Iterator<const char>
 String::begin() const
 {
-   Ptr<AbstractConstIterator<char> > it = 
+   Ptr<AbstractIterator<const char> > it = 
       new StringIterator(_base.begin(), _base.end());
-   return ConstIterator<char>(it);
+   return Iterator<const char>(it);
 }
 
-ConstIterator<char>
+Iterator<const char>
 String::end() const
 {
-   Ptr<AbstractConstIterator<char> > it = 
+   Ptr<AbstractIterator<const char> > it = 
       new StringIterator(_base.end(), _base.end());
-   return ConstIterator<char>(it);
+   return Iterator<const char>(it);
 }
 
 

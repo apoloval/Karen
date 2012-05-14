@@ -44,7 +44,7 @@ template <class Equals>
 bool
 Collection<T>::hasElement(const T& t, Equals eq) const
 {
-   ConstIterator<T> it = this->begin(), end = this->end();
+   Iterator<const T> it = this->begin(), end = this->end();
    for (; it != end; it++)
       if (eq(*it, t))
          return true;
@@ -68,7 +68,7 @@ template <class Equals>
 void
 List<T>::removeAll(const T& t, Equals eq)
 {
-   ConstIterator<T> it = this->begin(), end = this->end();
+   Iterator<T> it = this->begin(), end = this->end();
    for (; it != end; it++)
       if (eq(*it, t))
          this->remove(it);
@@ -92,7 +92,7 @@ Map<K, T>::operator[] (const K& k)
 
 template <class K, class T>
 void
-Map<K, T>::put(const Tuple<K, T>& value)
+Map<K, T>::put(const Tuple<const K, T>& value)
 { this->put(value.first(), value.second()); }
 
 template <class T, class CollectionClass, 
@@ -116,6 +116,12 @@ template <class T, class CollectionClass,
 IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>*
 IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::clone() const
 { return new IteratorImpl(*_collection, _impl, _end); }
+   
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
+Ptr<AbstractIterator<const T>>
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::toConstIterator()
+{ return clone(); }
    
 template <class T, class CollectionClass, 
           class ImplementationClass, class IteratorClass>
@@ -152,12 +158,6 @@ template <class T, class CollectionClass,
 T&
 IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getAfterNullCheck()
 { return const_cast<T&>(*_impl); }   
-
-template <class T, class CollectionClass, 
-          class ImplementationClass, class IteratorClass>
-Ptr<AbstractConstIterator<T> >
-IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::toConstIterator()
-{ return new IteratorImpl(*this); }   
 
 template <class T>
 DynArray<T>::DynArray() : _impl() {}
@@ -198,26 +198,26 @@ DynArray<T>::end()
 }
 
 template <class T>
-ConstIterator<T>
+Iterator<const T>
 DynArray<T>::begin() const
 { 
-   Ptr<AbstractConstIterator<T> > it = 
+   Ptr<AbstractIterator<const T> > it = 
       new DynArrayIterator(*this, _impl.begin(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
 }
 
 template <class T>
-ConstIterator<T>
+Iterator<const T>
 DynArray<T>::end() const
 {
-   Ptr<AbstractConstIterator<T> > it = 
+   Ptr<AbstractIterator<const T> > it = 
       new DynArrayIterator(*this, _impl.end(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
 }
 
 template <class T>
 void
-DynArray<T>::remove(ConstIterator<T>& it)
+DynArray<T>::remove(Iterator<T>& it)
 {
    DynArrayIterator* nit = it.template impl<DynArrayIterator>();
    if (nit && (nit->collection() == this))
@@ -301,26 +301,26 @@ LinkedList<T>::end()
 }
    
 template <class T>
-ConstIterator<T>
+Iterator<const T>
 LinkedList<T>::begin() const
 {
-   Ptr<AbstractConstIterator<T> > it = new LinkedListIterator(
+   Ptr<AbstractIterator<const T> > it = new LinkedListIterator(
          *this, _impl.begin(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
 }
    
 template <class T>
-ConstIterator<T>
+Iterator<const T>
 LinkedList<T>::end() const
 {
-   Ptr<AbstractConstIterator<T> > it = new LinkedListIterator(
+   Ptr<AbstractIterator<const T> > it = new LinkedListIterator(
          *this, _impl.end(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
 }
    
 template <class T>
 void
-LinkedList<T>::remove(ConstIterator<T>& it)
+LinkedList<T>::remove(Iterator<T>& it)
 {
    LinkedListIterator *nit = it.template impl<LinkedListIterator>();
    if (nit && (nit->collection() == this))
@@ -436,26 +436,44 @@ TreeSet<T, Compare>::clear()
 { _impl.clear(); }
 
 template <class T, class Compare>
-ConstIterator<T>
+Iterator<const T>
 TreeSet<T, Compare>::begin() const
 {
-   Ptr<AbstractConstIterator<T> > it = new TreeSetIterator(
+   Ptr<AbstractIterator<const T> > it = new TreeSetIterator(
          *this, _impl.begin(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
 }
    
 template <class T, class Compare>
-ConstIterator<T>
+Iterator<const T>
 TreeSet<T, Compare>::end() const
 {
-   Ptr<AbstractConstIterator<T> > it = new TreeSetIterator(
+   Ptr<AbstractIterator<const T> > it = new TreeSetIterator(
          *this, _impl.end(), _impl.end());
-   return ConstIterator<T>(it);
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::begin()
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetIterator(
+         *this, _impl.begin(), _impl.end());
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::end()
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetIterator(
+         *this, _impl.end(), _impl.end());
+   return Iterator<const T>(it);
 }
    
 template <class T, class Compare>
 void
-TreeSet<T, Compare>::remove(ConstIterator<T>& it)
+TreeSet<T, Compare>::remove(Iterator<const T>& it)
 {
    TreeSetIterator *nit = it.template impl<TreeSetIterator>();
    if (nit && (nit->collection() == this))   
@@ -483,7 +501,7 @@ TreeMap<K, T, Compare>::TreeMap(const Compare& cmp)
 
 template <class K, class T, class Compare>
 TreeMap<K, T, Compare>::TreeMap(
-      const Tuple<K, T>* elems, 
+      const Tuple<const K, T>* elems, 
       unsigned long nelems, 
       const Compare& cmp)
  : _impl(KeyCompare(cmp))
@@ -504,7 +522,7 @@ TreeMap<K, T, Compare>::clear()
 
 template <class K, class T, class Compare>
 void
-TreeMap<K, T, Compare>::remove(ConstIterator<Tuple<K, T> >& it)
+TreeMap<K, T, Compare>::remove(Iterator<Tuple<const K, T> >& it)
 {
    TreeMapIterator* nit = it.template impl<TreeMapIterator>();
    if (nit && (nit->collection() == this))
@@ -516,21 +534,39 @@ TreeMap<K, T, Compare>::remove(ConstIterator<Tuple<K, T> >& it)
 }
 
 template <class K, class T, class Compare>
-ConstIterator<Tuple<K, T> >
-TreeMap<K, T, Compare>::begin() const
+Iterator<Tuple<const K, T> >
+TreeMap<K, T, Compare>::begin()
 {
-   Ptr<AbstractConstIterator<Tuple<K, T> > > it =
+   Ptr<AbstractIterator<Tuple<const K, T> > > it =
          new TreeMapIterator(*this, _impl.begin(), _impl.end());
-   return ConstIterator<Tuple<K, T> >(it);
+   return Iterator<Tuple<const K, T> >(it);
 }
 
 template <class K, class T, class Compare>
-ConstIterator<Tuple<K, T> >
+Iterator<Tuple<const K, T> >
+TreeMap<K, T, Compare>::end()
+{
+   Ptr<AbstractIterator<Tuple<const K, T> > > it =
+         new TreeMapIterator(*this, _impl.end(), _impl.end());
+   return Iterator<Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<const Tuple<const K, T> >
+TreeMap<K, T, Compare>::begin() const
+{
+   Ptr<AbstractIterator<const Tuple<const K, T> > > it =
+         new TreeMapIterator(*this, _impl.begin(), _impl.end());
+   return Iterator<const Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<const Tuple<const K, T> >
 TreeMap<K, T, Compare>::end() const
 {
-   Ptr<AbstractConstIterator<Tuple<K, T> > > it =
+   Ptr<AbstractIterator<const Tuple<const K, T> > > it =
          new TreeMapIterator(*this, _impl.end(), _impl.end());
-   return ConstIterator<Tuple<K, T> >(it);
+   return Iterator<const Tuple<const K, T> >(it);
 }
 
 template <class K, class T, class Compare>
@@ -603,18 +639,28 @@ PriorityQueue<T, Compare, Backend>::clear()
 { _backend.clear(); }
 
 template <class T, class Compare, class Backend>
-ConstIterator<T>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::begin()
+{ return _backend.begin(); }
+   
+template <class T, class Compare, class Backend>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::end()
+{ return _backend.end(); }
+   
+template <class T, class Compare, class Backend>
+Iterator<const T>
 PriorityQueue<T, Compare, Backend>::begin() const
 { return _backend.begin(); }
    
 template <class T, class Compare, class Backend>
-ConstIterator<T>
+Iterator<const T>
 PriorityQueue<T, Compare, Backend>::end() const
 { return _backend.end(); }
    
 template <class T, class Compare, class Backend>
 void
-PriorityQueue<T, Compare, Backend>::remove(ConstIterator<T>& it)
+PriorityQueue<T, Compare, Backend>::remove(Iterator<const T>& it)
 { return _backend.remove(it); }
    
 template <class T, class Compare, class Backend>
@@ -632,7 +678,7 @@ T
 PriorityQueue<T, Compare, Backend>::poll()
 {
    T t = head();
-   ConstIterator<T> it = _backend.begin();
+   Iterator<const T> it = _backend.begin();
    _backend.remove(it);
    return t;
 }

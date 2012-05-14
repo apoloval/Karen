@@ -103,26 +103,18 @@ public:
     * Remove the element pointed by given iterator. The iterator is updated
     * to point to the element that followed the removed one. 
     */
-   virtual void remove(ConstIterator<T>& it) = 0;
+   virtual void remove(Iterator<T>& it) = 0;
    
    /**
     * Obtain a const iterator to the beginning of the collection.
     */
-   virtual ConstIterator<T> begin() const = 0;
+   virtual Iterator<const T> begin() const = 0;
    
    /**
     * Obtain a const iterator to the end of the collection (actually beyond it).
     */
-   virtual ConstIterator<T> end() const = 0;
+   virtual Iterator<const T> end() const = 0;
    
-};
-
-
-template <class T>
-class SequentialCollection : public Collection<T>
-{
-public:
-
    /**
     * Obtain an iterator to the beginning of the collection.
     */
@@ -133,6 +125,13 @@ public:
     */
    virtual Iterator<T> end() = 0;
    
+};
+
+
+template <class T>
+class SequentialCollection : public Collection<T>
+{
+public:
 };
 
 template <class T>
@@ -282,7 +281,7 @@ public:
  * collection that behaves as a set.
  */
 template <class T>
-class Set : public AssociativeCollection<T>
+class Set : public AssociativeCollection<const T>
 {
 public:
 
@@ -303,7 +302,7 @@ public:
  * a collection that behaves as a map or dictionary. 
  */
 template <class K, class T>
-class Map : public AssociativeCollection<Tuple<K, T> >
+class Map : public AssociativeCollection<Tuple<const K, T> >
 {
 public:
 
@@ -332,7 +331,7 @@ public:
    /**
     * Put a new element in the map with given key from its wrapping tuple.
     */
-   inline void put(const Tuple<K, T>& value);
+   inline void put(const Tuple<const K, T>& value);
 
    /**
     * Retrieve an element by its key, or throw a NotFoundException if 
@@ -362,7 +361,7 @@ template <class T,
           class ImplementationClass,
           class IteratorClass = typename ImplementationClass::iterator>
 class IteratorImpl : public AbstractIterator<T>,
-                     public AbstractConstIterator<T>
+                     public AbstractIterator<const T>
 {
 public:
 
@@ -373,6 +372,8 @@ public:
    inline virtual bool isNull() const;
    
    inline virtual IteratorImpl* clone() const;
+
+   inline virtual Ptr<AbstractIterator<const T>> toConstIterator();
 
    inline IteratorClass& impl();
    
@@ -392,8 +393,6 @@ private:
    
    inline virtual T& getAfterNullCheck();
    
-   inline Ptr<AbstractConstIterator<T> > toConstIterator();
-
 };
 
 template <class T>
@@ -424,11 +423,11 @@ public:
    
    inline virtual Iterator<T> end();
    
-   inline virtual ConstIterator<T> begin() const;
+   inline virtual Iterator<const T> begin() const;
    
-   inline virtual ConstIterator<T> end() const;
+   inline virtual Iterator<const T> end() const;
 
-   inline void remove(ConstIterator<T>& it);
+   inline virtual void remove(Iterator<T>& it);
 
    inline virtual const T& get(unsigned long pos) const 
       throw (OutOfBoundsException);
@@ -464,11 +463,11 @@ public:
    
    inline virtual Iterator<T> end();
    
-   inline virtual ConstIterator<T> begin() const;
+   inline virtual Iterator<const T> begin() const;
    
-   inline virtual ConstIterator<T> end() const;
+   inline virtual Iterator<const T> end() const;
    
-   inline void remove(ConstIterator<T>& it);
+   inline virtual void remove(Iterator<T>& it);
 
    inline virtual const T& first() const throw (NotFoundException);
 
@@ -506,11 +505,15 @@ public:
    
    inline void clear();
 
-   inline virtual ConstIterator<T> begin() const;
+   inline virtual Iterator<const T> begin();
    
-   inline virtual ConstIterator<T> end() const;
+   inline virtual Iterator<const T> end();
 
-   inline void remove(ConstIterator<T>& it);
+   inline virtual Iterator<const T> begin() const;
+   
+   inline virtual Iterator<const T> end() const;
+
+   inline void remove(Iterator<const T>& it);
 
    inline void insert(const T& t);
    
@@ -531,7 +534,7 @@ public:
 
    inline TreeMap(const Compare& cmp = Compare());
    
-   inline TreeMap(const Tuple<K, T>* elems, 
+   inline TreeMap(const Tuple<const K, T>* elems, 
                   unsigned long nelems,
                   const Compare& cmp = Compare());
 
@@ -539,11 +542,15 @@ public:
    
    inline virtual void clear();
    
-   inline virtual void remove(ConstIterator<Tuple<K, T> >& it);
+   inline virtual void remove(Iterator<Tuple<const K, T> >& it);
    
-   inline virtual ConstIterator<Tuple<K, T> > begin() const;
+   inline virtual Iterator<Tuple<const K, T> > begin();
    
-   inline virtual ConstIterator<Tuple<K, T> > end() const;
+   inline virtual Iterator<Tuple<const K, T> > end();
+
+   inline virtual Iterator<const Tuple<const K, T> > begin() const;
+   
+   inline virtual Iterator<const Tuple<const K, T> > end() const;
 
    inline virtual bool hasKey(const K& k) const;
 
@@ -565,14 +572,15 @@ private:
       
       inline KeyCompare(const Compare& c = Compare()) : cmp(c) {}
    
-      inline bool operator () (const Tuple<K, T>& lhs, const Tuple<K, T>& rhs) const
+      inline bool operator () (const Tuple<const K, T>& lhs, 
+                               const Tuple<const K, T>& rhs) const
       { return cmp(lhs.first(), rhs.first()); }
    };
 
-   typedef IteratorImpl<Tuple<K, T>, TreeMap, 
-                        std::set<Tuple<K, T>, KeyCompare> > TreeMapIterator;
+   typedef IteratorImpl<Tuple<const K, T>, TreeMap, 
+                        std::set<Tuple<const K, T>, KeyCompare> > TreeMapIterator;
    
-   mutable std::set<Tuple<K, T>, KeyCompare> _impl;
+   mutable std::set<Tuple<const K, T>, KeyCompare> _impl;
 
 };
 
@@ -613,7 +621,7 @@ public:
 template <class T, 
           class Compare = DefaultLessThan<T>, 
           class Backend = TreeSet<T, Compare> >
-class PriorityQueue : public CollectionAdaptor<T, Backend>
+class PriorityQueue : public CollectionAdaptor<const T, Backend>
 {
 public:
 
@@ -623,11 +631,15 @@ public:
    
    inline void clear();
 
-   inline virtual ConstIterator<T> begin() const;
+   inline virtual Iterator<const T> begin();
    
-   inline virtual ConstIterator<T> end() const;
+   inline virtual Iterator<const T> end();
 
-   inline void remove(ConstIterator<T>& it);
+   inline virtual Iterator<const T> begin() const;
+   
+   inline virtual Iterator<const T> end() const;
+
+   inline void remove(Iterator<const T>& it);
 
    inline virtual const T& head() const;
 
