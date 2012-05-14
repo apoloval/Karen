@@ -408,11 +408,11 @@ void
 LinkedList<T>::removeFirst()
 throw (NotFoundException)
 {
-   typename std::list<T>::iterator it = _impl.begin(), end = _impl.end();
-   if (it == end)
+   if (size() > 0)
+      _impl.pop_front();
+   else
       KAREN_THROW(NotFoundException, 
          "cannot remove first element of linked list: list is empty");
-   _impl.erase(it);
 }
 
 template <class T>
@@ -420,11 +420,11 @@ void
 LinkedList<T>::removeLast()
 throw (NotFoundException)
 {
-   typename std::list<T>::reverse_iterator it = _impl.rbegin(), end = _impl.rend();
-   if (it == end)
+   if (size() > 0)
+      _impl.pop_back();
+   else
       KAREN_THROW(NotFoundException, 
          "cannot remove last element of linked list: list is empty");
-   _impl.erase(it.base());
 }
 
 template <class T, class Compare>
