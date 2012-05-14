@@ -32,6 +32,7 @@
 
 #include <vector>
 #include <list>
+#include <set>
 #include <map>
 
 namespace karen { namespace utils {
@@ -356,7 +357,10 @@ public:
 
 
 
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, 
+          class CollectionClass, 
+          class ImplementationClass,
+          class IteratorClass = typename ImplementationClass::iterator>
 class IteratorImpl : public AbstractIterator<T>,
                      public AbstractConstIterator<T>
 {
@@ -370,15 +374,15 @@ public:
    
    inline virtual IteratorImpl* clone() const;
 
-   inline typename ImplementationClass::iterator impl();
+   inline IteratorClass& impl();
    
    inline const CollectionClass* collection();
    
 private:
 
-   mutable const CollectionClass*                  _collection;
-   mutable typename ImplementationClass::iterator  _impl;
-   mutable typename ImplementationClass::iterator  _end;
+   mutable const CollectionClass*   _collection;
+   mutable IteratorClass            _impl;
+   mutable IteratorClass            _end;
 
    inline virtual void nextAfterNullCheck();
    
@@ -500,10 +504,6 @@ public:
    
    inline void clear();
 
-   inline virtual Iterator<T> begin();
-   
-   inline virtual Iterator<T> end();
-   
    inline virtual ConstIterator<T> begin() const;
    
    inline virtual ConstIterator<T> end() const;
@@ -513,6 +513,12 @@ public:
    inline void insert(const T& t);
    
    inline void removeAll(const T& t);
+
+private:
+
+   typedef IteratorImpl<T, TreeSet, std::set<T> > TreeSetIterator;
+   
+   mutable std::set<T> _impl;
    
 };
 

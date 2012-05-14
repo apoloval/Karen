@@ -1064,7 +1064,7 @@ public:
       
       int seq[] = { 2, 7, 10, 15, 17, 20 };
       int i = 0;
-      Iterator<int> it = s.begin();
+      ConstIterator<int> it = s.begin();
       KAREN_UTEST_ASSERT(it);
       for (; it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
@@ -1086,7 +1086,7 @@ public:
       
       int seq[] = { 2, 7, 15, 17, 20 };
       int i = 0;
-      for (Iterator<int> it = s.begin(); it; it++)
+      for (ConstIterator<int> it = s.begin(); it; it++)
          KAREN_UTEST_ASSERT(*it == seq[i++]);
    }
    

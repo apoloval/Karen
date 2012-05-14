@@ -95,8 +95,9 @@ void
 Map<K, T>::put(const Tuple<K, T>& value)
 { this->put(value.first(), value.second()); }
 
-template <class T, class CollectionClass, class ImplementationClass>
-IteratorImpl<T, CollectionClass, ImplementationClass>::IteratorImpl(
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::IteratorImpl(
       const CollectionClass& col,
       const typename ImplementationClass::iterator& impl,
       const typename ImplementationClass::iterator& end)
@@ -104,49 +105,58 @@ IteratorImpl<T, CollectionClass, ImplementationClass>::IteratorImpl(
 {
 }
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 bool
-IteratorImpl<T, CollectionClass, ImplementationClass>::isNull() const
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::isNull() const
 { return _impl == _end; }
 
-template <class T, class CollectionClass, class ImplementationClass>
-IteratorImpl<T, CollectionClass, ImplementationClass>*
-IteratorImpl<T, CollectionClass, ImplementationClass>::clone() const
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>*
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::clone() const
 { return new IteratorImpl(*_collection, _impl, _end); }
    
-template <class T, class CollectionClass, class ImplementationClass>
-typename ImplementationClass::iterator
-IteratorImpl<T, CollectionClass, ImplementationClass>::impl()
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
+IteratorClass&
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::impl()
 { return _impl; }
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 const CollectionClass*
-IteratorImpl<T, CollectionClass, ImplementationClass>::collection()
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::collection()
 { return _collection; }
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 void
-IteratorImpl<T, CollectionClass, ImplementationClass>::nextAfterNullCheck()
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::nextAfterNullCheck()
 { _impl++; }   
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 void
-IteratorImpl<T, CollectionClass, ImplementationClass>::prevAfterNullCheck()
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::prevAfterNullCheck()
 { _impl--; }   
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 const T&
-IteratorImpl<T, CollectionClass, ImplementationClass>::getAfterNullCheck() const
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getAfterNullCheck() const
 { return *_impl; }   
    
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 T&
-IteratorImpl<T, CollectionClass, ImplementationClass>::getAfterNullCheck()
-{ return *_impl; }   
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getAfterNullCheck()
+{ return const_cast<T&>(*_impl); }   
 
-template <class T, class CollectionClass, class ImplementationClass>
+template <class T, class CollectionClass, 
+          class ImplementationClass, class IteratorClass>
 Ptr<AbstractConstIterator<T> >
-IteratorImpl<T, CollectionClass, ImplementationClass>::toConstIterator()
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::toConstIterator()
 { return new IteratorImpl(*this); }   
 
 template <class T>
@@ -412,28 +422,21 @@ throw (NotFoundException)
 template <class T, class Compare>
 unsigned long
 TreeSet<T, Compare>::size() const
-{
-}
+{ return _impl.size(); }
    
 template <class T, class Compare>
 void
 TreeSet<T, Compare>::clear()
-{}
+{ _impl.clear(); }
 
-template <class T, class Compare>
-Iterator<T>
-TreeSet<T, Compare>::begin()
-{}
-   
-template <class T, class Compare>
-Iterator<T>
-TreeSet<T, Compare>::end()
-{}
-   
 template <class T, class Compare>
 ConstIterator<T>
 TreeSet<T, Compare>::begin() const
-{}
+{
+   Ptr<AbstractConstIterator<T> > it = new TreeSetIterator(
+         *this, _impl.begin(), _impl.end());
+   return ConstIterator<T>(it);
+}
    
 template <class T, class Compare>
 ConstIterator<T>
