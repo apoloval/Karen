@@ -233,8 +233,9 @@ public:
    /**
     * Obtain iterator implementation.
     */
-   inline AbstractConstIterator<T>* impl()
-   { return _impl; }
+   template <class Impl = AbstractConstIterator<T> >
+   inline Impl* impl()
+   { return dynamic_cast<Impl>((AbstractConstIterator<T>*) _impl); }
 
    /**
     * Increment operator.
@@ -329,8 +330,9 @@ public:
    /**
     * Obtain iterator implementation.
     */
-   inline AbstractIterator<T>* impl()
-   { return _impl; }
+   template <class Impl = AbstractIterator<T> >
+   inline Impl* impl()
+   { return dynamic_cast<Impl*>((AbstractIterator<T>*) _impl); }
 
    /**
     * Increment operator.
