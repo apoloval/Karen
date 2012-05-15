@@ -125,6 +125,28 @@ public:
     */
    virtual Iterator<T> end() = 0;
    
+   /**
+    * Obtain a reverse const iterator to the beginning of the collection.
+    */
+   virtual Iterator<const T> rbegin() const = 0;
+   
+   /**
+    * Obtain a reverse const iterator to the end of the collection 
+    * (actually beyond it).
+    */
+   virtual Iterator<const T> rend() const = 0;
+   
+   /**
+    * Obtain a reverse iterator to the beginning of the collection.
+    */
+   virtual Iterator<T> rbegin() = 0;
+   
+   /**
+    * Obtain a reverse iterator to the end of the collection (actually 
+    * beyond it).
+    */
+   virtual Iterator<T> rend() = 0;
+   
 };
 
 
@@ -367,8 +389,8 @@ class IteratorImpl : public AbstractIterator<T>,
 public:
 
    inline IteratorImpl(const CollectionClass& col,
-                       const typename ImplementationClass::iterator& impl,
-                       const typename ImplementationClass::iterator& end);
+                       const IteratorClass& impl,
+                       const IteratorClass& end);
    
    inline virtual bool isNull() const;
    
@@ -428,6 +450,14 @@ public:
    
    inline virtual Iterator<const T> end() const;
 
+   inline virtual Iterator<T> rbegin();
+   
+   inline virtual Iterator<T> rend();
+   
+   inline virtual Iterator<const T> rbegin() const;
+   
+   inline virtual Iterator<const T> rend() const;
+
    inline virtual void remove(Iterator<T>& it);
 
    inline virtual const T& get(unsigned long pos) const 
@@ -445,7 +475,13 @@ public:
 
 private:
 
-   typedef IteratorImpl<T, DynArray, std::vector<T> > DynArrayIterator;
+   typedef IteratorImpl<
+         T, DynArray, std::vector<T>, 
+         typename std::vector<T>::iterator> DynArrayIterator;
+
+   typedef IteratorImpl<
+         T, DynArray, std::vector<T>, 
+         typename std::vector<T>::reverse_iterator> DynArrayReverseIterator;
 
    mutable std::vector<T> _impl;
    
@@ -467,6 +503,14 @@ public:
    inline virtual Iterator<const T> begin() const;
    
    inline virtual Iterator<const T> end() const;
+   
+   inline virtual Iterator<T> rbegin();
+   
+   inline virtual Iterator<T> rend();
+   
+   inline virtual Iterator<const T> rbegin() const;
+   
+   inline virtual Iterator<const T> rend() const;
    
    inline virtual void remove(Iterator<T>& it);
 
@@ -490,7 +534,13 @@ public:
 
 private:
 
-   typedef IteratorImpl<T, LinkedList, std::list<T>> LinkedListIterator;
+   typedef IteratorImpl<
+      T, LinkedList, std::list<T>, 
+      typename std::list<T>::iterator> LinkedListIterator;
+   
+   typedef IteratorImpl<
+      T, LinkedList, std::list<T>, 
+      typename std::list<T>::reverse_iterator> LinkedListReverseIterator;
    
    mutable std::list<T> _impl;
 };
@@ -514,6 +564,14 @@ public:
    
    inline virtual Iterator<const T> end() const;
 
+   inline virtual Iterator<const T> rbegin();
+   
+   inline virtual Iterator<const T> rend();
+
+   inline virtual Iterator<const T> rbegin() const;
+   
+   inline virtual Iterator<const T> rend() const;
+
    inline void remove(Iterator<const T>& it);
 
    inline Iterator<const T> insert(const T& t);
@@ -522,7 +580,13 @@ public:
 
 private:
 
-   typedef IteratorImpl<T, TreeSet, std::set<T, Compare> > TreeSetIterator;
+   typedef IteratorImpl<
+         T, TreeSet, std::set<T, Compare>,
+         typename std::set<T, Compare>::iterator> TreeSetIterator;
+   
+   typedef IteratorImpl<
+         T, TreeSet, std::set<T, Compare>,
+         typename std::set<T, Compare>::reverse_iterator> TreeSetReverseIterator;
    
    mutable std::set<T, Compare> _impl;
    
@@ -553,6 +617,14 @@ public:
    
    inline virtual Iterator<const Tuple<const K, T> > end() const;
 
+   inline virtual Iterator<Tuple<const K, T> > rbegin();
+   
+   inline virtual Iterator<Tuple<const K, T> > rend();
+
+   inline virtual Iterator<const Tuple<const K, T> > rbegin() const;
+   
+   inline virtual Iterator<const Tuple<const K, T> > rend() const;
+
    inline virtual bool hasKey(const K& k) const;
 
    inline virtual Iterator<Tuple<const K, T>> put(const K& k, const T& t);
@@ -575,11 +647,18 @@ private:
                                const Tuple<const K, T>& rhs) const
       { return cmp(lhs.first(), rhs.first()); }
    };
-
-   typedef IteratorImpl<Tuple<const K, T>, TreeMap, 
-                        std::set<Tuple<const K, T>, KeyCompare> > TreeMapIterator;
    
-   mutable std::set<Tuple<const K, T>, KeyCompare> _impl;
+   typedef std::set<Tuple<const K, T>, KeyCompare> _Impl;
+
+   typedef IteratorImpl<
+      Tuple<const K, T>, TreeMap, _Impl, 
+      typename _Impl::iterator> TreeMapIterator;
+   
+   typedef IteratorImpl<
+      Tuple<const K, T>, TreeMap, _Impl,
+      typename _Impl::reverse_iterator> TreeMapReverseIterator;
+   
+   mutable _Impl _impl;
 
 };
 
@@ -637,6 +716,14 @@ public:
    inline virtual Iterator<const T> begin() const;
    
    inline virtual Iterator<const T> end() const;
+
+   inline virtual Iterator<const T> rbegin();
+   
+   inline virtual Iterator<const T> rend();
+
+   inline virtual Iterator<const T> rbegin() const;
+   
+   inline virtual Iterator<const T> rend() const;
 
    inline void remove(Iterator<const T>& it);
 

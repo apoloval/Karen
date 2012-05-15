@@ -99,8 +99,8 @@ template <class T, class CollectionClass,
           class ImplementationClass, class IteratorClass>
 IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::IteratorImpl(
       const CollectionClass& col,
-      const typename ImplementationClass::iterator& impl,
-      const typename ImplementationClass::iterator& end)
+      const IteratorClass& impl,
+      const IteratorClass& end)
  : _collection(&col), _impl(impl), _end(end)
 {
 }
@@ -216,6 +216,42 @@ DynArray<T>::end() const
 }
 
 template <class T>
+Iterator<T>
+DynArray<T>::rbegin()
+{ 
+   Ptr<AbstractIterator<T> > it = 
+      new DynArrayReverseIterator(*this, _impl.rbegin(), _impl.rend());
+   return Iterator<T>(it);
+}
+
+template <class T>
+Iterator<T>
+DynArray<T>::rend()
+{ 
+   Ptr<AbstractIterator<T> > it = 
+      new DynArrayReverseIterator(*this, _impl.rend(), _impl.rend());
+   return Iterator<T>(it);
+}
+
+template <class T>
+Iterator<const T>
+DynArray<T>::rbegin() const
+{ 
+   Ptr<AbstractIterator<const T> > it = 
+      new DynArrayReverseIterator(*this, _impl.rbegin(), _impl.rend());
+   return Iterator<const T>(it);
+}
+
+template <class T>
+Iterator<const T>
+DynArray<T>::rend() const
+{
+   Ptr<AbstractIterator<const T> > it = 
+      new DynArrayReverseIterator(*this, _impl.rend(), _impl.rend());
+   return Iterator<const T>(it);
+}
+
+template <class T>
 void
 DynArray<T>::remove(Iterator<T>& it)
 {
@@ -323,6 +359,42 @@ LinkedList<T>::end() const
 }
    
 template <class T>
+Iterator<T>
+LinkedList<T>::rbegin()
+{
+   Ptr<AbstractIterator<T> > it = new LinkedListReverseIterator(
+         *this, _impl.rbegin(), _impl.rend());
+   return Iterator<T>(it);
+}
+   
+template <class T>
+Iterator<T>
+LinkedList<T>::rend()
+{
+   Ptr<AbstractIterator<T> > it = new LinkedListReverseIterator(
+         *this, _impl.rend(), _impl.rend());
+   return Iterator<T>(it);
+}
+   
+template <class T>
+Iterator<const T>
+LinkedList<T>::rbegin() const
+{
+   Ptr<AbstractIterator<const T> > it = new LinkedListReverseIterator(
+         *this, _impl.rbegin(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T>
+Iterator<const T>
+LinkedList<T>::rend() const
+{
+   Ptr<AbstractIterator<const T> > it = new LinkedListReverseIterator(
+         *this, _impl.rend(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T>
 void
 LinkedList<T>::remove(Iterator<T>& it)
 {
@@ -344,11 +416,11 @@ const T&
 LinkedList<T>::first() const 
 throw (NotFoundException)
 { 
-   typename std::list<T>::const_iterator it = _impl.begin(), end = _impl.end();
-   if (it == end)
+   if (_impl.size() > 0)
+      return _impl.front();
+   else
       KAREN_THROW(NotFoundException, 
          "cannot fetch first element of linked list: list is empty");
-   return *it;   
 }
 
 template <class T>
@@ -356,11 +428,11 @@ const T&
 LinkedList<T>::last() const
 throw (NotFoundException)
 {
-   typename std::list<T>::const_reverse_iterator it = _impl.rbegin(), end = _impl.rend();
-   if (it == end)
+   if (_impl.size() > 0)
+      return _impl.back();
+   else
       KAREN_THROW(NotFoundException, 
          "cannot fetch last element of linked list: list is empty");
-   return *it;   
 }
    
 template <class T>
@@ -480,6 +552,42 @@ TreeSet<T, Compare>::end()
 }
    
 template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::rbegin() const
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetReverseIterator(
+         *this, _impl.rbegin(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::rend() const
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetReverseIterator(
+         *this, _impl.rend(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::rbegin()
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetReverseIterator(
+         *this, _impl.rbegin(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
+Iterator<const T>
+TreeSet<T, Compare>::rend()
+{
+   Ptr<AbstractIterator<const T> > it = new TreeSetReverseIterator(
+         *this, _impl.rend(), _impl.rend());
+   return Iterator<const T>(it);
+}
+   
+template <class T, class Compare>
 void
 TreeSet<T, Compare>::remove(Iterator<const T>& it)
 {
@@ -586,6 +694,42 @@ TreeMap<K, T, Compare>::end() const
 {
    Ptr<AbstractIterator<const Tuple<const K, T> > > it =
          new TreeMapIterator(*this, _impl.end(), _impl.end());
+   return Iterator<const Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<Tuple<const K, T> >
+TreeMap<K, T, Compare>::rbegin()
+{
+   Ptr<AbstractIterator<Tuple<const K, T> > > it =
+         new TreeMapReverseIterator(*this, _impl.rbegin(), _impl.rend());
+   return Iterator<Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<Tuple<const K, T> >
+TreeMap<K, T, Compare>::rend()
+{
+   Ptr<AbstractIterator<Tuple<const K, T> > > it =
+         new TreeMapReverseIterator(*this, _impl.rend(), _impl.rend());
+   return Iterator<Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<const Tuple<const K, T> >
+TreeMap<K, T, Compare>::rbegin() const
+{
+   Ptr<AbstractIterator<const Tuple<const K, T> > > it =
+         new TreeMapReverseIterator(*this, _impl.rbegin(), _impl.rend());
+   return Iterator<const Tuple<const K, T> >(it);
+}
+
+template <class K, class T, class Compare>
+Iterator<const Tuple<const K, T> >
+TreeMap<K, T, Compare>::rend() const
+{
+   Ptr<AbstractIterator<const Tuple<const K, T> > > it =
+         new TreeMapReverseIterator(*this, _impl.rend(), _impl.rend());
    return Iterator<const Tuple<const K, T> >(it);
 }
 
@@ -698,6 +842,26 @@ PriorityQueue<T, Compare, Backend>::end() const
 { return _backend.end(); }
    
 template <class T, class Compare, class Backend>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::rbegin()
+{ return _backend.rbegin(); }
+   
+template <class T, class Compare, class Backend>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::rend()
+{ return _backend.rend(); }
+   
+template <class T, class Compare, class Backend>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::rbegin() const
+{ return _backend.rbegin(); }
+   
+template <class T, class Compare, class Backend>
+Iterator<const T>
+PriorityQueue<T, Compare, Backend>::rend() const
+{ return _backend.rend(); }
+   
+template <class T, class Compare, class Backend>
 void
 PriorityQueue<T, Compare, Backend>::remove(Iterator<const T>& it)
 { return _backend.remove(it); }
@@ -705,7 +869,7 @@ PriorityQueue<T, Compare, Backend>::remove(Iterator<const T>& it)
 template <class T, class Compare, class Backend>
 const T&
 PriorityQueue<T, Compare, Backend>::head() const
-{ return *_backend.begin(); }
+{ return *_backend.rbegin(); }
 
 template <class T, class Compare, class Backend>
 void
@@ -717,7 +881,7 @@ T
 PriorityQueue<T, Compare, Backend>::poll()
 {
    T t = head();
-   Iterator<const T> it = _backend.begin();
+   Iterator<const T> it = _backend.rbegin();
    _backend.remove(it);
    return t;
 }
