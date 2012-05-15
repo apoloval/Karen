@@ -931,7 +931,7 @@ public:
       l.insertBack(12);
       l.insertBack(14);
       Iterator<int> it = l.begin();
-      for (int i = 0; i < 4; i++) it++;
+      ++it; ++it; ++it;
       l.insertBefore(13, it);
       KAREN_UTEST_ASSERT(!l.isEmpty());
       KAREN_UTEST_ASSERT(l.size() == 5);
@@ -962,7 +962,7 @@ public:
       int j = 10;
       it = l.begin();
       KAREN_UTEST_ASSERT(it);
-      for (; it; it++)
+      for (; it; ++it)
          KAREN_UTEST_ASSERT(*it == j++);
    }
    
