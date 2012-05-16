@@ -592,6 +592,56 @@ private:
    
 };
 
+template <class T, class Compare = DefaultLessThan<T> >
+class TreeMultiset : public Set<T>
+{
+public:
+
+   inline TreeMultiset(const Compare& cmp = Compare());
+
+   inline virtual unsigned long size() const;
+   
+   inline void clear();
+
+   inline virtual Iterator<const T> begin();
+   
+   inline virtual Iterator<const T> end();
+
+   inline virtual Iterator<const T> begin() const;
+   
+   inline virtual Iterator<const T> end() const;
+
+   inline virtual Iterator<const T> rbegin();
+   
+   inline virtual Iterator<const T> rend();
+
+   inline virtual Iterator<const T> rbegin() const;
+   
+   inline virtual Iterator<const T> rend() const;
+
+   inline void remove(Iterator<const T>& it);
+
+   inline Iterator<const T> insert(const T& t);
+   
+   inline void removeAll(const T& t);
+
+private:
+
+   typedef std::multiset<T, Compare> _Impl;
+
+   typedef IteratorImpl<
+         T, TreeMultiset, _Impl, 
+         typename _Impl::iterator> TreeMultisetIterator;
+   
+   typedef IteratorImpl<
+         T, TreeMultiset, _Impl, 
+         typename _Impl::reverse_iterator> TreeMultisetReverseIterator;
+   
+   mutable _Impl _impl;
+   
+};
+
+
 template <class K, class T, class Compare = DefaultLessThan<K> >
 class TreeMap : public Map<K, T>
 {
@@ -698,7 +748,7 @@ public:
 
 template <class T, 
           class Compare = DefaultLessThan<T>, 
-          class Backend = TreeSet<T, Compare> >
+          class Backend = TreeMultiset<T, Compare> >
 class PriorityQueue : public CollectionAdaptor<const T, Backend>
 {
 public:

@@ -1339,8 +1339,8 @@ public:
          { 15, "Stephen" },
       };
       Entry ord[] = {
-         ent[1],
          ent[3],
+         ent[1],
          ent[2],
          ent[0],
       };
