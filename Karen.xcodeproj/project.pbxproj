@@ -31,6 +31,7 @@
 		B5080E711521A06B00DC495A /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E701521A06B00DC495A /* FreeType.framework */; };
 		B50947C2142C8D2400F3449C /* test-utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947C1142C8D2400F3449C /* test-utils.cpp */; };
 		B53669C014487848001374A8 /* test-glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669BF14487848001374A8 /* test-glut.cpp */; };
+		B5BA4D0F15655158008BD04D /* draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BA4D0E15655158008BD04D /* draw.cpp */; };
 		B5FE5545144C765300EFD75F /* test-cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5FE5544144C765300EFD75F /* test-cocoa.cpp */; };
 		B5FE555B144C7FFF00EFD75F /* glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF89143E0BEE007AE498 /* glut.cpp */; };
 		B5FE555C144C7FFF00EFD75F /* gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669A814481499001374A8 /* gl.cpp */; };
@@ -124,6 +125,8 @@
 		B53669AA14482CD5001374A8 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = src/ui/image.cpp; sourceTree = "<group>"; };
 		B53669B414487826001374A8 /* test-glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test-glut"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53669BF14487848001374A8 /* test-glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-glut.cpp"; path = "test/test-glut.cpp"; sourceTree = "<group>"; };
+		B5BA4D0E15655158008BD04D /* draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = draw.cpp; path = src/ui/draw.cpp; sourceTree = "<group>"; };
+		B5BA4D111565699E008BD04D /* bolt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bolt.h; path = include/utils/bolt.h; sourceTree = "<group>"; };
 		B5BEB8771526F4A100BD1F7F /* collection-inl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "collection-inl.h"; path = "include/utils/collection-inl.h"; sourceTree = "<group>"; };
 		B5E8FF71143C95E1007AE498 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = app.h; path = include/app.h; sourceTree = "<group>"; };
 		B5E8FF75143C983F007AE498 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = engine.h; path = include/ui/engine.h; sourceTree = "<group>"; };
@@ -236,22 +239,23 @@
 		B5094789142B874B00F3449C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				B5BA4D111565699E008BD04D /* bolt.h */,
 				B5080E4E15219D1600DC495A /* buffer.h */,
+				B5BEB8771526F4A100BD1F7F /* collection-inl.h */,
+				B50947AC142BA93100F3449C /* collection.h */,
+				B509479E142B8AC800F3449C /* exception.h */,
 				B5080E4F15219D1600DC495A /* file-posix.h */,
 				B5080E5015219D1600DC495A /* file.h */,
 				B5080E5115219D1600DC495A /* iterator.h */,
-				B5080E5215219D1600DC495A /* stream.h */,
-				B509478A142B878100F3449C /* types.h */,
-				B509479E142B8AC800F3449C /* exception.h */,
-				B50947A4142B9A9400F3449C /* string.h */,
-				B50947AC142BA93100F3449C /* collection.h */,
-				B5BEB8771526F4A100BD1F7F /* collection-inl.h */,
-				B50947AE142C85CD00F3449C /* test.h */,
-				B50947CA1430B39600F3449C /* pointer.h */,
 				B50947CD1430C4B700F3449C /* numeric.h */,
-				B5312DF11431B7F300D24DAE /* platform.h */,
 				B5E8FF82143DF850007AE498 /* parsing.h */,
+				B5312DF11431B7F300D24DAE /* platform.h */,
+				B50947CA1430B39600F3449C /* pointer.h */,
+				B5080E5215219D1600DC495A /* stream.h */,
+				B50947A4142B9A9400F3449C /* string.h */,
+				B50947AE142C85CD00F3449C /* test.h */,
 				B53669A114473495001374A8 /* timing.h */,
+				B509478A142B878100F3449C /* types.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -325,6 +329,7 @@
 				B5E8FF80143DF114007AE498 /* engine.cpp */,
 				B5E8FF8F14446524007AE498 /* event.cpp */,
 				B53669AA14482CD5001374A8 /* image.cpp */,
+				B5BA4D0E15655158008BD04D /* draw.cpp */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -557,6 +562,7 @@
 				B5080E6615219E0A00DC495A /* button.cpp in Sources */,
 				B5080E6715219E0A00DC495A /* widget.cpp in Sources */,
 				B5080E6915219E1500DC495A /* ft.cpp in Sources */,
+				B5BA4D0F15655158008BD04D /* draw.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

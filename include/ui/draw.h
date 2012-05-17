@@ -25,17 +25,94 @@
 #ifndef KAREN_UI_DRAW_H
 #define KAREN_UI_DRAW_H
 
-#include "../utils/collection.h"
-#include "../utils/platform.h"
-
-#include "bitmap.h"
-#include "types.h"
+#include "ui/bitmap.h"
+#include "ui/types.h"
+#include "utils/bolt.h"
+#include "utils/collection.h"
+#include "utils/exception.h"
+#include "utils/platform.h"
+#include "utils/types.h"
 
 using karen::utils::DynArray;
 
 namespace karen { namespace ui {
 
 class DrawingContext;
+
+/**
+ * Bitmap binding class. This class represents a binding between the
+ * a bitmap object and the drawing context. Once a bitmap is bound to
+ * a drawing context, the binding object may be used to draw such a
+ * bitmap on the corresponding canvas. This class is aimed to be extended
+ * by concrete implementations that execute the real binding process.
+ */
+class BitmapBinding
+{
+public:
+
+   /**
+    * Obtain the parent context for this bitmap binding.
+    */
+   inline const DrawingContext& parentContext() const
+   { return *_parentContext; }
+   
+   /**
+    * Obtain the bitmap that is bounded to the drawing context.
+    */
+   inline const Bitmap& bitmap() const
+   { return _bitmap; }
+   
+   /**
+    * Obtain the bitmap that is bounded to the drawing context. It returns
+    * a non-const bitmap that may be altered if the binding is unlocked. 
+    * Otherwise, this operation throws a InvalidStateException. Any atempt
+    * to modify the bitmap wrapped by the bolt when binding is locked will
+    * cause the exception to be thrown as well.
+    */
+   utils::Bolt<Bitmap>& bitmap() throw (utils::InvalidStateException);
+   
+   /**
+    * Lock the bitmap binding, Any attempt to obtain a non-const reference
+    * to the bitmap will cause a InvalidStateException to be thrown.
+    */
+   void lock();
+   
+   /**
+    * Unlock the bitmap binding, After this call, it is possible to fetch a 
+    * non-const reference to the bitmap to modify it.
+    */
+   void unlock();
+
+protected:
+
+   /**
+    * Create a new bitmap binding object by indicating the bitmap and the 
+    * parent context.
+    */
+   BitmapBinding(const Bitmap& bitmap, const DrawingContext& parentContext);
+
+   /**
+    * On binding lock event. This template method is invoked each time
+    * the binding is locked. It may be used by concrete implementations
+    * to react against binding locks. 
+    */
+   virtual void onLock() = 0;
+
+   /**
+    * On binding unlock event. This template method is invoked each time
+    * the binding is unlocked. It may be used by concrete implementations
+    * to react against binding unlocks. 
+    */
+   virtual void onUnlock() = 0;
+   
+private:
+
+   const DrawingContext* _parentContext;
+   utils::Bolt<Bitmap> _bolt;
+   Bitmap _bitmap;
+   bool _unlocked;
+
+};
 
 /**
  * Canvas class. This abstract class provides an interface for executing
