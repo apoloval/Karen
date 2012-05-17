@@ -44,7 +44,7 @@ public:
    /**
     * Create a new canvas with given size.
     */
-   OpenGLCanvas(const Vector& size);
+   OpenGLCanvas(const DrawingContext& parentContext, const Vector& size);
 
    /**
     * Get canvas size. Obtain canvas dimensions.

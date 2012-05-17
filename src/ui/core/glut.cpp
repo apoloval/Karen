@@ -134,7 +134,7 @@ throw (utils::InvalidInputException)
    
    glutDisplayFunc(GlutDrawingContext::glutDisplayHandler);
    
-   _canvas = new OpenGLCanvas(screenProps.dimensions);
+   _canvas = new OpenGLCanvas(*this, screenProps.dimensions);
    
    return *_canvas;
 }

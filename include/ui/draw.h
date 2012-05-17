@@ -35,6 +35,8 @@ using karen::utils::DynArray;
 
 namespace karen { namespace ui {
 
+class DrawingContext;
+
 /**
  * Canvas class. This abstract class provides an interface for executing
  * drawing primitives.
@@ -193,6 +195,18 @@ public:
    };
    
    /**
+    * Create a new canvas indicating its parent context.
+    */
+   inline Canvas(const DrawingContext& parentContext)
+     : _parentContext(&parentContext) {}
+   
+   /**
+    * Obtain the parent drawing context.
+    */
+   inline const DrawingContext& drawingContext() const
+   { return *_parentContext; }
+   
+   /**
     * Get canvas size. Obtain canvas dimensions.
     */
    virtual Vector size() const = 0;
@@ -241,6 +255,10 @@ public:
     * Draw (or write) text on canvas.
     */
    virtual void drawText(const TextParams& txt) = 0;
+
+private:
+
+   const DrawingContext* _parentContext;
    
 };
 

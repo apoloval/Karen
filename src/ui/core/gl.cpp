@@ -37,8 +37,10 @@
 
 namespace karen { namespace ui { namespace core {
 
-OpenGLCanvas::OpenGLCanvas(const Vector& size)
- : _size(size)
+OpenGLCanvas::OpenGLCanvas(
+         const DrawingContext& parentContext, 
+         const Vector& size)
+ : Canvas(parentContext), _size(size)
 {
    glEnable(GL_BLEND);
    glEnable(GL_DEPTH_TEST);

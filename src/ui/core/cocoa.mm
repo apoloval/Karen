@@ -403,7 +403,7 @@ throw (utils::InvalidInputException)
             
    [[_window contentView] addSubview: _glView];
    
-   _glCanvas = new OpenGLCanvas(screenProps.dimensions);
+   _glCanvas = new OpenGLCanvas(*this, screenProps.dimensions);
    
    [_glView setScreenCanvas: _glCanvas];
    
