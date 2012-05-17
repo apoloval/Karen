@@ -256,10 +256,19 @@ void
 DynArray<T>::remove(Iterator<T>& it)
 {
    DynArrayIterator* nit = it.template impl<DynArrayIterator>();
+   DynArrayReverseIterator* nrit = it.template impl<DynArrayReverseIterator>();
    if (nit && (nit->collection() == this))
    {
       Ptr<AbstractIterator<T>> newIt = 
          new DynArrayIterator(*this, _impl.erase(nit->impl()), _impl.end());
+      it = newIt;
+   }
+   else if (nrit && (nrit->collection() == this))
+   {
+      typename _Impl::reverse_iterator newItImpl =
+         typename _Impl::reverse_iterator(_impl.erase(--(nrit->impl().base())));
+      Ptr<AbstractIterator<T>> newIt = new DynArrayReverseIterator(
+            *this, newItImpl, _impl.rend());
       it = newIt;
    }
    else
@@ -399,10 +408,19 @@ void
 LinkedList<T>::remove(Iterator<T>& it)
 {
    LinkedListIterator *nit = it.template impl<LinkedListIterator>();
+   LinkedListReverseIterator *nrit = it.template impl<LinkedListReverseIterator>();
    if (nit && (nit->collection() == this))
    {
       Ptr<AbstractIterator<T>> newIt = 
          new LinkedListIterator(*this, _impl.erase(nit->impl()), _impl.end());
+      it = newIt;
+   }
+   else if (nrit && (nrit->collection() == this))
+   {
+      typename _Impl::reverse_iterator newItImpl =
+         typename _Impl::reverse_iterator(_impl.erase(--(nrit->impl().base())));
+      Ptr<AbstractIterator<T>> newIt = new LinkedListReverseIterator(
+            *this, newItImpl, _impl.rend());
       it = newIt;
    }
    else
@@ -593,10 +611,16 @@ TreeSet<T, Compare>::remove(Iterator<const T>& it)
 {
    Iterator<const T> itCopy = it;
    TreeSetIterator *nit = itCopy.template impl<TreeSetIterator>();
+   TreeSetReverseIterator *nrit = itCopy.template impl<TreeSetReverseIterator>();
    if (nit && (nit->collection() == this))   
    {
       it++;
       _impl.erase(nit->impl());
+   }
+   else if (nrit && (nrit->collection() == this))
+   {
+      it++;
+      _impl.erase(--nit->impl());
    }
    else
       KAREN_THROW(InvalidInputException, 
@@ -777,10 +801,16 @@ TreeMap<K, T, Compare>::remove(Iterator<Tuple<const K, T> >& it)
 {
    Iterator<Tuple<const K, T>> itCopy = it;
    TreeMapIterator* nit = itCopy.template impl<TreeMapIterator>();
+   TreeMapReverseIterator* nrit = itCopy.template impl<TreeMapReverseIterator>();
    if (nit && (nit->collection() == this))
    {
       it++;
       _impl.erase(nit->impl());
+   }
+   else if (nrit && (nrit->collection() == this))
+   {
+      it++;
+      _impl.erase(--nrit->impl().base());
    }
    else
       KAREN_THROW(InvalidInputException, 

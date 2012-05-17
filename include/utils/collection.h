@@ -475,15 +475,17 @@ public:
 
 private:
 
-   typedef IteratorImpl<
-         T, DynArray, std::vector<T>, 
-         typename std::vector<T>::iterator> DynArrayIterator;
+   typedef std::vector<T> _Impl;
 
    typedef IteratorImpl<
          T, DynArray, std::vector<T>, 
-         typename std::vector<T>::reverse_iterator> DynArrayReverseIterator;
+         typename _Impl::iterator> DynArrayIterator;
 
-   mutable std::vector<T> _impl;
+   typedef IteratorImpl<
+         T, DynArray, std::vector<T>, 
+         typename _Impl::reverse_iterator> DynArrayReverseIterator;
+
+   mutable _Impl _impl;
    
 };
 
@@ -534,15 +536,17 @@ public:
 
 private:
 
+   typedef std::list<T> _Impl;
+
    typedef IteratorImpl<
       T, LinkedList, std::list<T>, 
-      typename std::list<T>::iterator> LinkedListIterator;
+      typename _Impl::iterator> LinkedListIterator;
    
    typedef IteratorImpl<
       T, LinkedList, std::list<T>, 
-      typename std::list<T>::reverse_iterator> LinkedListReverseIterator;
+      typename _Impl::reverse_iterator> LinkedListReverseIterator;
    
-   mutable std::list<T> _impl;
+   mutable _Impl _impl;
 };
 
 template <class T, class Compare = DefaultLessThan<T> >
@@ -580,15 +584,17 @@ public:
 
 private:
 
+   typedef std::set<T, Compare> _Impl;
+
    typedef IteratorImpl<
          T, TreeSet, std::set<T, Compare>,
-         typename std::set<T, Compare>::iterator> TreeSetIterator;
+         typename _Impl::iterator> TreeSetIterator;
    
    typedef IteratorImpl<
          T, TreeSet, std::set<T, Compare>,
-         typename std::set<T, Compare>::reverse_iterator> TreeSetReverseIterator;
+         typename _Impl::reverse_iterator> TreeSetReverseIterator;
    
-   mutable std::set<T, Compare> _impl;
+   mutable _Impl _impl;
    
 };
 
