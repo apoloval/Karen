@@ -46,14 +46,14 @@ public:
    /**
     * Default constructor. It creates a null-valued pointer. 
     */
-   Ptr() : refc(NULL), obj(NULL) {}
+   Ptr() : _refc(NULL), _obj(NULL) {}
    
    /**
     * Value constructor. It creates a new smart pointer from given raw
     * pointer. If given pointer is NULL, the smart pointer is null as well
     * and no reference count is allocated to manage it.
     */
-   Ptr(T *value) : refc(value ? new RefCounter(1) : NULL), obj(value) {}
+   Ptr(T *value) : _refc(value ? new RefCounter(1) : NULL), _obj(value) {}
    
    /**
     * Copy constructor. This copy constructor creates a new smart pointer
@@ -121,7 +121,7 @@ public:
     */
    template <class Other>
    bool operator == (const Ptr<Other> &p) const
-   { return this->refc == p.refc; }
+   { return this->_refc == p._refc; }
    
    /**
     * Cast operator to raw pointer. This operator converts the smart pointer
@@ -129,7 +129,7 @@ public:
     * deallocate the object by using the C-like pointer with 'delete' operator
     * would derive in memory deallocation issues. 
     */
-   operator T* () const { return obj; }
+   operator T* () const { return _obj; }
    
    /**
     * Bool casting operator. The smart pointer may be casted into a boolean 
@@ -142,13 +142,13 @@ public:
     * Check whether smart pointer is null. 
     */
    bool isNull() const
-   { return refc == NULL; }
+   { return _refc == NULL; }
    
    /**
     * Check whether smart pointer is not null. 
     */
    bool isNotNull() const
-   { return refc != NULL; }
+   { return _refc != NULL; }
    
    /**
     * Obtain the value of the count reference for this smart pointer. If no
@@ -157,7 +157,7 @@ public:
     * object as this. 
     */
    unsigned int count() const
-   { return refc ? *refc : 0; }
+   { return _refc ? *_refc : 0; }
 
    /**
     * Pointer-accessor operator. This operator may be used to access the
@@ -215,6 +215,22 @@ public:
       return result;
    }
 
+   /**
+    * This function member performs a dynamic casting of the pointer. It
+    * returns another smart pointer for Other objects, which object is shared
+    * given this smart pointer. If the casting fails, the resulting pointer
+    * is null. If pointer is null, a NullPointerException is raised. 
+    */
+   template <class Other>
+   Ptr<const Other> dynCasting() const throw (NullPointerException)
+   {
+      const Other *cast = dynamic_cast<const Other*>(safeObject());
+      Ptr<const Other> result;
+      if (cast)
+         result.uncheckedCopy(*this, cast);
+      return result;
+   }
+
    /* 
     * This friendship is established with the template class Ptr itself
     * and used to allow castings.
@@ -225,58 +241,58 @@ private:
 
    typedef unsigned int RefCounter;
 
-   RefCounter *refc;
-   T *obj;
+   RefCounter *_refc;
+   T *_obj;
    
    void release()
    {
-      if (refc)
+      if (_refc)
       {
-         (*refc)--;
-         if ((*refc) == 0)
+         (*_refc)--;
+         if ((*_refc) == 0)
          {  
-            if (obj)
-               delete obj;
-            delete refc;
+            if (_obj)
+               delete _obj;
+            delete _refc;
          }
       }
-      refc = NULL;
-      obj = NULL;
+      _refc = NULL;
+      _obj = NULL;
    }
    
    template <class Other>
    void copy(const Ptr<Other> &p)
    {
-      this->refc = p.refc;
-      this->obj  = p.obj;
-      if (this->refc)
-         (*this->refc)++;
+      this->_refc = p._refc;
+      this->_obj  = p._obj;
+      if (this->_refc)
+         (*this->_refc)++;
    }
    
    template <class Other>
    void move(Ptr<Other>& p)
    {
-      this->refc  = p.refc;
-      this->obj   = p.obj;
-      p.refc      = NULL;
-      p.obj       = NULL;
+      this->_refc  = p._refc;
+      this->_obj   = p._obj;
+      p._refc      = NULL;
+      p._obj       = NULL;
    }
 
    template <class Other, class Obj>
    void uncheckedCopy(const Ptr<Other> &p, Obj *obj)
    {
-      this->refc = p.refc;
-      this->obj  = obj;
-      if (this->refc)
-         (*this->refc)++;
+      this->_refc = p._refc;
+      this->_obj  = _obj;
+      if (this->_refc)
+         (*this->_refc)++;
    }
 
    T *safeObject() throw (NullPointerException)
    {
-      if (!obj) 
+      if (!_obj) 
          KAREN_THROW(NullPointerException, 
                      "attempt to dereference a null pointer");
-      return obj;
+      return _obj;
    }   
 
    const T *safeObject() const throw (NullPointerException)
