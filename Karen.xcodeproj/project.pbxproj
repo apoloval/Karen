@@ -30,6 +30,9 @@
 		B5080E6F15219F0A00DC495A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6E15219F0A00DC495A /* Cocoa.framework */; };
 		B5080E711521A06B00DC495A /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E701521A06B00DC495A /* FreeType.framework */; };
 		B50947C2142C8D2400F3449C /* test-utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947C1142C8D2400F3449C /* test-utils.cpp */; };
+		B526A8F415669DDF0003CDEF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6E15219F0A00DC495A /* Cocoa.framework */; };
+		B526A90A15669DF30003CDEF /* test-image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5204FE115666F3D003C6363 /* test-image.cpp */; };
+		B526A90B15669DFD0003CDEF /* Karen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FE554F144C7F2B00EFD75F /* Karen.framework */; };
 		B53669C014487848001374A8 /* test-glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669BF14487848001374A8 /* test-glut.cpp */; };
 		B5BA4D0F15655158008BD04D /* draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BA4D0E15655158008BD04D /* draw.cpp */; };
 		B5FE5545144C765300EFD75F /* test-cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5FE5544144C765300EFD75F /* test-cocoa.cpp */; };
@@ -39,7 +42,6 @@
 		B5FE555E144C7FFF00EFD75F /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF7C143DA7FE007AE498 /* types.cpp */; };
 		B5FE555F144C7FFF00EFD75F /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF80143DF114007AE498 /* engine.cpp */; };
 		B5FE5560144C7FFF00EFD75F /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF8F14446524007AE498 /* event.cpp */; };
-		B5FE5561144C7FFF00EFD75F /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669AA14482CD5001374A8 /* image.cpp */; };
 		B5FE5562144C7FFF00EFD75F /* string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947A2142B978B00F3449C /* string.cpp */; };
 		B5FE5563144C7FFF00EFD75F /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947B0142C87C300F3449C /* test.cpp */; };
 		B5FE5564144C7FFF00EFD75F /* numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947CF1430C66400F3449C /* numeric.cpp */; };
@@ -117,12 +119,13 @@
 		B50947CA1430B39600F3449C /* pointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pointer.h; path = include/utils/pointer.h; sourceTree = "<group>"; };
 		B50947CD1430C4B700F3449C /* numeric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = numeric.h; path = include/utils/numeric.h; sourceTree = "<group>"; };
 		B50947CF1430C66400F3449C /* numeric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = numeric.cpp; path = src/utils/numeric.cpp; sourceTree = "<group>"; };
+		B5204FE115666F3D003C6363 /* test-image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-image.cpp"; path = "test/test-image.cpp"; sourceTree = "<group>"; };
+		B526A8F215669DDF0003CDEF /* test-image.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-image.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5312DF11431B7F300D24DAE /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform.h; path = include/utils/platform.h; sourceTree = "<group>"; };
 		B53669A114473495001374A8 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timing.h; path = include/utils/timing.h; sourceTree = "<group>"; };
 		B53669A41447371A001374A8 /* timing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timing.cpp; path = src/utils/timing.cpp; sourceTree = "<group>"; };
 		B53669A614481335001374A8 /* gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl.h; path = include/ui/core/gl.h; sourceTree = "<group>"; };
 		B53669A814481499001374A8 /* gl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl.cpp; path = src/ui/core/gl.cpp; sourceTree = "<group>"; };
-		B53669AA14482CD5001374A8 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = src/ui/image.cpp; sourceTree = "<group>"; };
 		B53669B414487826001374A8 /* test-glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test-glut"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53669BF14487848001374A8 /* test-glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-glut.cpp"; path = "test/test-glut.cpp"; sourceTree = "<group>"; };
 		B5BA4D0E15655158008BD04D /* draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = draw.cpp; path = src/ui/draw.cpp; sourceTree = "<group>"; };
@@ -133,7 +136,6 @@
 		B5E8FF77143C9935007AE498 /* draw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = draw.h; path = include/ui/draw.h; sourceTree = "<group>"; };
 		B5E8FF79143C9C72007AE498 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = include/ui/types.h; sourceTree = "<group>"; };
 		B5E8FF7C143DA7FE007AE498 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = src/ui/types.cpp; sourceTree = "<group>"; };
-		B5E8FF7E143DBB50007AE498 /* image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = image.h; path = include/ui/image.h; sourceTree = "<group>"; };
 		B5E8FF80143DF114007AE498 /* engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = engine.cpp; path = src/ui/engine.cpp; sourceTree = "<group>"; };
 		B5E8FF82143DF850007AE498 /* parsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parsing.h; path = include/utils/parsing.h; sourceTree = "<group>"; };
 		B5E8FF84143DF8FF007AE498 /* parsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parsing.cpp; path = src/utils/parsing.cpp; sourceTree = "<group>"; };
@@ -161,6 +163,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5FE556E144C80D900EFD75F /* Karen.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B526A8EF15669DDF0003CDEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B526A90B15669DFD0003CDEF /* Karen.framework in Frameworks */,
+				B526A8F415669DDF0003CDEF /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +233,7 @@
 				B53669B414487826001374A8 /* test-glut */,
 				B5FE5528144C762100EFD75F /* test-cocoa.app */,
 				B5FE554F144C7F2B00EFD75F /* Karen.framework */,
+				B526A8F215669DDF0003CDEF /* test-image.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -295,6 +307,7 @@
 				B50947C1142C8D2400F3449C /* test-utils.cpp */,
 				B53669BF14487848001374A8 /* test-glut.cpp */,
 				B5FE5544144C765300EFD75F /* test-cocoa.cpp */,
+				B5204FE115666F3D003C6363 /* test-image.cpp */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -310,7 +323,6 @@
 				B5E8FF75143C983F007AE498 /* engine.h */,
 				B5E8FF77143C9935007AE498 /* draw.h */,
 				B5E8FF79143C9C72007AE498 /* types.h */,
-				B5E8FF7E143DBB50007AE498 /* image.h */,
 				B5E8FF8B143E0DD7007AE498 /* loop.h */,
 				B5E8FF8D143E1272007AE498 /* event.h */,
 				B5E8FF911444C333007AE498 /* timer.h */,
@@ -328,7 +340,6 @@
 				B5E8FF7C143DA7FE007AE498 /* types.cpp */,
 				B5E8FF80143DF114007AE498 /* engine.cpp */,
 				B5E8FF8F14446524007AE498 /* event.cpp */,
-				B53669AA14482CD5001374A8 /* image.cpp */,
 				B5BA4D0E15655158008BD04D /* draw.cpp */,
 			);
 			name = UI;
@@ -414,6 +425,23 @@
 			productReference = B50947B7142C8CFB00F3449C /* test-utils */;
 			productType = "com.apple.product-type.tool";
 		};
+		B526A8F115669DDF0003CDEF /* test-image */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B526A90715669DDF0003CDEF /* Build configuration list for PBXNativeTarget "test-image" */;
+			buildPhases = (
+				B526A8EE15669DDF0003CDEF /* Sources */,
+				B526A8EF15669DDF0003CDEF /* Frameworks */,
+				B526A8F015669DDF0003CDEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "test-image";
+			productName = "test-image";
+			productReference = B526A8F215669DDF0003CDEF /* test-image.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B53669B314487826001374A8 /* test-glut */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B53669BD14487826001374A8 /* Build configuration list for PBXNativeTarget "test-glut" */;
@@ -491,11 +519,19 @@
 				B50947B6142C8CFB00F3449C /* test-utils */,
 				B53669B314487826001374A8 /* test-glut */,
 				B5FE5527144C762100EFD75F /* test-cocoa */,
+				B526A8F115669DDF0003CDEF /* test-image */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B526A8F015669DDF0003CDEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B5FE5526144C762100EFD75F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -519,6 +555,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B50947C2142C8D2400F3449C /* test-utils.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B526A8EE15669DDF0003CDEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B526A90A15669DF30003CDEF /* test-image.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,7 +592,6 @@
 				B5FE555E144C7FFF00EFD75F /* types.cpp in Sources */,
 				B5FE555F144C7FFF00EFD75F /* engine.cpp in Sources */,
 				B5FE5560144C7FFF00EFD75F /* event.cpp in Sources */,
-				B5FE5561144C7FFF00EFD75F /* image.cpp in Sources */,
 				B5FE5562144C7FFF00EFD75F /* string.cpp in Sources */,
 				B5FE5563144C7FFF00EFD75F /* test.cpp in Sources */,
 				B5FE5564144C7FFF00EFD75F /* numeric.cpp in Sources */,
@@ -629,6 +672,58 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B526A90815669DDF0003CDEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "test/test-cocoa.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		B526A90915669DDF0003CDEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "test/test-cocoa.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
@@ -804,6 +899,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B526A90715669DDF0003CDEF /* Build configuration list for PBXNativeTarget "test-image" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B526A90815669DDF0003CDEF /* Debug */,
+				B526A90915669DDF0003CDEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		B53669BD14487826001374A8 /* Build configuration list for PBXNativeTarget "test-glut" */ = {
 			isa = XCConfigurationList;

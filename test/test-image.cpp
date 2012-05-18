@@ -34,11 +34,12 @@ using namespace karen;
 #define SPEED_X      2.0f
 #define SPEED_Y      0.0f
 #define FIG_SIZE     100.0f
+#define BITMAP_SIZE  128
 #define FPS          60.0f
 
 ui::ScreenProperties screenProps =
 {
-   ui::IVector(SCREEN_W, SCREEN_H),     // dimensions
+   ui::IVector(SCREEN_W, SCREEN_H),    // dimensions
    ui::PixelFormat::FORMAT_32BPP_RGBA, // pixel format
    false,                              // fullscreen
    true,                               // double buffered
@@ -54,11 +55,13 @@ public:
    SimpleDrawing(ui::Engine* en)
     : mov(SPEED_X, SPEED_Y), frameCount(0), engine(en)
    {
-      ui::Bitmap bmp(ui::IVector(128, 128), ui::PixelFormat::FORMAT_24BPP_RGB);
    }
 
    inline virtual void draw(ui::Canvas& canvas)
    {
+      if (_bitmap.isNull())
+         initBitmap();
+   
       ui::Canvas::ImageParams imgParams =
       {
          _bitmap,
@@ -140,6 +143,22 @@ private:
    long frameCount;
    ui::Engine* engine;
    Ptr<ui::BitmapBinding> _bitmap;
+   
+   void initBitmap()
+   {
+      ui::Bitmap bmp(ui::IVector(BITMAP_SIZE, BITMAP_SIZE), 
+                     ui::PixelFormat::FORMAT_32BPP_RGBA);
+      for (int i = 0; i < BITMAP_SIZE; i++)
+         for (int j = 0; j < BITMAP_SIZE; j++)
+         {
+            bool evenRow = (i / (BITMAP_SIZE / 8)) % 2;
+            bool evenCol = (j / (BITMAP_SIZE / 8)) % 2;
+            ui::Color col(
+                  evenRow == evenCol ? ui::Color::RED : ui::Color::BLUE);
+            bmp.setPixelAt(ui::IVector(i, j), col);
+         }
+      _bitmap = engine->drawingContext().bindBitmap(bmp);
+   }
 
 };
 
