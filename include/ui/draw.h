@@ -51,6 +51,11 @@ class BitmapBinding
 public:
 
    /**
+    * Virtual destructor.
+    */
+   inline virtual ~BitmapBinding() {}
+
+   /**
     * Obtain the parent context for this bitmap binding.
     */
    inline const DrawingContext& parentContext() const
@@ -253,11 +258,11 @@ public:
     */
    struct ImageParams
    {
-      Bitmap*           image;
-      Rect              imageRect;
-      Rect              canvasRect;
-      ImageDisplayMode  displayMode;
-      double            light;
+      Ptr<BitmapBinding>   image;
+      Rect                 imageRect;
+      Rect                 canvasRect;
+      ImageDisplayMode     displayMode;
+      double               light;
    };
    
    /**
@@ -423,6 +428,13 @@ public:
     * Mark the drawing context to as needing to be redisplayed.
     */
    virtual void postRedisplay() = 0;
+   
+   /**
+    * Bint a bitmap to this drawing context. The resulting binding object
+    * is returned. That object may be used to draw images using the 
+    * canvas provided by this drawing context.
+    */
+   virtual Ptr<BitmapBinding> bindBitmap(const Bitmap& bmp) = 0;
 
 };
 

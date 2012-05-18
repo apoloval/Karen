@@ -435,6 +435,12 @@ CocoaDrawingContext::postRedisplay()
    [_glView setNeedsDisplay: YES];
 }
 
+Ptr<BitmapBinding>
+CocoaDrawingContext::bindBitmap(const Bitmap& bmp)
+{ 
+   return new GLBitmapBinding(bmp, *this);
+}
+
 
 
 void

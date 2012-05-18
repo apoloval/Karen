@@ -155,6 +155,12 @@ GlutDrawingContext::postRedisplay()
    glutPostRedisplay();
 }
 
+Ptr<BitmapBinding>
+GlutDrawingContext::bindBitmap(const Bitmap& bmp)
+{
+   return new GLBitmapBinding(bmp, *this);
+}
+
 void
 GlutDrawingContext::glutDisplayHandler()
 {

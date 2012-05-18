@@ -27,15 +27,40 @@
 #include "utils/platform.h"
 #include "utils/pointer.h"
 
-#if KAREN_PLATFORM == KAREN_PLATFORM_OSX
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
-
 #include <cmath>
 
 namespace karen { namespace ui { namespace core {
+
+static void 
+toGLPixelFormat(const PixelFormat& fmt, GLenum& format, GLenum& type)
+throw (utils::InvalidInputException)
+{
+   if (fmt == PixelFormat::FORMAT_8BPP_GREYSCALE)
+   { format = GL_LUMINANCE; type = GL_UNSIGNED_BYTE; }
+   else if (fmt == PixelFormat::FORMAT_16BPP_GREYSCALE)
+   { format = GL_LUMINANCE; type = GL_UNSIGNED_SHORT; }
+   else if (fmt == PixelFormat::FORMAT_24BPP_RGB)
+   { format = GL_RGB; type = GL_UNSIGNED_BYTE; }
+   else if (fmt == PixelFormat::FORMAT_24BPP_BGR)
+   { format = GL_BGR; type = GL_UNSIGNED_BYTE; }
+   else if (fmt == PixelFormat::FORMAT_32BPP_RGBX)
+   { KAREN_THROW(utils::InvalidInputException, 
+                 "OpenGL is unable to work with RGBX pixel format"); }
+   else if (fmt == PixelFormat::FORMAT_32BPP_XRGB)
+   { KAREN_THROW(utils::InvalidInputException, 
+                 "OpenGL is unable to work with XRGB pixel format"); }
+   else if (fmt == PixelFormat::FORMAT_32BPP_BGRX)
+   { KAREN_THROW(utils::InvalidInputException, 
+                 "OpenGL is unable to work with BGRX pixel format"); }
+   else if (fmt == PixelFormat::FORMAT_32BPP_XBGR)
+   { KAREN_THROW(utils::InvalidInputException, 
+                 "OpenGL is unable to work with XBGR pixel format"); }
+   else if (fmt == PixelFormat::FORMAT_32BPP_RGBA)
+   { format = GL_RGBA; type = GL_UNSIGNED_BYTE; }
+   else if (fmt == PixelFormat::FORMAT_32BPP_ABGR)
+   { KAREN_THROW(utils::InvalidInputException, 
+                 "OpenGL is unable to work with ABGR pixel format"); }
+}
 
 OpenGLCanvas::OpenGLCanvas(
          const DrawingContext& parentContext, 
@@ -317,6 +342,60 @@ void
 OpenGLCanvas::drawText(const TextParams& txt)
 {
    /* TODO: code this. */
+}
+
+GLBitmapBinding::GLBitmapBinding(
+      const Bitmap& bitmap, 
+      const DrawingContext& parentContext)
+ : BitmapBinding(bitmap, parentContext), _textureName(0)
+{
+   updateTextureName();
+}
+
+void
+GLBitmapBinding::onLock()
+{
+}
+
+void
+GLBitmapBinding::onUnlock()
+{
+   updateTextureName();
+}
+
+void
+GLBitmapBinding::updateTextureName()
+{
+   if (_textureName && glIsTexture(_textureName))
+      glDeleteTextures(1, &_textureName);
+   glGenTextures(1, &_textureName);
+   glBindTexture(GL_TEXTURE_2D, _textureName);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   
+   const Bitmap& bitmap = static_cast<const GLBitmapBinding*>(this)->bitmap();
+
+   GLsizei width = bitmap.pitch().x, height = bitmap.pitch().y;   
+   GLenum pixelFormat, pixelType;
+   toGLPixelFormat(bitmap.pixelFormat(), pixelFormat, pixelType);
+   const GLvoid* data = bitmap.pixels();
+   
+   glTexImage2D(GL_TEXTURE_2D,      // the target
+                0,                  // texture level
+                GL_RGBA,            // internal format
+                width,              // image width
+                height,             // image height
+                0,                  // border width
+                pixelFormat,        // image format
+                GL_UNSIGNED_BYTE,   // pixel data type
+                data);              // pixel data      
+   GLenum error = glGetError();
+   if (error != GL_NO_ERROR)
+      KAREN_THROW(utils::InternalErrorException,
+         "cannot create GL texture for given bitmap: %s",
+         gluErrorString(error));
 }
 
 }}}; /* namespace karen::ui::core */

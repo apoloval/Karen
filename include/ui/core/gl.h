@@ -31,6 +31,14 @@
 #include "utils/collection.h"
 #include "utils/pointer.h"
 
+#if KAREN_PLATFORM == KAREN_PLATFORM_OSX
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#endif
+
 namespace karen { namespace ui { namespace core {
 
 /**
@@ -100,6 +108,35 @@ public:
 private:
 
    Vector _size;
+
+};
+
+/**
+ * OpenGL bitmap binding. This class provides OpenGL-specific binding
+ * between a bitmap and a OpenGL-supported drawing context.
+ */
+class GLBitmapBinding : public BitmapBinding
+{
+public:
+
+   GLBitmapBinding(const Bitmap& bitmap, const DrawingContext& parentContext);
+   
+   /**
+    * Obtain the GL texture name corresponding to this bitmap binding.
+    */
+   inline GLuint textureName() const { return _textureName; }
+
+protected:
+
+   virtual void onLock();
+   
+   virtual void onUnlock();
+   
+   void updateTextureName();
+
+private:
+
+   GLuint _textureName;
 
 };
 
