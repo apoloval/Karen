@@ -282,7 +282,7 @@ private:
    void uncheckedCopy(const Ptr<Other> &p, Obj *obj)
    {
       this->_refc = p._refc;
-      this->_obj  = _obj;
+      this->_obj  = obj;
       if (this->_refc)
          (*this->_refc)++;
    }
