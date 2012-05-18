@@ -335,7 +335,42 @@ OpenGLCanvas::drawQuad(const QuadParams& quad)
 void
 OpenGLCanvas::drawImage(const ImageParams& img)
 {
-   /* TODO: code this. */
+   if (&img.image->parentContext() != &this->drawingContext())
+      KAREN_THROW(utils::InvalidInputException,
+         "cannot draw given image: "
+         "image binding does not belongs to the same drawing context");
+   const GLBitmapBinding* binding = img.image.dynCasting<GLBitmapBinding>();
+   GLuint texName = binding->textureName();
+   if (!glIsTexture(texName))
+      KAREN_THROW(utils::InternalErrorException, 
+         "cannot draw image: the GL binding contains an invalid texture name");
+   
+   glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, texName);
+   
+   const Vector& imgSize = img.image->bitmap().size();
+   const Vector& imgPitch = img.image->bitmap().pitch();
+   
+   double imgW = imgSize.x / imgPitch.x, 
+          imgH = imgSize.y / imgPitch.y;
+   
+   double canvasX = img.canvasRect.x,
+          canvasY = img.canvasRect.y,
+          canvasW = img.canvasRect.w,
+          canvasH = img.canvasRect.h;
+   
+   // This implementation just provides a DISPLAY_MODE_SCALE display mode
+   // TODO: implement this to support other display modes
+   glBegin(GL_QUADS);
+      glTexCoord2d(0.0, 0.0);
+      glVertex2d(canvasX, canvasY);
+      glTexCoord2d(imgW, 0.0);
+      glVertex2d(canvasX + canvasW, canvasY);
+      glTexCoord2d(imgW, imgH);
+      glVertex2d(canvasX + canvasW, canvasY + canvasH);
+      glTexCoord2d(0.0, imgH);
+      glVertex2d(canvasX, canvasY + canvasH);
+   glEnd();
 }
 
 void
