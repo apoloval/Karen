@@ -339,7 +339,7 @@ OpenGLCanvas::drawImage(const ImageParams& img)
       KAREN_THROW(utils::InvalidInputException,
          "cannot draw given image: "
          "image binding does not belongs to the same drawing context");
-   const GLBitmapBinding* binding = img.image.dynCasting<GLBitmapBinding>();
+   Ptr<const GLBitmapBinding> binding = img.image.dynCasting<GLBitmapBinding>();
    GLuint texName = binding->textureName();
    if (!glIsTexture(texName))
       KAREN_THROW(utils::InternalErrorException, 
@@ -401,6 +401,7 @@ GLBitmapBinding::onUnlock()
 void
 GLBitmapBinding::updateTextureName()
 {
+   glEnable(GL_TEXTURE_2D);
    if (_textureName && glIsTexture(_textureName))
       glDeleteTextures(1, &_textureName);
    glGenTextures(1, &_textureName);
@@ -424,13 +425,22 @@ GLBitmapBinding::updateTextureName()
                 height,             // image height
                 0,                  // border width
                 pixelFormat,        // image format
-                GL_UNSIGNED_BYTE,   // pixel data type
+                pixelType,          // pixel data type
                 data);              // pixel data      
+
+   /* TODO:
+    * For some unknown reason, glTexImage2D is not updating glError properly.
+    * In my 10.7 laptop, it indicates a GL_INVALID_FRAMEBUFFER_OPERATION but
+    * it loads the bitmap succesfully after all. For now, this check is only 
+    * enabled for the rest of platforms until the problem is located.
+    */
+   #if KAREN_PLATFORM != KAREN_PLATFORM_OSX
    GLenum error = glGetError();
    if (error != GL_NO_ERROR)
       KAREN_THROW(utils::InternalErrorException,
          "cannot create GL texture for given bitmap: %s",
          gluErrorString(error));
+   #endif
 }
 
 }}}; /* namespace karen::ui::core */
