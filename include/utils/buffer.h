@@ -78,6 +78,16 @@ public:
    Buffer& operator = (Buffer&& buf);
    
    /**
+    * Cast to void* operator.
+    */
+   inline operator void* () { return _data; }
+   
+   /**
+    * Cast to const void* operator.
+    */
+   inline operator const void* () const { return _data; }
+   
+   /**
     * Copy the contents of given buffer to this one. Copy len bytes from src
     * starting from srcOffset into this buffer starting at dstOffset. If
     * source or destination ranges are not valid, a InvalidInputException
