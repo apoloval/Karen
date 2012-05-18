@@ -240,7 +240,7 @@ throw (utils::InvalidInputException)
 {
    if (!isValidPixelPosition(pos))
       KAREN_THROW(utils::InvalidInputException, 
-         "cannot obtain pixel data from image: invalid position");
+         "cannot set pixel data of image: invalid position");
 
    const PixelFormat& fmt = pixelFormat();
    const PixelFormat::Mask& mask = fmt.mask();
