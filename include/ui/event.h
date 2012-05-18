@@ -158,20 +158,20 @@ struct Event
    /**
     * Obtain the mouse button position as a Karen vector.
     */
-   inline Vector mouseButtonPos() const
-   { return Vector(mouseButton.posX, mouseButton.posY); }
+   inline IVector mouseButtonPos() const
+   { return IVector(mouseButton.posX, mouseButton.posY); }
    
    /**
     * Obtain the mouse motion-from position as a Karen vector.
     */
-   inline Vector mouseMotionFromPos() const
-   { return Vector(mouseMotion.fromX, mouseMotion.fromY); }
+   inline IVector mouseMotionFromPos() const
+   { return IVector(mouseMotion.fromX, mouseMotion.fromY); }
    
    /**
     * Obtain the mouse motion-to position as a Karen vector.
     */
-   inline Vector mouseMotionToPos() const
-   { return Vector(mouseMotion.toX, mouseMotion.toY); }
+   inline IVector mouseMotionToPos() const
+   { return IVector(mouseMotion.toX, mouseMotion.toY); }
    
 };
 
@@ -258,7 +258,7 @@ public:
     * considers in ignoring the event and pass it up in the chain.
     */
    virtual void respondToMouseButtonPressed(
-         const Vector& pressedAt,
+         const IVector& pressedAt,
          MouseButton btn);
    
    /**
@@ -266,7 +266,7 @@ public:
     * considers in ignoring the event and pass it up in the chain.
     */
    virtual void respondToMouseButtonReleased(
-         const Vector& pressedAt,
+         const IVector& pressedAt,
          MouseButton btn);
    
    /**
@@ -274,16 +274,16 @@ public:
     * considers in ignoring the event and pass it up in the chain.
     */
    virtual void respondToMouseMoved(
-         const Vector& fromPos,
-         const Vector& toPos);
+         const IVector& fromPos,
+         const IVector& toPos);
    
    /**
     * Responde to a mouse dragged event. The default implementation
     * considers in ignoring the event and pass it up in the chain.
     */
    virtual void respondToMouseDragged(
-         const Vector& fromPos,
-         const Vector& toPos);
+         const IVector& fromPos,
+         const IVector& toPos);
    
    /**
     * Obtain the next responder in the chain, or null if there is none.

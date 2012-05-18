@@ -133,8 +133,8 @@ public:
     */
    struct LineParams
    {
-      Vector   beginPos;         //!< Position of begin point
-      Vector   endPos;           //!< Position of end point
+      DVector  beginPos;         //!< Position of begin point
+      DVector  endPos;           //!< Position of end point
       Color    beginColor;       //!< Color of begin point
       Color    endColor;         //!< Color of end point
       float    lineWidth;        //!< Line width
@@ -146,8 +146,8 @@ public:
     */
    struct ArcParams
    {
-      Vector   beginPos;         //!< Position of begin point
-      Vector   endPos;           //!< Position of end point
+      DVector  beginPos;         //!< Position of begin point
+      DVector  endPos;           //!< Position of end point
       Color    beginColor;       //!< Color of begin point
       Color    endColor;         //!< Color of end point
       float    lineWidth;        //!< Arc width
@@ -161,7 +161,7 @@ public:
     */
    struct BezierParams
    {
-      DynArray<Vector>  points;  //!< Line points
+      DynArray<DVector>  points; //!< Line points
       float          lineWidth;  //!< Bezier line width
       float          curvature;  //!< Bezier curvature
       float          precision;  //!< Number of segments that comprise the line
@@ -174,7 +174,7 @@ public:
     */
    struct TriangleParams
    {
-      Vector   vertex[3];        //!< Position of triangle vertices
+      DVector  vertex[3];        //!< Position of triangle vertices
       Color    vertexColor[3];   //!< Color of triangle vertices
       float    lineWidth;        //!< Line width
       bool     fill;             //!< Indicator of whether triangle must be filled
@@ -186,7 +186,7 @@ public:
     */
    struct QuadParams
    {
-      Vector   vertex[4];        //!< Position of quad vertices
+      DVector  vertex[4];        //!< Position of quad vertices
       Color    vertexColor[4];   //!< Color of quad vertices
       float    lineWidth;        //!< Line width
       bool     fill;             //!< Indicator of whether quad must be filled
@@ -196,16 +196,16 @@ public:
        * rectangle.
        */
       inline static QuadParams createRectangle(
-            const Vector& topleft,
-            const Vector& bottomright,
+            const DVector& topleft,
+            const DVector& bottomright,
             const Color& color,
             float linewidth = 1,
             bool fill = true)
       {
          QuadParams params =
          {
-            { topleft, Vector(bottomright.x, topleft.y),
-              bottomright, Vector(topleft.x, bottomright.y) },
+            { topleft, DVector(bottomright.x, topleft.y),
+              bottomright, DVector(topleft.x, bottomright.y) },
             { color, color, color, color },
             linewidth,
             fill,
@@ -218,7 +218,7 @@ public:
        * a rectangle.
        */
       inline static QuadParams createRectangle(
-            const Rect& rect,
+            const DRect& rect,
             const Color& color,
             float linewidth = 1,
             bool fill = true)
@@ -259,8 +259,8 @@ public:
    struct ImageParams
    {
       Ptr<BitmapBinding>   image;
-      Rect                 imageRect;
-      Rect                 canvasRect;
+      IRect                imageRect;
+      DRect                canvasRect;
       ImageDisplayMode     displayMode;
       double               light;
    };
@@ -273,7 +273,7 @@ public:
    {
       String      text;
       Font        font;
-      Rect        canvasRect;
+      DRect       canvasRect;
    };
    
    /**
@@ -291,7 +291,7 @@ public:
    /**
     * Get canvas size. Obtain canvas dimensions.
     */
-   virtual Vector size() const = 0;
+   virtual DVector size() const = 0;
 
    /**
     * Clear the canvas.
@@ -367,7 +367,7 @@ struct ScreenProperties
    /**
     * Screen dimensions. 
     */
-   Vector         dimensions;
+   IVector        dimensions;
    
    /**
     * Pixel format. Not all pixel formats defined by PixelFormat

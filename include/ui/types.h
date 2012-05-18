@@ -30,34 +30,44 @@
 #include "utils/string.h"
 #include "utils/types.h"
 
+#include <cmath>
+
 #define __max__(n1, n2) ((n1) > (n2) ? (n1) : (n2))
 #define __min__(n1, n2) ((n1) < (n2) ? (n1) : (n2))
 
 namespace karen { namespace ui {
 
 /* Required pre-declarations. */
+template <class T>
 class Rect;
 
 /**
  * Vector type. This struct provides an abstraction for a 2D vector.
  */
+template <class T>
 struct KAREN_EXPORT Vector
 {
    /** X position. */
-   double x;
+   T x;
    
    /** Y position. */
-   double y;
+   T y;
    
    /**
     * Create a new vector with coordinates [0, 0]
     */
-   inline Vector() : x(0.0), y(0.0) {}
+   inline Vector() : x(T()), y(T()) {}
 
    /**
     * Create a new vector with given coordinates.
     */
-   Vector(double _x, double _y) : x(_x), y(_y) {}
+   Vector(const T& _x, const T& _y) : x(_x), y(_y) {}
+   
+   /**
+    * Templated copy constructor. 
+    */
+   template <class Other>
+   Vector(const Vector<Other>& v) : x(v.x), y(v.y) {}
 
    /**
     * Equals to operator.
@@ -110,19 +120,19 @@ struct KAREN_EXPORT Vector
    /**
     * Divide by scalar operator.
     */
-   inline Vector operator / (double value) const
+   inline Vector operator / (const T& value) const
    { return Vector(this->x / value, this->y / value); }
    
    /**
     * Add and assign operator.
     */
-   inline Vector& operator +=(const Vector& p)
+   inline Vector& operator += (const Vector& p)
    { x += p.x; y += p.y; return *this; }
    
    /**
     * Subtract and assign operator.
     */
-   inline Vector& operator -=(const Vector& p)
+   inline Vector& operator -= (const Vector& p)
    { x -= p.x; y -= p.y; return *this; }
    
    /**
@@ -135,18 +145,21 @@ struct KAREN_EXPORT Vector
    /**
     * Check if this vector is inside the rectangle defined by v rectangle.
     */
-   inline bool isInside(const Rect& v) const;
+   inline bool isInside(const Rect<T>& v) const
+   { return isInside(Vector(v.x, v.y), Vector(v.w, v.h)); }
    
    /**
     * Calculate distance between this vector and the one passed as
     * argument.
     */
-   double distance(const Vector& p) const;
+   inline double distance(const Vector& p) const
+   { return sqrt(pow((double) p.x - x, 2.0) + pow((double) p.y - y, 2.0)); } 
    
    /**
     * Obtain the length of this vector.
     */
-   double length() const;
+   inline double length() const
+   { return sqrt(pow((double) x, 2.0) + pow((double) y, 2.0)); }
    
    /**
     * Normalise this vector.
@@ -185,42 +198,48 @@ struct KAREN_EXPORT Vector
          
 };
 
+typedef Vector<double>  DVector;
+typedef Vector<float>   FVector;
+typedef Vector<int>     IVector;
+typedef Vector<long>    LVector;
+
 /**
  * Three-dimensional vector class. This class represents a three dimensional
  * vector.
  */
+template <class T>
 struct KAREN_EXPORT Vector3
 {
 
    /** 
     * X coordinate.
     */
-   double x;
+   T x;
    
    /** 
     * Y coordinate.
     */
-   double y;
+   T y;
 
    /** 
     * Z coordinate.
     */
-   double z;
+   T z;
    
    /**
     * Create a new vector with default coordinates [0, 0, 0]
     */
-   inline Vector3() : x(0.0), y(0.0), z(0.0) {}
+   inline Vector3() : x(T()), y(T()), z(T()) {}
    
    /**
     * Create a new vector with given value in all coordinates.
     */
-   inline Vector3(double v) : x(v), y(v), z(v) {}
+   inline Vector3(const T& v) : x(v), y(v), z(v) {}
    
    /**
     * Create a new vector from given coordinates.
     */
-   inline Vector3(double x, double y, double z) : x(x), y(y), z(z) {}
+   inline Vector3(const T& x, const T& y, const T& z) : x(x), y(y), z(z) {}
    
    /**
     * Equals to operator.
@@ -243,7 +262,7 @@ struct KAREN_EXPORT Vector3
    /**
     * Add operator.
     */
-   inline Vector3 operator + (double val) const
+   inline Vector3 operator + (const T& val) const
    { return Vector3(this->x + val, this->y + val, this->z + val); }
    
    /**
@@ -255,7 +274,7 @@ struct KAREN_EXPORT Vector3
    /**
     * Subtract operator.
     */
-   inline Vector3 operator - (double val) const
+   inline Vector3 operator - (const T& val) const
    { return Vector3(this->x - val, this->y - val, this->z - val); }
    
    /**
@@ -269,13 +288,13 @@ struct KAREN_EXPORT Vector3
    /**
     * Multiply operator.
     */
-   inline Vector3 operator * (double val) const
+   inline Vector3 operator * (const T& val) const
    { return Vector3(this->x * val, this->y * val, this->z * val); }
    
    /**
     * Divide operator.
     */
-   inline Vector3 operator / (double val) const
+   inline Vector3 operator / (const T& val) const
    { return Vector3(this->x / val, this->y / val, this->z / val); }
    
    /**
@@ -287,7 +306,7 @@ struct KAREN_EXPORT Vector3
    /**
     * Add and assign operator.
     */
-   inline Vector3& operator += (double val)
+   inline Vector3& operator += (const T& val)
    { this->x += val; this->y += val; this->z += val; return *this; }
 
    /**
@@ -299,13 +318,13 @@ struct KAREN_EXPORT Vector3
    /**
     * Subtract and assign operator.
     */
-   inline Vector3& operator -= (double val)
+   inline Vector3& operator -= (const T& val)
    { this->x -= val; this->y -= val; this->z -= val; return *this; }
 
    /**
     * Multiply and assign operator.
     */
-   inline Vector3& operator *= (double val)
+   inline Vector3& operator *= (const T& val)
    { this->x *= val; this->y *= val; this->z *= val; return *this; }
 
    /**
@@ -347,42 +366,48 @@ struct KAREN_EXPORT Vector3
    
 };
 
+typedef Vector3<double> DVector3;
+typedef Vector3<float>  FVector3;
+typedef Vector3<int>    IVector3;
+typedef Vector3<long>   LVector3;
+
 /**
  * Rect class. This class provides an abstraction for a rectangle in a 2D
  * euclidean space.
- */         
+ */
+template <class T>
 struct KAREN_EXPORT Rect
 {
 
    /**
     * X position of top-left corner of rectangle.
     */
-   double x;
+   T x;
 
    /**
     * Y position of top-left corner of rectangle.
     */
-   double y;
+   T y;
    
    /**
     * Rectangle width.
     */
-   double w;
+   T w;
 
    /**
     * Rectangle height.
     */
-   double h;
+   T h;
 
    /**
     * Create a new rectangle with top-left corner [0, 0] and size [0, 0].
     */
-   inline Rect() : Rect(0.0, 0.0, 0.0, 0.0) {}
+   inline Rect() : Rect(T(), T(), T(), T()) {}
 
    /**
     * Create a new rectangle with given top-left corner coordinates and size.
     */
-   inline Rect(double valX, double valY, double valW, double valH)
+   inline Rect(const T& valX, const T& valY, const T& valW, const T& valH)
     : x(valX), y(valY), w(valW), h(valH)
    {
    }
@@ -390,48 +415,49 @@ struct KAREN_EXPORT Rect
    /**
     * Create a new rectangle with given top-left position and given size.
     */
-   inline Rect(const Vector& p, const Vector& s) : Rect(p.x, p.y, s.x, s.y) {}
+   inline Rect(const Vector<T>& p, const Vector<T>& s)
+    : Rect(p.x, p.y, s.x, s.y) {}
     
    /**
     * Create a new rectangle with top-left corner at [0, 0] and given size. 
     */
-   inline Rect(const Vector& s) : Rect(Vector(0.0, 0.0), s) {}
+   inline Rect(const Vector<T>& s) : Rect(Vector<T>(T(), T()), s) {}
 
    /**
     * Obtain (top-left) rectangle position.
     */
-   inline Vector position() const
+   inline Vector<T> position() const
    { return topLeft(); }
    
    /**
     * Obtain top-left rectangle position.
     */
-   inline Vector topLeft() const
-   { return Vector(x, y); }
+   inline Vector<T> topLeft() const
+   { return Vector<T>(x, y); }
    
    /**
     * Obtain top-right rectangle position.
     */
-   inline Vector topRight() const
-   { return Vector(x + w, y); }
+   inline Vector<T> topRight() const
+   { return Vector<T>(x + w, y); }
    
    /**
     * Obtain bottom-left rectangle position.
     */
-   inline Vector bottomLeft() const
-   { return Vector(x, y + h); }
+   inline Vector<T> bottomLeft() const
+   { return Vector<T>(x, y + h); }
    
    /**
     * Obtain bottom-right rectangle position.
     */
-   inline Vector bottomRight() const
-   { return Vector(x + w, y + h); }
+   inline Vector<T> bottomRight() const
+   { return Vector<T>(x + w, y + h); }
    
    /**
     * Obtain rectangle size.
     */
-   inline Vector size() const
-   { return Vector(w, h); }
+   inline Vector<T> size() const
+   { return Vector<T>(w, h); }
    
    /**
     * Equals to operator.
@@ -448,19 +474,19 @@ struct KAREN_EXPORT Rect
    /**
     * Add operator.
     */
-   inline Rect operator + (const Vector& p) const
+   inline Rect operator + (const Vector<T>& p) const
    { return Rect(x + p.x, y + p.y, w, h); }
    
    /**
     * Subtract operator.
     */
-   inline Rect operator - (const Vector& p) const
+   inline Rect operator - (const Vector<T>& p) const
    { return Rect(x - p.x, y - p.y, w, h); }
    
    /**
     * Add and assign operator.
     */
-   inline Rect& operator += (const Vector& p)
+   inline Rect& operator += (const Vector<T>& p)
    { x += p.x; y += p.y; return *this; }
    
    /**
@@ -470,27 +496,27 @@ struct KAREN_EXPORT Rect
    inline Rect operator + (const Rect& v) const
    {
       // rectangle 1 origin vector
-      double v1x = x;
-      double v1y = y;
+      T v1x = x;
+      T v1y = y;
 
       // rectangle 2 origin vector
-      double v2x = v.x;
-      double v2y = v.y;
+      T v2x = v.x;
+      T v2y = v.y;
       
       // rectangle 1 end vector
-      double v3x = v1x + w;
-      double v3y = v1y + h;
+      T v3x = v1x + w;
+      T v3y = v1y + h;
        
       // rectangle 2 end vector
-      double v4x = v2x + v.w;
-      double v4y = v2y + v.h;
+      T v4x = v2x + v.w;
+      T v4y = v2y + v.h;
       
       // Calculate resulting vector and size
-      double rposx = __min__(v1x, v2x);
-      double rposy = __min__(v1y, v2y);
+      T rposx = __min__(v1x, v2x);
+      T rposy = __min__(v1y, v2y);
       
-      double rsizew = __max__(v3x, v4x) - rposx;
-      double rsizeh = __max__(v3y, v4y) - rposy;
+      T rsizew = __max__(v3x, v4x) - rposx;
+      T rsizeh = __max__(v3y, v4y) - rposy;
    
       return Rect(rposx, rposy, rsizew, rsizeh);
    }
@@ -504,17 +530,17 @@ struct KAREN_EXPORT Rect
       Rect result;
       
       // Origin vector of intersection
-      double v1x = __max__(x, v.x);
-      double v1y = __max__(y, v.y);
+      T v1x = __max__(x, v.x);
+      T v1y = __max__(y, v.y);
       
       // Ending vector of intersection
-      double v2x = __min__(x + w, v.x + v.w);
-      double v2y = __min__(y + h, v.y + v.h);
+      T v2x = __min__(x + w, v.x + v.w);
+      T v2y = __min__(y + h, v.y + v.h);
       
       // If origin is less than ending, 
       // it means a null intersection
       if ((v2x < v1x) || (v2y < v1y))
-         return utils::Nullable<Rect>();
+         return utils::Nullable<Rect<T>>();
       
       // Fill results
       result.x = v1x;
@@ -530,7 +556,7 @@ struct KAREN_EXPORT Rect
     * Check whether this rectangle overlaps with the rectangle defined by
     * given top-left coordinates and size. 
     */
-   inline bool overlap(const Vector& p, const Vector& s) const
+   inline bool overlap(const Vector<T>& p, const Vector<T>& s) const
    { return overlap(Rect(p, s)); }
    
    /**
@@ -539,7 +565,7 @@ struct KAREN_EXPORT Rect
     */
    inline bool overlap(const Rect& v) const
    {
-      utils::Nullable<Rect> intersection = *this - v;
+      utils::Nullable<Rect<T>> intersection = *this - v;
       
       // True if intersection is not null.
       return !intersection.isNull();
@@ -550,14 +576,14 @@ struct KAREN_EXPORT Rect
     */
    inline bool isInside(const Rect& v) const
    {
-      Rect sub = (*this - v);
+      Rect<T> sub = (*this - v);
       return *this == sub;
    }
    
    /**
     * Grow the rectangle the given amount of units.
     */
-   inline void grow(double inc)
+   inline void grow(const T& inc)
    {
       x -= inc;
       y -= inc;
@@ -568,7 +594,7 @@ struct KAREN_EXPORT Rect
    /**
     * Shrink this rectangle the given amount of units.
     */
-   inline void shrink(double dec)
+   inline void shrink(const T& dec)
    {
       x += dec;
       y += dec;
@@ -577,6 +603,11 @@ struct KAREN_EXPORT Rect
    }
 
 };
+
+typedef Rect<double> DRect;
+typedef Rect<float>  FRect;
+typedef Rect<int>    IRect;
+typedef Rect<long>   LRect;
 
 /** 
  * Color type. This struct provides an abstraction for a color
@@ -999,13 +1030,6 @@ private:
    unsigned int   _bitsPerPixel;
    
 };
-
-// Here goes the inline operations which uses forward declarations.
-inline bool
-Vector::isInside(const Rect& v) const
-{
-   return isInside(v.position(), v.size());
-}
 
 }} /* Namespace karen::ui */
 

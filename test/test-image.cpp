@@ -22,7 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include "ui/core/glut.h"
+#include "ui/core/cocoa.h"
 #include "utils/exception.h"
 
 #include <iostream>
@@ -42,33 +42,32 @@ ui::ScreenProperties screenProps =
    ui::PixelFormat::FORMAT_32BPP_RGBA, // pixel format
    false,                              // fullscreen
    true,                               // double buffered
-   "Karen GLUT Test"                   // caption
+   "Karen Cocoa Test"                  // caption
 };
 
-class SimpleDrawing : public ui::Drawable, public ui::TimerCallback
+class SimpleDrawing : public ui::Drawable, 
+                      public ui::TimerCallback,
+                      public ui::EventConsumer
 {
 public:
 
-   SimpleDrawing(ui::DrawingContext* ctx)
-    : mov(SPEED_X, SPEED_Y), frameCount(0), context(ctx)
-   {}
+   SimpleDrawing(ui::Engine* en)
+    : mov(SPEED_X, SPEED_Y), frameCount(0), engine(en)
+   {
+      ui::Bitmap bmp(ui::IVector(128, 128), ui::PixelFormat::FORMAT_24BPP_RGB);
+   }
 
    inline virtual void draw(ui::Canvas& canvas)
    {
-      ui::Canvas::QuadParams quad =
+      ui::Canvas::ImageParams imgParams =
       {
-         { ui::DVector(pos.x,              pos.y), 
-           ui::DVector(pos.x + FIG_SIZE,   pos.y), 
-           ui::DVector(pos.x + FIG_SIZE,   pos.y + FIG_SIZE), 
-           ui::DVector(pos.x,              pos.y + FIG_SIZE), },
-         { ui::Color(pos.x * 255.0f / SCREEN_W , 0xff, 0xff), 
-           ui::Color(0xff, pos.y * 255.0f / SCREEN_H, 0xff), 
-           ui::Color(0xff, 0xff, pos.x * 255.0f / SCREEN_W), 
-           ui::Color(0xff, 0x00, pos.y * 255.0f / SCREEN_H) },
-         1.0f,
-         true,
+         _bitmap,
+         ui::IRect(0.0, 0.0, 1.0, 1.0),
+         ui::DRect(pos.x, pos.y, FIG_SIZE, FIG_SIZE),
+         ui::Canvas::DISPLAY_MODE_SCALE,
+         1.0
       };
-      canvas.drawQuad(quad);
+      canvas.drawImage(imgParams);
    }
    
    virtual utils::Nullable<double> onTimeElapsed(double ms)
@@ -100,9 +99,38 @@ public:
       
       mov.y += 0.5f * ms * ms * 0.001f;
 
-      context->postRedisplay();
+      engine->drawingContext().postRedisplay();
       
       return 1000.0f / FPS;
+   }
+   
+   inline virtual void consumeEvent(const ui::Event& ev)
+   {
+      switch (ev.type)
+      {
+         case ui::MOUSE_PRESSED_EVENT:
+            std::cerr << "Mouse pressed at " <<
+                         ev.mouseButtonPos().toString() << std::endl;
+            break;            
+         case ui::MOUSE_RELEASED_EVENT:
+            std::cerr << "Mouse relesed at " << 
+                         ev.mouseButtonPos().toString() << std::endl;
+            break;
+         case ui::MOUSE_MOTION_EVENT:
+            std::cerr << "Mouse moved from " << 
+                         ev.mouseMotionFromPos().toString() << 
+                         " to " << 
+                         ev.mouseMotionToPos().toString() << std::endl;
+            break;
+         case ui::KEY_PRESSED_EVENT:
+            std::cerr << "Key pressed: " << ev.key.unicode << std::endl;
+         case ui::KEY_RELEASED_EVENT:
+            std::cerr << "Key released: " << ev.key.unicode << std::endl;
+            if (ev.key.unicode == ui::KeyEvent::SCAPE_KEY)
+               engine->stopLoop();
+         default:
+            break;
+      }
    }
 
 private:
@@ -110,7 +138,8 @@ private:
    ui::DVector pos;
    ui::DVector mov;
    long frameCount;
-   ui::DrawingContext* context;
+   ui::Engine* engine;
+   Ptr<ui::BitmapBinding> _bitmap;
 
 };
 
@@ -118,8 +147,8 @@ int main(int argc, char* argv[])
 {
    try
    {
-      std::cerr << "Initializing GLUT engine... ";
-      ui::Engine& engine = ui::Engine::init(ui::core::GlutEngine::ENGINE_NAME);
+      std::cerr << "Initializing Cocoa engine... ";
+      ui::Engine& engine = ui::Engine::init(ui::core::CocoaEngine::ENGINE_NAME);
       ui::DrawingContext& dc = engine.drawingContext();
       std::cerr << "Done" << std::endl;
 
@@ -127,10 +156,12 @@ int main(int argc, char* argv[])
       dc.initScreen(screenProps);
       std::cerr << "Done" << std::endl;
       
-      SimpleDrawing sd(&dc);   
+      SimpleDrawing sd(&engine);   
       dc.setDrawingTarget(&sd);
       ui::Timer& timer = engine.timer();
       timer.registerCallback(&sd, 1000.0f / FPS);
+      
+      engine.eventChannel().addEventConsumer(&sd);
       
       engine.runLoop();
    }

@@ -98,7 +98,7 @@ EventChannel::newInstance()
 
 void
 EventResponder::respondToMouseButtonPressed(
-      const Vector& pressedAt,
+      const IVector& pressedAt,
       MouseButton btn)
 {
    EventResponder* next = nextResponder();
@@ -108,7 +108,7 @@ EventResponder::respondToMouseButtonPressed(
 
 void
 EventResponder::respondToMouseButtonReleased(
-      const Vector& pressedAt,
+      const IVector& pressedAt,
       MouseButton btn)
 {
    EventResponder* next = nextResponder();
@@ -118,8 +118,8 @@ EventResponder::respondToMouseButtonReleased(
 
 void
 EventResponder::respondToMouseMoved(
-      const Vector& fromPos,
-      const Vector& toPos)
+      const IVector& fromPos,
+      const IVector& toPos)
 {
    EventResponder* next = nextResponder();
    if (next)
@@ -128,8 +128,8 @@ EventResponder::respondToMouseMoved(
 
 void
 EventResponder::respondToMouseDragged(
-      const Vector& fromPos,
-      const Vector& toPos)
+      const IVector& fromPos,
+      const IVector& toPos)
 {
    EventResponder* next = nextResponder();
    if (next)

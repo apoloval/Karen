@@ -37,7 +37,7 @@ Widget::~Widget()
 }
 
 Widget*
-Widget::activateWidgetAtPos(const Vector& localPos)
+Widget::activateWidgetAtPos(const IVector& localPos)
 { return this; }
 
 void
@@ -53,7 +53,7 @@ Container::setAsParentOfWidget(Widget& widget)
 }
 
 void
-Container::setFrameForChild(Widget& widget, const Rect& frame)
+Container::setFrameForChild(Widget& widget, const IRect& frame)
 {
    widget._frame = frame;
 }
@@ -61,7 +61,7 @@ Container::setFrameForChild(Widget& widget, const Rect& frame)
 void
 GridContainer::addWidget(
       Ptr<Widget> widget,
-      const Rect& coordinates)
+      const IRect& coordinates)
 throw (utils::InvalidInputException)
 {
    if (widget.isNull())
@@ -84,14 +84,14 @@ throw (utils::InvalidInputException)
 }
 
 Widget*
-GridContainer::activateWidgetAtPos(const Vector& localPos)
+GridContainer::activateWidgetAtPos(const IVector& localPos)
 {
    for (auto it = _children.begin(); it; it++)
       if (localPos.isInside(it->coord))
       {
          ChildInfo ci = *it;
          Widget* result = ci.widget;
-         Vector childPos(localPos - it->coord.position());
+         IVector childPos(localPos - it->coord.position());
          
          /*
           * For this container, the activation consists in moving

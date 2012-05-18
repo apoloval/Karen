@@ -222,7 +222,7 @@
       /*
        * Look for determined conditions to send the event to the consumer.
        */
-      karen::ui::Rect area(0, 0, wframe.size.width, wframe.size.height);
+      karen::ui::IRect area(0, 0, wframe.size.width, wframe.size.height);
       switch (kev.type)
       {
          case karen::ui::MOUSE_PRESSED_EVENT:

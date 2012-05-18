@@ -64,7 +64,7 @@ throw (utils::InvalidInputException)
 
 OpenGLCanvas::OpenGLCanvas(
          const DrawingContext& parentContext, 
-         const Vector& size)
+         const IVector& size)
  : Canvas(parentContext), _size(size)
 {
    glEnable(GL_BLEND);
@@ -109,9 +109,9 @@ OpenGLCanvas::flush()
 void
 OpenGLCanvas::drawLine(const LineParams& line)
 {
-   Vector vector(line.endPos - line.beginPos);
+   DVector vector(line.endPos - line.beginPos);
    float mod = sqrt(pow(vector.x, 2) + pow(vector.y, 2));
-   Vector normal(vector.y / mod, -vector.x / mod);
+   DVector normal(vector.y / mod, -vector.x / mod);
    
    QuadParams quadParams =
    { 
@@ -131,13 +131,13 @@ OpenGLCanvas::drawLine(const LineParams& line)
 void
 OpenGLCanvas::drawArc(const ArcParams& arc)
 {
-   Vector path = arc.endPos - arc.beginPos;  // The begin-end line
-   Vector npath(path.y, -path.x);            // Normal vector...
+   DVector path = arc.endPos - arc.beginPos;  // The begin-end line
+   DVector npath(path.y, -path.x);            // Normal vector...
    npath.normalise();                        // ...unitary
    
    // Calculate the axis point
-   Vector mid = arc.beginPos + (path * 0.5f);     // middle point of path
-   Vector axis = mid + (npath * arc.radious);     // Final axis point
+   DVector mid = arc.beginPos + (path * 0.5f);     // middle point of path
+   DVector axis = mid + (npath * arc.radious);     // Final axis point
    float rad = sqrtf(powf(arc.radious, 2) +       // Curvature radius
                      powf(path.length() * 0.5f, 2));
    
@@ -156,10 +156,10 @@ OpenGLCanvas::drawArc(const ArcParams& arc)
                 col.b / 255.0f, 
                 col.a / 255.0f);
       
-      Vector pathCut = arc.beginPos + (path * (i / ((float) arc.precision - 1)));
-      Vector dir = (pathCut - axis).normalise();
-      Vector p1 = axis + (dir * (rad + arc.lineWidth * 0.5f));
-      Vector p2 = axis + (dir * (rad - arc.lineWidth * 0.5f));
+      DVector pathCut = arc.beginPos + (path * (i / ((float) arc.precision - 1)));
+      DVector dir = (pathCut - axis).normalise();
+      DVector p1 = axis + (dir * (rad + arc.lineWidth * 0.5f));
+      DVector p2 = axis + (dir * (rad - arc.lineWidth * 0.5f));
 
       glVertex2f(p1.x, p1.y);
       glVertex2f(p2.x, p2.y);
@@ -191,10 +191,10 @@ OpenGLCanvas::drawBezier(const BezierParams& line)
    
    struct BezierCurve
    {
-      Vector orig;
-      Vector dest;
-      Vector ctrl1;
-      Vector ctrl2;
+      DVector orig;
+      DVector dest;
+      DVector ctrl1;
+      DVector ctrl2;
       
       inline bool operator == (const BezierCurve& bc) const
       { return orig == bc.orig && dest == bc.dest && 
@@ -348,8 +348,8 @@ OpenGLCanvas::drawImage(const ImageParams& img)
    glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, texName);
    
-   const Vector& imgSize = img.image->bitmap().size();
-   const Vector& imgPitch = img.image->bitmap().pitch();
+   DVector imgSize = img.image->bitmap().size();
+   DVector imgPitch = img.image->bitmap().pitch();
    
    double imgW = imgSize.x / imgPitch.x, 
           imgH = imgSize.y / imgPitch.y;

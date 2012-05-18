@@ -52,12 +52,12 @@ public:
    /**
     * Create a new canvas with given size.
     */
-   OpenGLCanvas(const DrawingContext& parentContext, const Vector& size);
+   OpenGLCanvas(const DrawingContext& parentContext, const IVector& size);
 
    /**
     * Get canvas size. Obtain canvas dimensions.
     */
-   inline virtual Vector size() const
+   inline virtual DVector size() const
    { return _size; }
 
    /**
@@ -107,7 +107,7 @@ public:
    
 private:
 
-   Vector _size;
+   DVector _size;
 
 };
 

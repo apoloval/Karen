@@ -30,7 +30,7 @@
 #include FT_FREETYPE_H
 #endif
 
-#include "ui/image.h"
+#include "ui/bitmap.h"
 #include "utils/pointer.h"
 
 namespace karen { namespace ui { namespace core {
@@ -64,13 +64,13 @@ public:
    void render(const String& text,
                const String& fontLocation,
                unsigned int fontSize,
-               Image& renderTo) throw (utils::InvalidInputException);
+               Bitmap& renderTo) throw (utils::InvalidInputException);
 
 private:
 
-   void blitToImage(Image& target) throw (utils::InvalidStateException);
+   void blitToImage(Bitmap& target) throw (utils::InvalidStateException);
          
-   Vector         _pen;   
+   DVector        _pen;   
    unsigned int   _fontSize;
    Color          _fontColor;
    

@@ -32,7 +32,7 @@ namespace karen { namespace ui {
 static void
 fillGreyscale8RegionWithColor(
       Bitmap& img, 
-      const Rect& reg,
+      const IRect& reg,
       const Color& col)
 throw (utils::InvalidInputException)
 {
@@ -45,7 +45,7 @@ throw (utils::InvalidInputException)
          "cannot fill image region: outside image boundaries");
 
    utils::Buffer& pix = img.pixels();
-   const Vector& pitch = img.pitch();
+   const IVector& pitch = img.pitch();
 
    // Luminance combination of RGB channels. 
    UInt8 mpix = col.r * 0.30 + col.g * 0.59 + col.b * 0.11;
@@ -60,7 +60,7 @@ throw (utils::InvalidInputException)
 static void
 fillGreyscale16RegionWithColor(
       Bitmap& img, 
-      const Rect& reg,
+      const IRect& reg,
       const Color& col)
 throw (utils::InvalidInputException)
 {
@@ -73,7 +73,7 @@ throw (utils::InvalidInputException)
          "cannot fill image region: outside image boundaries");
 
    utils::Buffer& pix = img.pixels();
-   const Vector& pitch = img.pitch();
+   const IVector& pitch = img.pitch();
 
    // Luminance combination of RGB channels. 
    UInt16 mpix = (col.r * 0.30 + col.g * 0.59 + col.b * 0.11) * 255;
@@ -88,7 +88,7 @@ throw (utils::InvalidInputException)
 static void
 fillTruecolorRegionWithColor(
       Bitmap& img, 
-      const Rect& reg,
+      const IRect& reg,
       const Color& col)
 throw (utils::InvalidInputException)
 {
@@ -97,7 +97,7 @@ throw (utils::InvalidInputException)
    const PixelFormat::Mask& mask = fmt.mask();
    const PixelFormat::Shift& shift = fmt.shift();
    unsigned int bpp = fmt.bytesPerPixel();
-   const Vector& pitch = img.pitch();
+   const IVector& pitch = img.pitch();
 
    if (bpp != 3 && bpp != 4)
       KAREN_THROW(utils::InvalidInputException, 
@@ -124,8 +124,8 @@ throw (utils::InvalidInputException)
       }
 }
 
-Bitmap::Bitmap(const Vector& dims, 
-               const Vector& pitch, 
+Bitmap::Bitmap(const IVector& dims, 
+               const IVector& pitch, 
                const PixelFormat& format)
 throw (utils::InvalidInputException)
  : _size(dims), _pitch(pitch), _format(format), _pixels(NULL)
@@ -143,7 +143,7 @@ throw (utils::InvalidInputException)
    _pixels = new utils::Buffer(buflen);
 }
 
-Bitmap::Bitmap(const Vector& dims, const PixelFormat& format)
+Bitmap::Bitmap(const IVector& dims, const PixelFormat& format)
 throw (utils::InvalidInputException)
  : Bitmap(dims, dims, format)
 {
@@ -195,7 +195,7 @@ Bitmap::fillWithColor(const Color& col)
 { fillRegionWithColor(size(), col); }
 
 void
-Bitmap::fillRegionWithColor(const Rect& reg, const Color& col) 
+Bitmap::fillRegionWithColor(const IRect& reg, const Color& col) 
 throw (utils::InvalidInputException)
 {
    const PixelFormat& fmt = pixelFormat();
@@ -209,7 +209,7 @@ throw (utils::InvalidInputException)
 }
    
 Color
-Bitmap::pixelAt(const Vector& pos) const 
+Bitmap::pixelAt(const IVector& pos) const 
 throw (utils::InvalidInputException)
 {
    if (!isValidPixelPosition(pos))
@@ -235,7 +235,7 @@ throw (utils::InvalidInputException)
 }
 
 void
-Bitmap::setPixelAt(const Vector& pos, const Color& color)
+Bitmap::setPixelAt(const IVector& pos, const Color& color)
 throw (utils::InvalidInputException)
 {
    if (!isValidPixelPosition(pos))
@@ -261,121 +261,7 @@ throw (utils::InvalidInputException)
 }
 
 unsigned long
-Bitmap::pixelOffset(const Vector& pos) const
+Bitmap::pixelOffset(const IVector& pos) const
 { return (pos.y * _pitch.x + pos.x) * _format.bytesPerPixel(); }
-
-/*
-
-void
-ImageBlender::fillWithColor(AbstractImage& img, const Color& col)
-{ fillRegionWithColor(img, img.region(), col); }
-
-void
-ImageBlender::fillRegionWithColor(
-      AbstractImage& img, 
-      const Rect& reg, 
-      const Color& col)
-throw (utils::InvalidInputException)
-{
-   const PixelFormat& fmt = img.pixelFormat();
-
-   if (fmt == PixelFormat::FORMAT_8BPP_GREYSCALE)
-      fillGreyscale8RegionWithColor(img, reg, col);
-   else if (fmt == PixelFormat::FORMAT_16BPP_GREYSCALE)
-      fillGreyscale16RegionWithColor(img, reg, col);
-   else
-      fillTruecolorRegionWithColor(img, reg, col);
-}
-
-void
-ImageBlender::fillGreyscale8RegionWithColor(
-      AbstractImage& img, 
-      const Rect& reg,
-      const Color& col)
-throw (utils::InvalidInputException)
-{
-   if (img.pixelFormat() != PixelFormat::FORMAT_8BPP_GREYSCALE)
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill 8-bit greyscale image: invalid pixel format");
-   
-   if (!reg.isInside(img.region()))
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill image region: outside image boundaries");
-
-   UInt8* pix = (UInt8*) img.pixels();
-   const Vector& pitch = img.pitch();
-
-   // Luminance combination of RGB channels. 
-   UInt8 mpix = col.r * 0.30 + col.g * 0.59 + col.b * 0.11;
-   for (int j = reg.y; j < reg.y + reg.h; j++)
-      memset(&pix[j * (unsigned long) pitch.x], mpix, reg.w);
-}
-
-void
-ImageBlender::fillGreyscale16RegionWithColor(
-      AbstractImage& img, 
-      const Rect& reg,
-      const Color& col)
-throw (utils::InvalidInputException)
-{
-   if (img.pixelFormat() != PixelFormat::FORMAT_16BPP_GREYSCALE)
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill 16-bit greyscale image: invalid pixel format");
-
-   if (!reg.isInside(img.region()))
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill image region: outside image boundaries");
-
-   UInt16* pix = (UInt16*) img.pixels();
-   const Vector& pitch = img.pitch();
-
-   // Luminance combination of RGB channels. 
-   UInt16 mpix = (col.r * 0.30 + col.g * 0.59 + col.b * 0.11) * 255;
-   for (int j = reg.y; j < reg.y + reg.h; j++)
-      for (int i = reg.x; i < reg.x + reg.w; i++)
-      {
-         pix[(unsigned long) (j * pitch.x + i)] = mpix;
-      }
-}
-
-void
-ImageBlender::fillTruecolorRegionWithColor(
-      AbstractImage& img, 
-      const Rect& reg,
-      const Color& col)
-throw (utils::InvalidInputException)
-{
-   UInt8* pix = (UInt8*) img.pixels();
-   const PixelFormat& fmt = img.pixelFormat();
-   const PixelFormat::Mask& mask = fmt.mask();
-   const PixelFormat::Shift& shift = fmt.shift();
-   unsigned int bpp = fmt.bytesPerPixel();
-   const Vector& pitch = img.pitch();
-
-   if (bpp != 3 && bpp != 4)
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill true color image: invalid pixel format");
-
-   if (!reg.isInside(img.region()))
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill image region: outside image boundaries");
-
-   // Prepare a master pixel with given color properties using source
-   // image pixel format. This master will be used as pattern to be copied
-   // over image pixels.
-   UInt32 mpix = 0;
-   mpix |= (((UInt32) col.r) << shift.r) & mask.r;
-   mpix |= (((UInt32) col.g) << shift.g) & mask.g;
-   mpix |= (((UInt32) col.b) << shift.b) & mask.b;
-   mpix |= (((UInt32) col.a) << shift.a) & mask.a;
-
-   for (int j = reg.y; j < reg.y + reg.h; j++)
-      for (int i = reg.x; i < reg.x + reg.w; i++)
-      {
-         unsigned long poff = (j * pitch.x + i) * bpp;
-         *(UInt32*) &pix[poff] = mpix;
-      }
-}
-*/
 
 }}; /* namespace karen::ui */

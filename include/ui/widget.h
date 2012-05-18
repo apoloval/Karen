@@ -57,13 +57,13 @@ public:
     * zero on any coordinate means that there is no requirement for that
     * component.
     */
-   inline const Vector& requiredSize() const
+   inline const IVector& requiredSize() const
    { return _requiredSize; }
    
    /**
     * Obtain the frame assigned to this widget by parent at its deployment.
     */
-   inline const Nullable<Rect>& frame() const
+   inline const Nullable<IRect>& frame() const
    { return _frame; }
    
    /**
@@ -89,7 +89,7 @@ public:
     * widget itself. The method is aimed to be overriden by children classes     
     * to provide their own implementation.
     */
-   virtual Widget* activateWidgetAtPos(const Vector& localPos);
+   virtual Widget* activateWidgetAtPos(const IVector& localPos);
 
 protected:
 
@@ -100,9 +100,9 @@ protected:
 
 private:
 
-   Container*     _parent;
-   Vector         _requiredSize;
-   Nullable<Rect> _frame;
+   Container*        _parent;
+   IVector           _requiredSize;
+   Nullable<IRect>   _frame;
 
 };
 
@@ -126,7 +126,7 @@ protected:
    /**
     * Set the frame for a child widget.
     */
-   virtual void setFrameForChild(Widget& widget, const Rect& frame);
+   virtual void setFrameForChild(Widget& widget, const IRect& frame);
 
 };
 
@@ -143,7 +143,7 @@ public:
     * alreary has a parent or the widget was already added, a 
     * InvalidInputException is thrown.
     */
-   void addWidget(Ptr<Widget> widget, const Rect& coordinates)
+   void addWidget(Ptr<Widget> widget, const IRect& coordinates)
          throw (utils::InvalidInputException);
    
    /**
@@ -154,7 +154,7 @@ public:
     * up in the chain to know it. This implementation locates the widget
     * at given position and marks it as the object-in-front.
     */
-   virtual Widget* activateWidgetAtPos(const Vector& localPos);
+   virtual Widget* activateWidgetAtPos(const IVector& localPos);
 
    /**
     * Draw this widget on given canvas. 
@@ -166,7 +166,7 @@ private:
    struct ChildInfo
    {
       Ptr<Widget> widget;
-      Rect        coord;      
+      IRect        coord;      
    };
 
    utils::LinkedList<ChildInfo> _children;

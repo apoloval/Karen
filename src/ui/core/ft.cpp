@@ -80,7 +80,7 @@ FreeTypeRenderer::render(
    const String& text,
    const String& fontLocation,
    unsigned int fontSize,
-   Image& renderTo)
+   Bitmap& renderTo)
 throw (utils::InvalidInputException)
 {
    FT_Error err;
@@ -97,7 +97,7 @@ throw (utils::InvalidInputException)
 }
 
 void
-FreeTypeRenderer::blitToImage(Image& target)
+FreeTypeRenderer::blitToImage(Bitmap& target)
 throw (utils::InvalidStateException)
 {
    FT_GlyphSlot slot = _face->glyph;

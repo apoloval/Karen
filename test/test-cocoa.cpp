@@ -38,7 +38,7 @@ using namespace karen;
 
 ui::ScreenProperties screenProps =
 {
-   ui::Vector(SCREEN_W, SCREEN_H),     // dimensions
+   ui::IVector(SCREEN_W, SCREEN_H),     // dimensions
    ui::PixelFormat::FORMAT_32BPP_RGBA, // pixel format
    false,                              // fullscreen
    true,                               // double buffered
@@ -59,10 +59,10 @@ public:
    {
       ui::Canvas::QuadParams quad =
       {
-         { ui::Vector(pos.x,              pos.y), 
-           ui::Vector(pos.x + FIG_SIZE,   pos.y), 
-           ui::Vector(pos.x + FIG_SIZE,   pos.y + FIG_SIZE), 
-           ui::Vector(pos.x,              pos.y + FIG_SIZE), },
+         { ui::DVector(pos.x,              pos.y), 
+           ui::DVector(pos.x + FIG_SIZE,   pos.y), 
+           ui::DVector(pos.x + FIG_SIZE,   pos.y + FIG_SIZE), 
+           ui::DVector(pos.x,              pos.y + FIG_SIZE), },
          { ui::Color(pos.x * 255.0f / SCREEN_W , 0xff, 0xff), 
            ui::Color(0xff, pos.y * 255.0f / SCREEN_H, 0xff), 
            ui::Color(0xff, 0xff, pos.x * 255.0f / SCREEN_W), 
@@ -138,8 +138,8 @@ public:
 
 private:
 
-   ui::Vector pos;
-   ui::Vector mov;
+   ui::DVector pos;
+   ui::DVector mov;
    long frameCount;
    ui::Engine* engine;
 

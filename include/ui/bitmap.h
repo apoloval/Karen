@@ -45,14 +45,14 @@ public:
     * Create an empty bitmap with given dimensions, pitch and format. If given
     * dimensions or pitch are not valid, a InvalidInputException is thrown.
     */
-   Bitmap(const Vector& dims, const Vector& pitch, const PixelFormat& format) 
+   Bitmap(const IVector& dims, const IVector& pitch, const PixelFormat& format) 
          throw (utils::InvalidInputException);
          
    /**
     * Create an empty bitmap with given dimensions and format. If given
     * dimensions are not valid, a InvalidInputException is thrown.
     */
-   Bitmap(const Vector& dims, const PixelFormat& format) 
+   Bitmap(const IVector& dims, const PixelFormat& format) 
          throw (utils::InvalidInputException);
          
    /**
@@ -90,31 +90,31 @@ public:
     * fills the region determined by reg with col color. If reg is out of
     * image boundaries, InvalidInputException is thrown.
     */
-   void fillRegionWithColor(const Rect& reg, const Color& col) 
+   void fillRegionWithColor(const IRect& reg, const Color& col) 
          throw (utils::InvalidInputException);
    /**
     * Obtain the offset of the pixel at given position in the data buffer 
     * in bytes. 
     */
-   unsigned long pixelOffset(const Vector& pos) const;
+   unsigned long pixelOffset(const IVector& pos) const;
    
    /**
     * Check whether given vector is a valid pixel position for this bitmap.
     */
-   inline bool isValidPixelPosition(const Vector& pos) const
-   { return pos.isInside(Rect(_size)); }
+   inline bool isValidPixelPosition(const IVector& pos) const
+   { return pos.isInside(IRect(_size)); }
 
    /**
     * Obtain the pitch of the bitmap, i.e. the exact number of columns and 
     * rows in the data buffer. 
     */
-   inline const Vector& pitch() const
+   inline const IVector& pitch() const
    { return _pitch; }
    
    /**
     * Obtain the color value of the pixel stored at given position.
     */
-   Color pixelAt(const Vector& pos) const 
+   Color pixelAt(const IVector& pos) const 
          throw (utils::InvalidInputException);
    
    /** 
@@ -138,19 +138,19 @@ public:
    /**
     * Set the color of the pixel stored at given position.
     */
-   void setPixelAt(const Vector& pos, const Color& pix)
+   void setPixelAt(const IVector& pos, const Color& pix)
          throw (utils::InvalidInputException);
 
    /**
     * Obtain the size of the bitmap in pixels.
     */
-   inline const Vector& size() const
+   inline const IVector& size() const
    { return _size; }
    
 private:
 
-   Vector               _size;
-   Vector               _pitch;
+   IVector              _size;
+   IVector              _pitch;
    PixelFormat          _format;
    Ptr<utils::Buffer>   _pixels;
 

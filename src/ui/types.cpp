@@ -28,18 +28,6 @@
 
 namespace karen { namespace ui {
 
-double
-Vector::distance(const Vector& p) const
-{
-   return sqrt(pow((double) p.x - x, 2.0) + pow((double) p.y - y, 2.0));
-}
-
-double
-Vector::length() const
-{
-   return sqrtf(powf(x, 2) + powf(y, 2));
-}
-
 KAREN_EXPORT const Color Color::BLACK   (0x00, 0x00, 0x00);
 KAREN_EXPORT const Color Color::WHITE   (0xff, 0xff, 0xff);
 KAREN_EXPORT const Color Color::RED     (0xff, 0x00, 0x00);
