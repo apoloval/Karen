@@ -147,7 +147,7 @@ private:
    void initBitmap()
    {
       ui::Bitmap bmp(ui::IVector(BITMAP_SIZE, BITMAP_SIZE), 
-                     ui::PixelFormat::FORMAT_32BPP_RGBA);
+                     ui::PixelFormat::FORMAT_24BPP_RGB);
       for (int i = 0; i < BITMAP_SIZE; i++)
          for (int j = 0; j < BITMAP_SIZE; j++)
          {
@@ -155,6 +155,10 @@ private:
             bool evenCol = (j / (BITMAP_SIZE / 8)) % 2;
             ui::Color col(
                   evenRow == evenCol ? ui::Color::RED : ui::Color::BLUE);
+            if (evenRow != evenCol)
+            {
+               evenRow = true;
+            }
             bmp.setPixelAt(ui::IVector(i, j), col);
          }
       _bitmap = engine->drawingContext().bindBitmap(bmp);

@@ -29,16 +29,85 @@
 
 namespace karen { namespace ui {
 
-static void
-fillGreyscale8RegionWithColor(
+#define SET_PIXEL8(buf, offset, value8) buf.set<UInt8>(value8, offset)
+#define SET_PIXEL16(buf, offset, value16) buf.set<UInt16>(value16, offset)
+
+#if KAREN_ENDIANNESS == KAREN_BIG_ENDIAN
+   #define SET_PIXEL24(buf, offset, value32) \
+      buf.set<UInt8>(value32      , offset + 2); \
+      buf.set<UInt8>(value32 >> 8 , offset + 1); \
+      buf.set<UInt8>(value32 >> 16, offset);
+#else
+   #define SET_PIXEL24(buf, offset, value32) \
+      buf.set<UInt8>(value32      , offset); \
+      buf.set<UInt8>(value32 >> 8 , offset + 1); \
+      buf.set<UInt8>(value32 >> 16, offset + 2);
+#endif   
+
+#define SET_PIXEL32(buf, offset, value32) buf.set<UInt32>(value32, offset)
+
+#define SET_PIXEL(bpp, buf, offset, value) \
+{ \
+   switch (bpp) \
+   { \
+      case 1: SET_PIXEL8(buf,  offset,  UInt8(value)); break; \
+      case 2: SET_PIXEL16(buf, offset, UInt16(value)); break; \
+      case 3: SET_PIXEL24(buf, offset, UInt32(value)); break; \
+      case 4: SET_PIXEL32(buf, offset, UInt32(value)); break; \
+   } \
+}
+
+#define GET_PIXEL8(buf, offset, value8) value8 = buf.get<UInt8>(offset);
+
+#define GET_PIXEL16(buf, offset, value16) value16 = buf.get<UInt16>(offset);
+
+#if KAREN_ENDIANNESS == KAREN_BIG_ENDIAN
+   #define GET_PIXEL24(buf, offset, value32) { \
+      UInt32 __byte1 = UInt32(buf.get<UInt8>(offset    )) << 16; \
+      UInt32 __byte2 = UInt32(buf.get<UInt8>(offset + 1)) << 8; \
+      UInt32 __byte3 = UInt32(buf.get<UInt8>(offset + 2)); \
+      value32 = 0xffffffff & __byte1 & __byte2 & __byte3; \
+   }
+#else
+   #define GET_PIXEL24(buf, offset, value32) { \
+      UInt32 __byte1 = UInt32(buf.get<UInt8>(offset + 2)) << 16; \
+      UInt32 __byte2 = UInt32(buf.get<UInt8>(offset + 1)) << 8; \
+      UInt32 __byte3 = UInt32(buf.get<UInt8>(offset    )); \
+      value32 = 0xffffffff & __byte1 & __byte2 & __byte3; \
+   }
+#endif   
+
+#define GET_PIXEL32(buf, offset, value32) value32 = buf.get<UInt32>(offset);
+
+#define GET_PIXEL(bpp, buf, offset, value) \
+{ \
+   switch (bpp) \
+   { \
+      case 1: GET_PIXEL8(buf,  offset, value); break; \
+      case 2: GET_PIXEL16(buf, offset, value); break; \
+      case 3: GET_PIXEL24(buf, offset, value); break; \
+      case 4: GET_PIXEL32(buf, offset, value); break; \
+   } \
+}
+
+template <class PixelType>
+void
+fillGreyscaleRegionWithColor(
       Bitmap& img, 
       const IRect& reg,
       const Color& col)
 throw (utils::InvalidInputException)
 {
-   if (img.pixelFormat() != PixelFormat::FORMAT_8BPP_GREYSCALE)
+   const PixelFormat& pf = img.pixelFormat();
+   if ((pf != PixelFormat::FORMAT_8BPP_GREYSCALE) ||
+       (pf != PixelFormat::FORMAT_16BPP_GREYSCALE))
       KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill 8-bit greyscale image: invalid pixel format");
+         "cannot fill greyscale image: pixel format is not greyscale");
+   
+   if (pf.bytesPerPixel() != sizeof(PixelType))
+      KAREN_THROW(utils::InvalidInputException, 
+         "cannot fill greyscale image: %d-bits pixel type for %d-bits image",
+         pf.bitsPerPixel(), sizeof(PixelType) * 8);
    
    if (!reg.isInside(img.size()))
       KAREN_THROW(utils::InvalidInputException, 
@@ -48,40 +117,13 @@ throw (utils::InvalidInputException)
    const IVector& pitch = img.pitch();
 
    // Luminance combination of RGB channels. 
-   UInt8 mpix = col.r * 0.30 + col.g * 0.59 + col.b * 0.11;
+   PixelType mpix = (col.r * 0.30 + col.g * 0.59 + col.b * 0.11) * 
+                    pow(2.0, (sizeof(PixelType) - 8) * 8);
    for (int j = reg.y; j < reg.y + reg.h; j++)
       for (int i = reg.x; i < reg.x + reg.w; i++)
       {
-         unsigned long offset = (j * pitch.x + i) * sizeof(UInt8);
-         pix.set<UInt8>(mpix, offset);
-      }
-}
-
-static void
-fillGreyscale16RegionWithColor(
-      Bitmap& img, 
-      const IRect& reg,
-      const Color& col)
-throw (utils::InvalidInputException)
-{
-   if (img.pixelFormat() != PixelFormat::FORMAT_16BPP_GREYSCALE)
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill 16-bit greyscale image: invalid pixel format");
-
-   if (!reg.isInside(img.size()))
-      KAREN_THROW(utils::InvalidInputException, 
-         "cannot fill image region: outside image boundaries");
-
-   utils::Buffer& pix = img.pixels();
-   const IVector& pitch = img.pitch();
-
-   // Luminance combination of RGB channels. 
-   UInt16 mpix = (col.r * 0.30 + col.g * 0.59 + col.b * 0.11) * 255;
-   for (int j = reg.y; j < reg.y + reg.h; j++)
-      for (int i = reg.x; i < reg.x + reg.w; i++)
-      {
-         unsigned long offset = (j * pitch.x + i) * sizeof(UInt16);
-         pix.set<UInt16>(mpix, offset);
+         unsigned long offset = (j * pitch.x + i) * sizeof(PixelType);
+         SET_PIXEL(sizeof(PixelType), pix, offset, mpix);
       }
 }
 
@@ -111,16 +153,16 @@ throw (utils::InvalidInputException)
    // image pixel format. This master will be used as pattern to be copied
    // over image pixels.
    UInt32 mpix = 0;
-   mpix |= (((UInt32) col.r) << shift.r) & mask.r;
-   mpix |= (((UInt32) col.g) << shift.g) & mask.g;
-   mpix |= (((UInt32) col.b) << shift.b) & mask.b;
-   mpix |= (((UInt32) col.a) << shift.a) & mask.a;
+   mpix |= (UInt32(col.r) << shift.r) & mask.r;
+   mpix |= (UInt32(col.g) << shift.g) & mask.g;
+   mpix |= (UInt32(col.b) << shift.b) & mask.b;
+   mpix |= (UInt32(col.a) << shift.a) & mask.a;
 
    for (int j = reg.y; j < reg.y + reg.h; j++)
       for (int i = reg.x; i < reg.x + reg.w; i++)
       {
          unsigned long poff = (j * pitch.x + i) * bpp;
-         pix.set<UInt32>(mpix, poff);
+         SET_PIXEL(bpp, pix, poff, mpix);
       }
 }
 
@@ -138,8 +180,6 @@ throw (utils::InvalidInputException)
       KAREN_THROW(utils::InvalidInputException, 
          "cannot initialize image object: invalid dimensions as input");
    unsigned long buflen = npixels * format.bytesPerPixel();
-   if (buflen % 4)
-      buflen += 4 - (buflen % 4);
    _pixels = new utils::Buffer(buflen);
 }
 
@@ -201,9 +241,9 @@ throw (utils::InvalidInputException)
    const PixelFormat& fmt = pixelFormat();
 
    if (fmt == PixelFormat::FORMAT_8BPP_GREYSCALE)
-      fillGreyscale8RegionWithColor(*this, reg, col);
+      fillGreyscaleRegionWithColor<UInt8>(*this, reg, col);
    else if (fmt == PixelFormat::FORMAT_16BPP_GREYSCALE)
-      fillGreyscale16RegionWithColor(*this, reg, col);
+      fillGreyscaleRegionWithColor<UInt16>(*this, reg, col);
    else
       fillTruecolorRegionWithColor(*this, reg, col);
 }
@@ -223,7 +263,8 @@ throw (utils::InvalidInputException)
    const PixelFormat::Shift& shift = fmt.shift();
    unsigned long poff = pixelOffset(pos);
    
-   UInt32 data = _pixels->get<UInt32>(poff);
+   UInt32 data = 0;
+   GET_PIXEL(fmt.bytesPerPixel(), (*_pixels), poff, data);
       
    pix.r = (data & mask.r) >> shift.r;
    pix.g = (data & mask.g) >> shift.g;
@@ -242,22 +283,19 @@ throw (utils::InvalidInputException)
       KAREN_THROW(utils::InvalidInputException, 
          "cannot set pixel data of image: invalid position");
 
-   const PixelFormat& fmt = pixelFormat();
+   const PixelFormat& fmt = pixelFormat();   
    const PixelFormat::Mask& mask = fmt.mask();
    const PixelFormat::Shift& shift = fmt.shift();
    unsigned long poff = pixelOffset(pos);
+   unsigned int bpp = fmt.bytesPerPixel();
    
-   UInt32 data = _pixels->get<UInt32>(poff);
+   UInt32 data = 0;   
+   data |= (UInt32(color.r) << shift.r) & mask.r;
+   data |= (UInt32(color.g) << shift.g) & mask.g;
+   data |= (UInt32(color.b) << shift.b) & mask.b;
+   data |= (UInt32(color.a) << shift.a) & mask.a;
    
-   // Fill with zeroes everything but the padding bytes
-   data &= ~(mask.r | mask.g | mask.b | mask.a);
-   
-   data |= ((UInt32) color.r) << shift.r;
-   data |= ((UInt32) color.g) << shift.g;
-   data |= ((UInt32) color.b) << shift.b;
-   data |= ((UInt32) color.a) << shift.a;
-   
-   _pixels->set<UInt32>(data, poff);
+   SET_PIXEL(bpp, (*_pixels), poff, data);
 }
 
 unsigned long
