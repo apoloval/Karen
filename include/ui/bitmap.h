@@ -33,6 +33,8 @@
 
 namespace karen { namespace ui {
 
+class Bitmap;
+
 /**
  * Bitmap class. This class holds a map of bits used to represent images
  * on a canvas. 
@@ -40,6 +42,47 @@ namespace karen { namespace ui {
 class Bitmap
 {
 public:
+
+   /**
+    * Bitmap lock coordinator class. This abstract class provides the interface 
+    * for an object able to coordinate bitmap locking. 
+    */
+   class LockCoordinator
+   {
+   public:
+
+      /**
+       * Virtual destructor.
+       */
+      inline virtual ~LockCoordinator() {}
+
+      /**
+       * Check whether a bitmap being coordinated is locked.
+       */
+      virtual bool isLocked(const Bitmap& bmp) const = 0;
+      
+      /**
+       * Lock a coordinated bitmap.
+       */
+      virtual void lock(const Bitmap& bmp) = 0;
+      
+      /**
+       * Unlock a coordinated bitmap.
+       */
+      virtual void unlock(const Bitmap& bmp) = 0;
+      
+      /**
+       * Callback invoked when a new bitmap is bounded to this coordinator.
+       */
+      virtual void onBind(const Bitmap& bmp) = 0;
+      
+      /**
+       * Callback invoked when a binding between this coordinator and given
+       * bitmap is disposed.
+       */
+      virtual void onDispose(const Bitmap& bmp) = 0;
+            
+   };
 
    /**
     * Create an empty bitmap with given dimensions, pitch and format. If given
@@ -79,6 +122,17 @@ public:
     * Move operator.
     */
    Bitmap& operator = (Bitmap&& bmp);
+   
+   /**
+    * Set lock coordinator for this bitmap.
+    */
+   void setLockCoordinator(LockCoordinator* lockCoord);
+   
+   /**
+    * Obtain the lock coordinator for this bitmap.
+    */
+   inline const LockCoordinator& lockCoordinator() const
+   { return *_lockCoord; }
    
    /**
     * Fill this bitmap with given color. 
@@ -153,6 +207,7 @@ private:
    IVector              _pitch;
    PixelFormat          _format;
    Ptr<utils::Buffer>   _pixels;
+   LockCoordinator*     _lockCoord;
 
 };
 

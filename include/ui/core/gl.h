@@ -41,6 +41,46 @@
 
 namespace karen { namespace ui { namespace core {
 
+
+class GLTextureStore : public Bitmap::LockCoordinator
+{
+public:
+
+   virtual bool isLocked(const Bitmap& bmp) const;
+   
+   virtual void lock(const Bitmap& bmp);
+   
+   virtual void unlock(const Bitmap& bmp);
+   
+   virtual void onBind(const Bitmap& bmp);
+   
+   virtual void onDispose(const Bitmap& bmp);
+
+   /**
+    * Obtain the texture name for given bitmap. 
+    */
+   GLint textureName(const Bitmap& bmp);
+
+private:
+
+   struct BitmapInfo
+   {
+      GLuint         textureName;
+      const Bitmap*  bitmap;
+      bool           locked;
+      
+      inline BitmapInfo(const Bitmap& bmp)
+       : textureName(0), bitmap(&bmp), locked(false) {}
+   };      
+
+   utils::TreeMap<const Bitmap*, Ptr<BitmapInfo>> _bitmapInfo;
+   
+   void updateTextureName(BitmapInfo& info);
+   
+   void releaseTextureName(BitmapInfo& info);
+
+};
+
 /**
  * OpenGL Canvas class. This class implements the canvas interface by using
  * OpenGL API.
@@ -107,36 +147,8 @@ public:
    
 private:
 
-   DVector _size;
-
-};
-
-/**
- * OpenGL bitmap binding. This class provides OpenGL-specific binding
- * between a bitmap and a OpenGL-supported drawing context.
- */
-class GLBitmapBinding : public BitmapBinding
-{
-public:
-
-   GLBitmapBinding(const Bitmap& bitmap, const DrawingContext& parentContext);
-   
-   /**
-    * Obtain the GL texture name corresponding to this bitmap binding.
-    */
-   inline GLuint textureName() const { return _textureName; }
-
-protected:
-
-   virtual void onLock();
-   
-   virtual void onUnlock();
-   
-   void updateTextureName();
-
-private:
-
-   GLuint _textureName;
+   DVector        _size;
+   GLTextureStore _textureStore;
 
 };
 

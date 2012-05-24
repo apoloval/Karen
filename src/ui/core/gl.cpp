@@ -62,6 +62,122 @@ throw (utils::InvalidInputException)
                  "OpenGL is unable to work with ABGR pixel format"); }
 }
 
+bool
+GLTextureStore::isLocked(const Bitmap& bmp) const
+{
+   try { return _bitmapInfo.get(&bmp)->locked; }
+   catch (utils::NotFoundException&) { return false; }
+}
+
+void
+GLTextureStore::lock(const Bitmap& bmp)
+{
+   try
+   {
+      Ptr<BitmapInfo>& info = _bitmapInfo.get(&bmp);
+      info->locked = true;
+   }
+   catch (utils::NotFoundException&) {}
+}
+
+void
+GLTextureStore::unlock(const Bitmap& bmp)
+{
+   try
+   {
+      Ptr<BitmapInfo>& info = _bitmapInfo.get(&bmp);
+      info->locked = false;
+      updateTextureName(*info);
+   }
+   catch (utils::NotFoundException&) {}
+}
+
+void
+GLTextureStore::onBind(const Bitmap& bmp)
+{
+   Ptr<BitmapInfo> info = new BitmapInfo(bmp);
+   _bitmapInfo.put(&bmp, info);
+   updateTextureName(*info);
+}
+
+void
+GLTextureStore::onDispose(const Bitmap& bmp)
+{
+   try
+   {
+      Ptr<BitmapInfo>& info(_bitmapInfo.get(&bmp));
+      releaseTextureName(*info);
+      _bitmapInfo.remove(&bmp);
+
+   }
+   catch (utils::NotFoundException&) {}   
+}
+
+GLint
+GLTextureStore::textureName(const Bitmap& bmp)
+{
+   try
+   {
+      Ptr<BitmapInfo>& info(_bitmapInfo.get(&bmp));
+      return info->textureName;
+   }
+   catch (utils::NotFoundException&) { return 0; }   
+}
+
+void
+GLTextureStore::updateTextureName(BitmapInfo& info)
+{
+   releaseTextureName(info);
+
+   glEnable(GL_TEXTURE_2D);
+   glGenTextures(1, &info.textureName);
+   glBindTexture(GL_TEXTURE_2D, info.textureName);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   
+   GLsizei width = info.bitmap->pitch().x, height = info.bitmap->pitch().y;   
+   GLenum pixelFormat, pixelType;
+   toGLPixelFormat(info.bitmap->pixelFormat(), pixelFormat, pixelType);
+   const GLvoid* data = info.bitmap->pixels();
+   
+   glTexImage2D(GL_TEXTURE_2D,      // the target
+                0,                  // texture level
+                GL_RGBA,            // internal format
+                width,              // image width
+                height,             // image height
+                0,                  // border width
+                pixelFormat,        // image format
+                pixelType,          // pixel data type
+                data);              // pixel data      
+
+   /* TODO:
+    * For some unknown reason, glTexImage2D is not updating glError properly.
+    * In my 10.7 laptop, it indicates a GL_INVALID_FRAMEBUFFER_OPERATION but
+    * it loads the bitmap succesfully after all. For now, this check is only 
+    * enabled for the rest of platforms until the problem is located.
+    */
+   #if KAREN_PLATFORM != KAREN_PLATFORM_OSX
+   GLenum error = glGetError();
+   if (error != GL_NO_ERROR)
+      KAREN_THROW(utils::InternalErrorException,
+         "cannot create GL texture for given bitmap: %s",
+         gluErrorString(error));
+   #endif
+}
+
+void
+GLTextureStore::releaseTextureName(BitmapInfo& info)
+{
+   glEnable(GL_TEXTURE_2D);
+   if (info.textureName && glIsTexture(info.textureName))
+   {
+      glDeleteTextures(1, &info.textureName);
+      info.textureName = 0;
+   }
+}
+
 OpenGLCanvas::OpenGLCanvas(
          const DrawingContext& parentContext, 
          const IVector& size)
@@ -335,21 +451,20 @@ OpenGLCanvas::drawQuad(const QuadParams& quad)
 void
 OpenGLCanvas::drawImage(const ImageParams& img)
 {
-   if (&img.image->parentContext() != &this->drawingContext())
-      KAREN_THROW(utils::InvalidInputException,
-         "cannot draw given image: "
-         "image binding does not belongs to the same drawing context");
-   Ptr<const GLBitmapBinding> binding = img.image.dynCasting<GLBitmapBinding>();
-   GLuint texName = binding->textureName();
+   if (&img.bitmap->lockCoordinator() != &_textureStore)
+      img.bitmap->setLockCoordinator(&_textureStore);
+   
+   GLuint texName = _textureStore.textureName(*img.bitmap);
    if (!glIsTexture(texName))
       KAREN_THROW(utils::InternalErrorException, 
-         "cannot draw image: the GL binding contains an invalid texture name");
+         "cannot draw image: the GL texture store contains "
+         "an invalid texture name for that bitmap");
    
    glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, texName);
    
-   DVector imgSize = img.image->bitmap().size();
-   DVector imgPitch = img.image->bitmap().pitch();
+   DVector imgSize = img.bitmap->size();
+   DVector imgPitch = img.bitmap->pitch();
    
    double imgW = imgSize.x / imgPitch.x, 
           imgH = imgSize.y / imgPitch.y;
@@ -377,70 +492,6 @@ void
 OpenGLCanvas::drawText(const TextParams& txt)
 {
    /* TODO: code this. */
-}
-
-GLBitmapBinding::GLBitmapBinding(
-      const Bitmap& bitmap, 
-      const DrawingContext& parentContext)
- : BitmapBinding(bitmap, parentContext), _textureName(0)
-{
-   updateTextureName();
-}
-
-void
-GLBitmapBinding::onLock()
-{
-}
-
-void
-GLBitmapBinding::onUnlock()
-{
-   updateTextureName();
-}
-
-void
-GLBitmapBinding::updateTextureName()
-{
-   glEnable(GL_TEXTURE_2D);
-   if (_textureName && glIsTexture(_textureName))
-      glDeleteTextures(1, &_textureName);
-   glGenTextures(1, &_textureName);
-   glBindTexture(GL_TEXTURE_2D, _textureName);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   
-   const Bitmap& bitmap = static_cast<const GLBitmapBinding*>(this)->bitmap();
-
-   GLsizei width = bitmap.pitch().x, height = bitmap.pitch().y;   
-   GLenum pixelFormat, pixelType;
-   toGLPixelFormat(bitmap.pixelFormat(), pixelFormat, pixelType);
-   const GLvoid* data = bitmap.pixels();
-   
-   glTexImage2D(GL_TEXTURE_2D,      // the target
-                0,                  // texture level
-                GL_RGBA,            // internal format
-                width,              // image width
-                height,             // image height
-                0,                  // border width
-                pixelFormat,        // image format
-                pixelType,          // pixel data type
-                data);              // pixel data      
-
-   /* TODO:
-    * For some unknown reason, glTexImage2D is not updating glError properly.
-    * In my 10.7 laptop, it indicates a GL_INVALID_FRAMEBUFFER_OPERATION but
-    * it loads the bitmap succesfully after all. For now, this check is only 
-    * enabled for the rest of platforms until the problem is located.
-    */
-   #if KAREN_PLATFORM != KAREN_PLATFORM_OSX
-   GLenum error = glGetError();
-   if (error != GL_NO_ERROR)
-      KAREN_THROW(utils::InternalErrorException,
-         "cannot create GL texture for given bitmap: %s",
-         gluErrorString(error));
-   #endif
 }
 
 }}}; /* namespace karen::ui::core */

@@ -435,14 +435,6 @@ CocoaDrawingContext::postRedisplay()
    [_glView setNeedsDisplay: YES];
 }
 
-Ptr<BitmapBinding>
-CocoaDrawingContext::bindBitmap(const Bitmap& bmp)
-{ 
-   return new GLBitmapBinding(bmp, *this);
-}
-
-
-
 void
 CocoaTimer::registerCallback(TimerCallback* callback, double ms)
 throw (utils::InvalidInputException)
@@ -459,10 +451,7 @@ throw (utils::InvalidInputException)
    [[NSRunLoop currentRunLoop] addTimer: tm forMode: NSDefaultRunLoopMode];
 }
 
-
-
 const String CocoaEngine::ENGINE_NAME("karen.core.cocoa-engine");
-
 
 CocoaEngine::~CocoaEngine()
 {

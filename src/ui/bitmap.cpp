@@ -90,6 +90,51 @@ namespace karen { namespace ui {
    } \
 }
 
+#define CHECK_LOCKED(msg) \
+   if (_lockCoord->isLocked(*this)) \
+      KAREN_THROW(utils::InvalidStateException, "%s: bitmap is locked", msg);
+
+class DefaultLockCoordinator : public Bitmap::LockCoordinator
+{
+public:
+
+   inline static DefaultLockCoordinator& instance()
+   {
+      DefaultLockCoordinator* inst = NULL;
+      if (!inst)
+         inst = new DefaultLockCoordinator();
+      return *inst;
+   }
+
+   inline virtual ~DefaultLockCoordinator() 
+   {}
+
+   inline virtual bool isLocked(const Bitmap& bmp) const
+   {
+      try { return _locks.get(&bmp); }
+      catch (utils::NotFoundException&) { return false; }
+   }
+   
+   inline virtual void lock(const Bitmap& bmp)
+   { _locks[&bmp] = true; }
+   
+   inline virtual void unlock(const Bitmap& bmp)
+   { _locks[&bmp] = false; }
+   
+   inline virtual void onBind(const Bitmap& bmp)
+   { unlock(bmp); }
+   
+   inline virtual void onDispose(const Bitmap& bmp)
+   { _locks.remove(&bmp); }
+
+private:
+
+   utils::TreeMap<const Bitmap*, bool> _locks;
+   
+   inline DefaultLockCoordinator() {}
+
+};
+
 template <class PixelType>
 void
 fillGreyscaleRegionWithColor(
@@ -170,7 +215,7 @@ Bitmap::Bitmap(const IVector& dims,
                const IVector& pitch, 
                const PixelFormat& format)
 throw (utils::InvalidInputException)
- : _size(dims), _pitch(pitch), _format(format), _pixels(NULL)
+ : _size(dims), _pitch(pitch), _format(format), _pixels(NULL), _lockCoord(NULL)
 {
    if (pitch.x < dims.x || pitch.y < dims.y)
       KAREN_THROW(utils::InvalidInputException, 
@@ -181,6 +226,8 @@ throw (utils::InvalidInputException)
          "cannot initialize image object: invalid dimensions as input");
    unsigned long buflen = npixels * format.bytesPerPixel();
    _pixels = new utils::Buffer(buflen);
+   
+   setLockCoordinator(&DefaultLockCoordinator::instance());
 }
 
 Bitmap::Bitmap(const IVector& dims, const PixelFormat& format)
@@ -199,20 +246,24 @@ Bitmap::Bitmap(Bitmap&& bmp)
  : _size(bmp._size), _pitch(bmp._pitch), 
    _format(bmp._format), _pixels(bmp._pixels)
 {
+   setLockCoordinator(&DefaultLockCoordinator::instance());
+   
    bmp._pixels = NULL;
 }
    
 Bitmap::~Bitmap()
-{
-}
+{ _lockCoord->onDispose(*this); }
 
 Bitmap&
 Bitmap::operator = (const Bitmap& bmp)
 {
-   _size    = bmp._size;
-   _pitch   = bmp._pitch;
-   _format  = bmp._format;
-   _pixels  = bmp._pixels;      
+   _size       = bmp._size;
+   _pitch      = bmp._pitch;
+   _format     = bmp._format;
+   _pixels     = bmp._pixels;
+   _lockCoord  = NULL;
+   
+   setLockCoordinator(bmp._lockCoord);
 
    return *this;
 }
@@ -223,11 +274,23 @@ Bitmap::operator = (Bitmap&& bmp)
    _size    = bmp._size;
    _pitch   = bmp._pitch;
    _format  = bmp._format;
-   _pixels  = bmp._pixels;      
+   _pixels  = bmp._pixels;
+   _lockCoord  = NULL;
+   
+   setLockCoordinator(bmp._lockCoord);
    
    bmp._pixels = NULL;
 
    return *this;
+}
+
+void
+Bitmap::setLockCoordinator(LockCoordinator* lockCoord)
+{
+   if (_lockCoord)
+      _lockCoord->onDispose(*this);
+   _lockCoord = lockCoord;
+   _lockCoord->onBind(*this);
 }
 
 void
@@ -238,6 +301,7 @@ void
 Bitmap::fillRegionWithColor(const IRect& reg, const Color& col) 
 throw (utils::InvalidInputException)
 {
+   CHECK_LOCKED("cannot fill bitmap");
    const PixelFormat& fmt = pixelFormat();
 
    if (fmt == PixelFormat::FORMAT_8BPP_GREYSCALE)
@@ -279,6 +343,7 @@ void
 Bitmap::setPixelAt(const IVector& pos, const Color& color)
 throw (utils::InvalidInputException)
 {
+   CHECK_LOCKED("cannot set pixel data of image");
    if (!isValidPixelPosition(pos))
       KAREN_THROW(utils::InvalidInputException, 
          "cannot set pixel data of image: invalid position");

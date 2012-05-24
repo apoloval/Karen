@@ -104,8 +104,6 @@ public:
     */
    virtual void postRedisplay();
    
-   virtual Ptr<BitmapBinding> bindBitmap(const Bitmap& bmp);
-   
 private:
 
    KarenWindow*      _window;

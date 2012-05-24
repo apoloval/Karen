@@ -26,42 +26,4 @@
 
 namespace karen { namespace ui {
 
-utils::Bolt<Bitmap>&
-BitmapBinding::bitmap()
-throw (utils::InvalidStateException)
-{
-   if (_unlocked)
-      KAREN_THROW(utils::InvalidStateException,
-         "cannot fetch bitmap for bitmap binding: the binding is locked");
-   return _bolt;
-}
-
-void
-BitmapBinding::lock()
-{
-   if (_unlocked)
-   {
-      _unlocked = false;
-      onLock();
-   }
-}
-
-void
-BitmapBinding::unlock()
-{
-   if (!_unlocked)
-   {
-      _unlocked = true;
-      onUnlock();
-   }
-}
-
-BitmapBinding::BitmapBinding(
-      const Bitmap& bitmap, const DrawingContext& parentContext)
- : _unlocked(false), 
-   _parentContext(&parentContext), 
-   _bitmap(bitmap),
-   _bolt(&_bitmap, utils::BooleanBoltCondition(&_unlocked))
-{}
-
 }}; // namespace karen::ui
