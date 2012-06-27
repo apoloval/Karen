@@ -2,7 +2,7 @@
  * ---------------------------------------------------------------------
  * This file is part of Karen
  *
- * Copyright (c) 2007-2011 Alvaro Polo
+ * Copyright (c) 2007-2012 Alvaro Polo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
