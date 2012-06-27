@@ -701,7 +701,9 @@ private:
    
       inline bool operator () (const Tuple<const K, T>& lhs, 
                                const Tuple<const K, T>& rhs) const
-      { return cmp(lhs.first(), rhs.first()); }
+      { 
+         return cmp(lhs.template get<0>(), rhs.template get<0>()); 
+      }
    };
    
    typedef std::set<Tuple<const K, T>, KeyCompare> _Impl;

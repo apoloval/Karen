@@ -80,79 +80,163 @@ private:
 };
 
 /**
- * Tuple template class. This template class provides a wrapper for a tuple
- * of values. This may be extended by using the DECL_TUPLE macro.
+ * Tuple template class. This variadic-template class provides a convenient 
+ * wrapper for a n-tuple of elements. 
  */
-template <class T1, class T2>
-class Tuple
-{
-public:   
-
-   /**
-    * Value constructor.
-    */
-   inline Tuple(const T1 &t1, const T2 &t2) : _first(t1), _second(t2) {}
-   
-   /**
-    * Create a new tuple from an STL pair object.
-    */
-   inline Tuple(const std::pair<T1, T2>& value)
-    : _first(value.first), _second(value.second) {}
-   
-   /**
-    * Copy constructor.
-    */
-   inline Tuple(const Tuple& value)
-    : _first(value._first), _second(value._second) {}
-    
-   /**
-    * Obtain the first element of the tuple.
-    */
-   const T1 &first() const
-   { return _first; }
-   
-   /**
-    * Obtain the first element of the tuple.
-    */
-   T1 &first()
-   { return _first; }
-   
-   /**
-    * Obtain the second element of the tuple.
-    */
-   const T2 &second() const
-   { return _second; }
-   
-   /**
-    * Obtain the second element of the tuple.
-    */
-   T2 &second()
-   { return _second; }
-   
-private:
-
-   T1 _first;  //!< The first element of the tuple
-   T2 _second; //!< The second element of the tuple
-
-};
+template <class ... T>
+class Tuple;
 
 /**
- * KAREN_DECL_TUPLE macro. This macro function may be used to extend the
- * Tuple template class to provide custom getters for the first
- * and second elements of the tuple. 
+ * Template specialization for base case. This template-specialization is
+ * aimed to provide the base class for any tuple hierarchy made recursive
+ * by the variadic template. This is not aimed to be instantiated directly
+ * (what makes no sense, who wants a tuple of one element? ).
  */
-#define KAREN_DECL_TUPLE(classname, type1, type2, getter1, getter2) \
-   class classname : public ::karen::utils::Tuple<type1, type2> \
-   { \
-   public:\
-      classname(const type1 &t1, const type2 &t2) \
-         : ::karen::utils::Tuple<type1, type2>((type1&) t1, (type2&) t2) {} \
-      const type1 &getter1() const { return this->first(); } \
-      type1 &getter1() { return this->first(); } \
-      const type2 &getter2() const { return this->second(); } \
-      type2 &getter2() { return this->second(); } \
-   };
+template <class T1>
+class Tuple<T1>
+{
+public:
+   
+   inline Tuple<T1>(const T1& elem) : _elem(elem) {}
 
+private:
+   
+   template <int id, class ... _T>
+   friend class Tuple<_T...>::_ElementAccessor;
+   
+   T1 _elem;
+   
+};
+
+/*
+ * Template specialization for recursive cases. This is the implementation 
+ * for tuples with more than one element.
+ */
+template <class T1, class ... T>
+class Tuple<T1, T...> : public Tuple<T...>
+{
+private:
+   
+   /*
+    * Element accessor template class. This class provides an accessor for 
+    * tuple elements. The id parameter indicates the position of the element 
+    * to be accessed. 
+    */
+   template <int id, class ... _T> struct _ElementAccessor;
+   
+   /*
+    * Template specialization for base case of accessing the first element.
+    */
+   template <class _T1, class ... _T>
+   struct _ElementAccessor<0, _T1, _T...>
+   {
+      /* 
+       * The type of the element accessed by this accessor.
+       */      
+      typedef _T1 type;
+      
+      /**
+       * A pointer to the tuple used to obtain the element value. 
+       */
+      mutable const Tuple<_T1, _T...>* _tuple;
+
+      /**
+       * Creates a new accessor by a reference to the tuple to be accessed.
+       */
+      inline _ElementAccessor(const Tuple<_T1, _T...>& t) : _tuple(&t) {}
+      
+      /**
+       * Cast operator. It returns the accessed element of the tuple.
+       */
+      inline operator const _T1&() const { return _tuple->_elem; }
+
+      /**
+       * Cast operator. It returns the accessed element of the tuple.
+       */
+      inline operator _T1&() { return const_cast<_T1&>(_tuple->_elem); }
+   };
+   
+   /*
+    * Template specialization for recursive cases.
+    */
+   template <int id, class _T1, class ... _T>
+   struct _ElementAccessor<id, _T1, _T...> : _ElementAccessor<id - 1, _T...>
+   {
+      /**
+       * The type of the element for the n-th (id) recursive case.
+       */
+      typedef typename _ElementAccessor<id - 1, _T...>::type type;
+
+      /**
+       * Creates a new accessor by a reference to the tuple to be accessed.
+       */
+      inline _ElementAccessor(const Tuple<_T1, _T...>& t) : 
+         _ElementAccessor<id - 1, _T...>(t) {}
+   };
+   
+public:
+   
+   /**
+    * Public accessor type. This is a special case of struct. It is used like 
+    * a static function of tuple class. It extends the _ElementAccessor 
+    * template class to serve as element accessor.
+    */
+   template <int id> struct getElement : _ElementAccessor<id, T1, T...>
+   {
+      /**
+       * The type of the n-th tuple element determined by id. 
+       */
+      typedef typename _ElementAccessor<id, T1, T...>::type type;
+      
+      /**
+       * Creates a new accessor for given tuple instance to n-th element 
+       * determined by id.
+       */
+      inline getElement(const Tuple<T1, T...>& t) : 
+         _ElementAccessor<id, T1, T...>(t) {}
+   };
+   
+   /**
+    * Obtain the n-th element of the tuple detemined by template parameter
+    * id. 
+    */
+   template <int id>
+   const typename getElement<id>::type& get() const
+   {
+      return getElement<id>(*this);
+   }
+   
+   /**
+    * Obtain the n-th element of the tuple detemined by template parameter
+    * id. 
+    */
+   template <int id>
+   typename getElement<id>::type& get()
+   {
+      return getElement<id>(*this);
+   }
+   
+   /**
+    * Create a new tuple with given elements.
+    */
+   inline Tuple(const T1 &elem, const T& ... t) : 
+      Tuple<T...>(t...), 
+      _elem(elem)
+   {} 
+   
+   /**
+    * Create a new tuple as a copy of that one passed as argument.
+    */
+   inline Tuple(const Tuple<T1, T...>& t) : Tuple<T...>(t), _elem(t._elem) {}
+
+private:
+      
+   template <int id, class ... _T>
+   friend class Tuple<_T...>::_ElementAccessor;
+
+   T1 _elem;
+
+};
 
 }}; // namespace karen::utils
 

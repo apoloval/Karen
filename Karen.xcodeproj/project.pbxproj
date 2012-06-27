@@ -28,12 +28,12 @@
 		B5080E6B15219EF700DC495A /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6A15219EF700DC495A /* OpenGL.framework */; };
 		B5080E6D15219F0000DC495A /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6C15219F0000DC495A /* GLUT.framework */; };
 		B5080E6F15219F0A00DC495A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6E15219F0A00DC495A /* Cocoa.framework */; };
-		B5080E711521A06B00DC495A /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E701521A06B00DC495A /* FreeType.framework */; };
 		B50947C2142C8D2400F3449C /* test-utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B50947C1142C8D2400F3449C /* test-utils.cpp */; };
 		B526A8F415669DDF0003CDEF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5080E6E15219F0A00DC495A /* Cocoa.framework */; };
 		B526A90A15669DF30003CDEF /* test-image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5204FE115666F3D003C6363 /* test-image.cpp */; };
 		B526A90B15669DFD0003CDEF /* Karen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FE554F144C7F2B00EFD75F /* Karen.framework */; };
 		B53669C014487848001374A8 /* test-glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53669BF14487848001374A8 /* test-glut.cpp */; };
+		B54FE2AA159B7D2400BF9A7C /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B54FE2A9159B7D2400BF9A7C /* FreeType.framework */; };
 		B5BA4D0F15655158008BD04D /* draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BA4D0E15655158008BD04D /* draw.cpp */; };
 		B5FE5545144C765300EFD75F /* test-cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5FE5544144C765300EFD75F /* test-cocoa.cpp */; };
 		B5FE555B144C7FFF00EFD75F /* glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5E8FF89143E0BEE007AE498 /* glut.cpp */; };
@@ -106,7 +106,6 @@
 		B5080E6A15219EF700DC495A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B5080E6C15219F0000DC495A /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/GLUT.framework; sourceTree = DEVELOPER_DIR; };
 		B5080E6E15219F0A00DC495A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		B5080E701521A06B00DC495A /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/Library/Frameworks/FreeType.framework; sourceTree = DEVELOPER_DIR; };
 		B509478A142B878100F3449C /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = include/utils/types.h; sourceTree = "<group>"; };
 		B509479E142B8AC800F3449C /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exception.h; path = include/utils/exception.h; sourceTree = "<group>"; };
 		B50947A2142B978B00F3449C /* string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string.cpp; path = src/utils/string.cpp; sourceTree = "<group>"; };
@@ -128,6 +127,7 @@
 		B53669A814481499001374A8 /* gl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl.cpp; path = src/ui/core/gl.cpp; sourceTree = "<group>"; };
 		B53669B414487826001374A8 /* test-glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test-glut"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53669BF14487848001374A8 /* test-glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-glut.cpp"; path = "test/test-glut.cpp"; sourceTree = "<group>"; };
+		B54FE2A9159B7D2400BF9A7C /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = /Library/Frameworks/FreeType.framework; sourceTree = "<absolute>"; };
 		B5BA4D0E15655158008BD04D /* draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = draw.cpp; path = src/ui/draw.cpp; sourceTree = "<group>"; };
 		B5BA4D111565699E008BD04D /* bolt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bolt.h; path = include/utils/bolt.h; sourceTree = "<group>"; };
 		B5BEB8771526F4A100BD1F7F /* collection-inl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "collection-inl.h"; path = "include/utils/collection-inl.h"; sourceTree = "<group>"; };
@@ -195,10 +195,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B54FE2AA159B7D2400BF9A7C /* FreeType.framework in Frameworks */,
 				B5080E6B15219EF700DC495A /* OpenGL.framework in Frameworks */,
 				B5080E6D15219F0000DC495A /* GLUT.framework in Frameworks */,
 				B5080E6F15219F0A00DC495A /* Cocoa.framework in Frameworks */,
-				B5080E711521A06B00DC495A /* FreeType.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +275,7 @@
 		B50947A6142BA3A400F3449C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B5080E701521A06B00DC495A /* FreeType.framework */,
+				B54FE2A9159B7D2400BF9A7C /* FreeType.framework */,
 				B5080E6E15219F0A00DC495A /* Cocoa.framework */,
 				B5080E6C15219F0000DC495A /* GLUT.framework */,
 				B5080E6A15219EF700DC495A /* OpenGL.framework */,
@@ -831,6 +831,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -863,6 +864,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -907,6 +909,7 @@
 				B526A90915669DDF0003CDEF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B53669BD14487826001374A8 /* Build configuration list for PBXNativeTarget "test-glut" */ = {
 			isa = XCConfigurationList;

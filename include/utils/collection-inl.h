@@ -93,7 +93,7 @@ Map<K, T>::operator[] (const K& k)
 template <class K, class T>
 void
 Map<K, T>::put(const Tuple<const K, T>& value)
-{ this->put(value.first(), value.second()); }
+{ this->put(value.template get<0>(), value.template get<1>()); }
 
 template <class T, class CollectionClass, 
           class ImplementationClass, class IteratorClass>
@@ -912,7 +912,7 @@ throw (NotFoundException)
    typename std::set<Tuple<const K, T>, KeyCompare>::const_iterator it = 
          _impl.find(Tuple<const K, T>(k, T()));
    if (it != _impl.end())
-      return it->second();
+      return it->template get<1>();
    else
       KAREN_THROW(NotFoundException,
          "cannot find element in tree map with such a key");
@@ -926,9 +926,9 @@ throw (NotFoundException)
    typename std::set<Tuple<const K, T>, KeyCompare>::iterator it = 
          _impl.find(Tuple<const K, T>(k, T()));
    if (it != _impl.end())
-      return const_cast<T&>(it->second());
+      return const_cast<T&>(it->template get<1>());
    else
-      return put(k, T())->second();
+      return put(k, T())->template get<1>();
 }
 
 template <class K, class T, class Compare>

@@ -1197,8 +1197,8 @@ public:
       int i = 0;
       for (it = d.begin(); it; it++)
       {
-         KAREN_UTEST_ASSERT(it->first() == elems[i].first());
-         KAREN_UTEST_ASSERT(it->second() == elems[i].second());
+         KAREN_UTEST_ASSERT(it->get<0>() == elems[i].get<0>());
+         KAREN_UTEST_ASSERT(it->get<1>() == elems[i].get<1>());
          i++;
       }
    }
