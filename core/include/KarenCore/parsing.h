@@ -34,10 +34,9 @@ namespace karen {
  * String tokenizer. Tokenizes a string, spliting it in tokens by searching 
  * for certain separator.
  */
-void tokenizeString(
-      const String& str, 
-      Array<String>& tokens,
-      String::Element separator = ' '); 
+KAREN_EXPORT void tokenizeString(const String& str, 
+                                 Array<String>& tokens,
+                                 String::Element separator = ' '); 
 
 }; // namespace karen
 

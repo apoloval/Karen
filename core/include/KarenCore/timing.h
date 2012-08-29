@@ -33,7 +33,7 @@ namespace karen {
  * Abstract counter class. This class provides an abstract interface
  * for a time counter. 
  */
-class AbstractCounter
+class KAREN_EXPORT AbstractCounter
 {
 public:
 
@@ -65,7 +65,7 @@ public:
  * Counter class. This concrete counter class wraps an actual implementation
  * by encapsulating it with an AbstractCounter interface. 
  */
-class Counter : public AbstractCounter
+class KAREN_EXPORT Counter : public AbstractCounter
 {
 public:
 
@@ -109,12 +109,12 @@ private:
 /**
  * Sleep thread for given milliseconds.
  */
-void sleepMillis(unsigned long millis);
+KAREN_EXPORT void sleepMillis(unsigned long millis);
 
 /**
  * Get the number of milliseconds since Karen engine started. 
  */
-double getTimeSinceLaunched();
+KAREN_EXPORT double getTimeSinceLaunched();
 
 }; // namespace karen
 

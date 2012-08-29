@@ -35,7 +35,7 @@ namespace karen {
  * dynamic data buffer. That's a data buffer which is automatically enlarged
  * when full. 
  */
-class Buffer
+class KAREN_EXPORT Buffer
 {
 public:
 
@@ -186,7 +186,7 @@ private:
    
 };
 
-class BufferInputStream : public InputStream
+class KAREN_EXPORT BufferInputStream : public InputStream
 {
 public:
 
@@ -215,7 +215,7 @@ private:
    
 };
 
-class BufferOutputStream : public OutputStream
+class KAREN_EXPORT BufferOutputStream : public OutputStream
 {
 public:
 

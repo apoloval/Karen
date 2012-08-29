@@ -34,7 +34,7 @@
 #define KAREN_PLATFORM_OSX       3
 
 #define KAREN_COMPILER_GCC       1
-#define KAREN_COMPILER_LLVM      2
+#define KAREN_COMPILER_CLANG     2
 #define KAREN_COMPILER_MSVC      3
 #define KAREN_COMPILER_CYGWIN    4
 #define KAREN_COMPILER_MINGW     5
@@ -64,15 +64,15 @@
 #if defined(__GNUC__)
 #  define KAREN_COMPILER KAREN_COMPILER_GCC
 #elif defined(__llvm__) || defined(__clang__)
-#  #define KAREN_COMPILER KAREN_COMPILER_LLVM
+#  define KAREN_COMPILER KAREN_COMPILER_CLANG
 #elif defined(_MSC_VER)
-#  #define KAREN_COMPILER KAREN_COMPILER_MSVC
+#  define KAREN_COMPILER KAREN_COMPILER_MSVC
 #elif defined(__CYGWIN__)
-#  #define KAREN_COMPILER KAREN_COMPILER_CYGWIN
+#  define KAREN_COMPILER KAREN_COMPILER_CYGWIN
 #elif defined(__MINGW32__)
-#  #define KAREN_COMPILER KAREN_COMPILER_MINGW
+#  define KAREN_COMPILER KAREN_COMPILER_MINGW
 #else
-#  #error cannot determine C++ compiler vendor
+#  error cannot determine C++ compiler vendor
 #endif
 
 /* Check the endianness. */
@@ -90,7 +90,8 @@
 #if KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
 #  ifdef KAREN_LIB_BUILD
 #     if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
-#        KAREN_COMPILER == KAREN_COMPILER_MINGW
+         KAREN_COMPILER == KAREN_COMPILER_MINGW || \
+         KAREN_COMPILER == KAREN_COMPILER_CLANG
 #        define KAREN_EXPORT __attribute__((dllexport))
 #        define KAREN_LOCAL
 #     else
@@ -99,7 +100,8 @@
 #     endif
 #  else
 #     if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
-#        KAREN_COMPILER == KAREN_COMPILER_MINGW
+         KAREN_COMPILER == KAREN_COMPILER_MINGW || \
+         KAREN_COMPILER == KAREN_COMPILER_CLANG
 #        define KAREN_EXPORT __attribute__((dllimport))
 #        define KAREN_LOCAL
 #     else
@@ -133,6 +135,11 @@ typedef __int64            Int64;
 #else
 typedef unsigned long long UInt64;
 typedef long long          Int64;
+#endif
+
+/* Check for C++11 features. */
+#if KAREN_COMPILER == KAREN_COMPILER_CLANG
+   #define KAREN_CXX11_HAVE_VARIADIC_TEMPLATES
 #endif
 
 #endif

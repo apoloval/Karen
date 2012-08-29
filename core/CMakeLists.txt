@@ -6,6 +6,11 @@ set(flag_std_cxx11 "-std=c++11")
 set(test_output_dir "build/test")
 set(lib_output_dir "build/lib")
 
+if (WIN32)
+   set(test_link_flags "-static-libgcc -static-libstdc++")
+   set(lib_compile_flags "-Wno-deprecated")
+endif(WIN32)
+
 set(sources)
 list(APPEND sources
    src/buffer.cpp
@@ -46,10 +51,13 @@ add_library(KarenCore SHARED ${sources} ${headers})
 include_directories(include)
 
 set_target_properties(KarenCore PROPERTIES
-   COMPILE_FLAGS "${flag_std_cxx11}"
+   COMPILE_FLAGS "${flag_std_cxx11} ${lib_compile_flags}"
+   DEFINE_SYMBOL "KAREN_LIB_BUILD=1" 
    FRAMEWORK true
+   GNUtoMS true
    PUBLIC_HEADER "${headers}"
    LIBRARY_OUTPUT_DIRECTORY "${lib_output_dir}"
+   PREFIX ""
 )
 
 # Unit test executables
@@ -73,7 +81,8 @@ set_target_properties(
       KarenCore-UnitTest-Set
       KarenCore-UnitTest-String
    PROPERTIES
-      COMPILE_FLAGS "${flag_std_cxx11}"
+      COMPILE_FLAGS "${flag_std_cxx11} ${lib_compile_flags}"
+      LINK_FLAGS "${test_link_flags}"
       RUNTIME_OUTPUT_DIRECTORY "${test_output_dir}"
 )
 

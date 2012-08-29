@@ -38,6 +38,8 @@
 #     define KAREN_TIMING KAREN_TIMING_POSIX
 #  elif KAREN_PLATFORM == KAREN_PLATFORM_OSX
 #     define KAREN_TIMING KAREN_TIMING_POSIX
+#  elif KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
+#     define KAREN_TIMING KAREN_TIMING_POSIX
 #  else
 #     error Unknown runtime platform
 #  endif

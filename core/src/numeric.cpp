@@ -25,6 +25,7 @@
 #include "KarenCore/numeric.h"
 
 #include <cerrno>
+#include <cstdlib>
 #include <sstream>
 
 namespace karen {

@@ -23,7 +23,6 @@
  */
 
 #include <KarenCore/file.h>
-#include <KarenCore/file-posix.h>
 #include <KarenCore/test.h>
 
 using namespace karen;
@@ -35,8 +34,6 @@ public:
    FileTestSuite()
       : UnitTestSuite("File")
    {
-      FileFactory::setActiveFileFactory(new PosixFileFactory());
-   
       KAREN_UTEST_ADD(FileTestSuite::shouldCreateFile);
       KAREN_UTEST_ADD(FileTestSuite::shouldWriteAndWriteFile);
       KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenNotCreatingAndFileDoesNotExist);

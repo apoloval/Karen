@@ -27,6 +27,8 @@
 #include "KarenCore/string.h"
 #include "KarenCore/types.h"
 
+#include <cstdarg>
+#include <cstdio>
 #include <sstream>
 
 namespace karen {

@@ -51,7 +51,7 @@ KAREN_DECL_EXCEPTION(TestFailedException);
  * Unit test suite class. This class represent unit test suites. This is
  * an abstract class aimed to be extended by concrete unit test suites.
  */
-class UnitTestSuite
+class KAREN_EXPORT UnitTestSuite
 {
 public:
 
@@ -143,7 +143,7 @@ private:
  * a unit test reporter, i.e. an object with the ability to report unit test
  * results.
  */
-class UnitTestReporter
+class KAREN_EXPORT UnitTestReporter
 {
 public:
 
@@ -172,7 +172,7 @@ public:
 };
 
 //! Standard output unit test reporter
-class StdOutUnitTestReporter : public UnitTestReporter
+class KAREN_EXPORT StdOutUnitTestReporter : public UnitTestReporter
 {
 public:
 

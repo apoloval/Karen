@@ -51,6 +51,12 @@ throw (IOException, InvalidStateException)
    _impl = factory->createFile(location, mode);
 }
 
-Ptr<FileFactory> FileFactory::_activeFactory;
-
 }; // namespace karen
+
+#if KAREN_PLATFORM == KAREN_PLATFORM_UNIX
+#include "KarenCore/file-posix.h"
+Ptr<karen::FileFactory> karen::FileFactory::_activeFactory = 
+      new PosixFileFactory();
+#elif KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
+Ptr<karen::FileFactory> karen::FileFactory::_activeFactory = nullptr;
+#endif

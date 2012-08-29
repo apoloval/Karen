@@ -35,7 +35,7 @@ namespace karen {
 /**
  * File open mode. This struct indicates in which mode a file is opened. 
  */
-struct FileOpenMode
+struct KAREN_EXPORT FileOpenMode
 {
    bool forReading;           //!< The file is opened for reading. 
    bool forWriting;           //!< The file is opened for writing.
@@ -89,7 +89,7 @@ struct FileOpenMode
  * AbstractFile inherits from InputStream and OutputStream, allowing its 
  * instances to behave as streams for reading and writing. 
  */
-class AbstractFile : public InputStream, public OutputStream
+class KAREN_EXPORT AbstractFile : public InputStream, public OutputStream
 {
 public:
 
@@ -125,7 +125,7 @@ public:
  * actual implementation is obtained from the active abstract file factory 
  * represtened by AbstractFileFactory class. 
  */
-class File : public AbstractFile
+class KAREN_EXPORT File : public AbstractFile
 {
 public:
 
@@ -160,7 +160,7 @@ private:
  * a concrete implementation for FileFactory that will be used by File class
  * to instantiate a concrete implementation. 
  */
-class FileFactory
+class KAREN_EXPORT FileFactory
 {
 public:
 

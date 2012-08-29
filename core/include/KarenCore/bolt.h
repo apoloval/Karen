@@ -34,7 +34,7 @@ namespace karen {
  * as condition for Bolt template class. It wraps a boolean value, considering
  * the condition as met when the value evalutes to true.
  */
-struct BooleanBoltCondition
+struct KAREN_EXPORT BooleanBoltCondition
 {
    const bool* value;
    
@@ -54,7 +54,7 @@ struct BooleanBoltCondition
  * done while condition is not met, a InvalidStateException is thrown instead.
  */
 template <class T, class Condition = BooleanBoltCondition>
-class Bolt
+class KAREN_EXPORT Bolt
 {
 public:
 

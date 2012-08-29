@@ -33,7 +33,7 @@ namespace karen {
  * Input stream class. This class provides an abstraction for an input stream,
  * this is, an object which allows reading bytes from it.
  */
-class InputStream
+class KAREN_EXPORT InputStream
 {
 public:
 
@@ -73,7 +73,7 @@ public:
  * Output stream class. This class provides an abstraction for an output stream,
  * this is, an object which allows writting bytes to it.
  */
-class OutputStream
+class KAREN_EXPORT OutputStream
 {
 public:
 

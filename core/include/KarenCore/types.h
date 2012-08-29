@@ -79,6 +79,12 @@ private:
 
 };
 
+/* 
+ * Tuple template class depends on variadic template C++ feature. 
+ * This is only available on compilers that support such a feature.
+ */
+#ifdef KAREN_CXX11_HAVE_VARIADIC_TEMPLATES
+
 /**
  * Tuple template class. This variadic-template class provides a convenient 
  * wrapper for a n-tuple of elements. 
@@ -237,6 +243,63 @@ private:
    T1 _elem;
 
 };
+#else
+
+/*
+ * The non-variadic template version of tuple. This only works for 2-tuples. 
+ */
+template <class T1, class T2, int id>
+struct TupleFieldAccessor;
+
+template <class T1, class T2>
+struct TupleFieldAccessor<T1, T2, 0>
+{
+   typedef T1 Type;
+   inline static const Type& get(const T1& t1, const T2& t2) { return t1; }
+   inline static Type& get(T1& t1, T2& t2) { return t1; }
+};
+
+template <class T1, class T2>
+struct TupleFieldAccessor<T1, T2, 1>
+{
+   typedef T2 Type;
+   inline static const Type& get(const T1& t1, const T2& t2) { return t2; }
+   inline static Type& get(T1& t1, T2& t2) { return t2; }
+};
+
+template <class T1, class T2>
+class Tuple
+{
+public:
+   
+   inline Tuple(const T1& t1, const T2& t2) : _t1(t1), _t2(t2) {}
+
+   /**
+    * Obtain the n-th element of the tuple detemined by template parameter
+    * id. 
+    */
+   template <int id>
+   const typename TupleFieldAccessor<T1, T2, id>::Type& get() const
+   {
+      return TupleFieldAccessor<T1, T2, id>::get(_t1, _t2);
+   }
+   
+   /**
+    * Obtain the n-th element of the tuple detemined by template parameter
+    * id. 
+    */
+   template <int id>
+   typename TupleFieldAccessor<T1, T2, id>::Type& get()
+   {
+      return TupleFieldAccessor<T1, T2, id>::get(_t1, _t2);
+   }
+   
+private:
+
+   T1 _t1;
+   T2 _t2;
+};
+#endif
 
 }; // namespace karen
 

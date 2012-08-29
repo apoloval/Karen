@@ -25,6 +25,7 @@
 #ifndef KAREN_CORE_STRING_H
 #define KAREN_CORE_STRING_H
 
+#include "KarenCore/platform.h"
 #include "KarenCore/types.h"
 
 #include <string>
@@ -50,7 +51,7 @@ typedef std::string StringBase;
  * a member renaming (to fit Karen coding standards) and additional
  * members not included in STL strings. 
  */
-class String
+class KAREN_EXPORT String
 {
 public:
 

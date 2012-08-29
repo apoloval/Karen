@@ -30,7 +30,7 @@
 
 namespace karen {
 
-class Integer
+class KAREN_EXPORT Integer
 {
 public:
 
@@ -46,7 +46,7 @@ public:
 
 };
 
-class Float
+class KAREN_EXPORT Float
 {
 public:
 
