@@ -54,10 +54,13 @@
 /* Check the platform OS. */
 #if defined( __WIN32__ ) || defined( _WIN32 ) || defined( _WIN64 )
 #  define KAREN_PLATFORM KAREN_PLATFORM_WINDOWS
+#  define KAREN_PLATFORM_IS_WIN32
 #elif defined( __APPLE_CC__) || (defined(__APPLE__) && defined(__MACH__))
 #  define KAREN_PLATFORM KAREN_PLATFORM_OSX
+#  define KAREN_PLATFORM_IS_POSIX
 #else
 #  define KAREN_PLATFORM KAREN_PLATFORM_LINUX
+#  define KAREN_PLATFORM_IS_POSIX
 #endif
 
 /* Check the compiler. */
