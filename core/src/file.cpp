@@ -53,10 +53,12 @@ throw (IOException, InvalidStateException)
 
 }; // namespace karen
 
-#if KAREN_PLATFORM == KAREN_PLATFORM_UNIX
-#include "KarenCore/file-posix.h"
-Ptr<karen::FileFactory> karen::FileFactory::_activeFactory = 
-      new PosixFileFactory();
-#elif KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
-Ptr<karen::FileFactory> karen::FileFactory::_activeFactory = nullptr;
+#if defined(KAREN_PLATFORM_IS_POSIX)
+   #include "KarenCore/file-posix.h"
+   Ptr<karen::FileFactory> karen::FileFactory::_activeFactory =
+         new PosixFileFactory();
+#elif defined(KAREN_PLATFORM_IS_WIN32)
+   Ptr<karen::FileFactory> karen::FileFactory::_activeFactory = nullptr;
+#else
+   #error cannot determine the file backend implementation for your platform
 #endif
