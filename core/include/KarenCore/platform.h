@@ -46,75 +46,90 @@
 #if defined(__x86_64__) || defined(_M_X64)   || defined(__powerpc64__) || \
     defined(__alpha__)  || defined(__ia64__) || defined(__s390__)      || \
     defined(__s390x__)
-#  define KAREN_ARCH_TYPE KAREN_ARCH_64
+   #define KAREN_ARCH_TYPE KAREN_ARCH_64
 #else
-#  define KAREN_ARCH_TYPE KAREN_ARCH_32
+   #define KAREN_ARCH_TYPE KAREN_ARCH_32
 #endif
 
 /* Check the platform OS. */
 #if defined( __WIN32__ ) || defined( _WIN32 ) || defined( _WIN64 )
-#  define KAREN_PLATFORM KAREN_PLATFORM_WINDOWS
-#  define KAREN_PLATFORM_IS_WIN32
+   #define KAREN_PLATFORM KAREN_PLATFORM_WINDOWS
+   #define KAREN_PLATFORM_IS_WIN32
 #elif defined( __APPLE_CC__) || (defined(__APPLE__) && defined(__MACH__))
-#  define KAREN_PLATFORM KAREN_PLATFORM_OSX
-#  define KAREN_PLATFORM_IS_POSIX
+   #define KAREN_PLATFORM KAREN_PLATFORM_OSX
+   #define KAREN_PLATFORM_IS_POSIX
 #else
-#  define KAREN_PLATFORM KAREN_PLATFORM_LINUX
-#  define KAREN_PLATFORM_IS_POSIX
+   #define KAREN_PLATFORM KAREN_PLATFORM_LINUX
+   #define KAREN_PLATFORM_IS_POSIX
 #endif
 
 /* Check the compiler. */
-#if defined(__GNUC__)
-#  define KAREN_COMPILER KAREN_COMPILER_GCC
-#elif defined(__llvm__) || defined(__clang__)
-#  define KAREN_COMPILER KAREN_COMPILER_CLANG
+#if defined(__llvm__) || defined(__clang__)
+   #define KAREN_COMPILER KAREN_COMPILER_CLANG
+   #define KAREN_COMPILER_MAJOR_VERSION __clang_major__
+   #define KAREN_COMPILER_MINOR_VERSION __clang_minor__
+#elif defined(__GNUC__)
+   #define KAREN_COMPILER KAREN_COMPILER_GCC
+   #define KAREN_COMPILER_MAJOR_VERSION __GNUC__
+   #define KAREN_COMPILER_MINOR_VERSION __GNUC_MINOR__
 #elif defined(_MSC_VER)
-#  define KAREN_COMPILER KAREN_COMPILER_MSVC
+   #define KAREN_COMPILER KAREN_COMPILER_MSVC
+   #define KAREN_COMPILER_MAJOR_VERSION ((_MSC_VER / 100) - 6)
+   #define KAREN_COMPILER_MINOR_VERSION ((_MSC_VER % 100) / 10)
 #elif defined(__CYGWIN__)
-#  define KAREN_COMPILER KAREN_COMPILER_CYGWIN
+   #define KAREN_COMPILER KAREN_COMPILER_CYGWIN
+   #define KAREN_COMPILER_MAJOR_VERSION __GNUC__
+   #define KAREN_COMPILER_MINOR_VERSION __GNUC_MINOR__
 #elif defined(__MINGW32__)
-#  define KAREN_COMPILER KAREN_COMPILER_MINGW
+   #define KAREN_COMPILER KAREN_COMPILER_MINGW
+   #define KAREN_COMPILER_MAJOR_VERSION __GNUC__
+   #define KAREN_COMPILER_MINOR_VERSION __GNUC_MINOR__
 #else
-#  error cannot determine C++ compiler vendor
+   #error cannot determine C++ compiler vendor
 #endif
+
+#define KAREN_COMPILER_AT_LEAST(major, minor) \
+   (KAREN_COMPILER_MAJOR_VERSION > major || \
+         (major == KAREN_COMPILER_MAJOR_VERSION && \
+          KAREN_COMPILER_MINOR_VERSION >= minor ))
 
 /* Check the endianness. */
 #if defined(__i386__) || defined(_M_IX86)    || defined(_X86_)     || \
     defined(__ia64__) || defined(_M_IA64)    || defined(__amd64__) || \
     defined(__amd64)  || defined(__x86_64__) || defined(__x86_64)  || \
     defined(_M_X64)
-#  define KAREN_ENDIANNESS KAREN_LITTLE_ENDIAN
+   #define KAREN_ENDIANNESS KAREN_LITTLE_ENDIAN
 #elif defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__) || \
       defined(__ppc__) || defined(_M_PPC)
-#  define KAREN_ENDIANNESS KAREN_BIG_ENDIAN
+   #define KAREN_ENDIANNESS KAREN_BIG_ENDIAN
 #endif
 
 /* Define the symbol export macros. */
 #if KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
-#  ifdef KAREN_LIB_BUILD
-#     if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
-         KAREN_COMPILER == KAREN_COMPILER_MINGW || \
-         KAREN_COMPILER == KAREN_COMPILER_CLANG
-#        define KAREN_EXPORT __attribute__((dllexport))
-#        define KAREN_LOCAL
-#     else
-#        define KAREN_EXPORT __declspec(dllexport)
-#        define KAREN_LOCAL
-#     endif
-#  else
-#     if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
-         KAREN_COMPILER == KAREN_COMPILER_MINGW || \
-         KAREN_COMPILER == KAREN_COMPILER_CLANG
-#        define KAREN_EXPORT __attribute__((dllimport))
-#        define KAREN_LOCAL
-#     else
-#        define KAREN_EXPORT __declspec(dllimport)
-#        define KAREN_LOCAL
-#     endif
-#  endif
+   #ifdef KAREN_LIB_BUILD
+      #if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
+          KAREN_COMPILER == KAREN_COMPILER_MINGW || \
+          KAREN_COMPILER == KAREN_COMPILER_CLANG
+         #define KAREN_EXPORT __attribute__((dllexport))
+         #define KAREN_LOCAL
+      #else
+         #define KAREN_EXPORT __declspec(dllexport)
+         #define KAREN_LOCAL
+      #endif
+   #else
+      #if KAREN_COMPILER == KAREN_COMPILER_CYGWIN || \
+          KAREN_COMPILER == KAREN_COMPILER_MINGW || \
+          KAREN_COMPILER == KAREN_COMPILER_CLANG
+      #define KAREN_EXPORT __attribute__((dllimport))
+      #define KAREN_LOCAL
+   #else
+      #define KAREN_EXPORT __declspec(dllimport)
+      #define KAREN_LOCAL
+   #endif
+#endif
 #else // non-windows
-#  define KAREN_EXPORT __attribute__ ((visibility ("default")))
-#  define KAREN_LOCAL  __attribute__ ((visibility ("hidden")))
+   #define KAREN_EXPORT __attribute__ ((visibility ("default")))
+   #define KAREN_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
 // Integer formats of fixed bit width
@@ -129,20 +144,65 @@ typedef unsigned short     UInt16;
 typedef short              Int16;
 typedef unsigned char      UInt8;
 typedef char               Int8;
+typedef UInt8              Byte;
 
 
 // Special case: 64-bit types
-#if KAREN_COMPILER == KAREN_COMPILER_MSVC
+#if KAREN_ARCH_TYPE == KAREN_ARCH_64
+   #if KAREN_COMPILER == KAREN_COMPILER_MSVC
 typedef unsigned __int64   UInt64;
 typedef __int64            Int64;
-#else
+   #else
 typedef unsigned long long UInt64;
 typedef long long          Int64;
+   #endif
 #endif
 
 /* Check for C++11 features. */
 #if KAREN_COMPILER == KAREN_COMPILER_CLANG
-   #define KAREN_CXX11_HAVE_VARIADIC_TEMPLATES
+   #if KAREN_COMPILER_AT_LEAST(2, 9)
+      #define KAREN_CXX11_HAVE_AUTO_TYPE
+      #define KAREN_CXX11_HAVE_RVALUE_REFS
+      #define KAREN_CXX11_HAVE_STATIC_ASSERTIONS
+      #define KAREN_CXX11_HAVE_VARIADIC_TEMPLATES
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(3, 0)
+      #define KAREN_CXX11_HAVE_DELEGATING_CONSTRUCTORS
+      #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(3, 1)
+      #define KAREN_CXX11_HAVE_INITIALIZER_LISTS
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(4, 0)
+      #define KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
+   #endif
+#elif KAREN_COMPILER == KAREN_COMPILER_GCC
+   #if KAREN_COMPILER_AT_LEAST(4, 3)
+      #define KAREN_CXX11_HAVE_RVALUE_REFS
+      #define KAREN_CXX11_HAVE_STATIC_ASSERTIONS
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(4, 4)
+      #define KAREN_CXX11_HAVE_AUTO_TYPE
+      #define KAREN_CXX11_HAVE_INITIALIZER_LISTS
+      #define KAREN_CXX11_HAVE_VARIADIC_TEMPLATES
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(4, 5)
+      #define KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(4, 6)
+      #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
+   #endif
+   #if KAREN_COMPILER_AT_LEAST(4, 7)
+      #define KAREN_CXX11_HAVE_DELEGATING_CONSTRUCTORS
+   #endif
+#elif KAREN_COMPILER == KAREN_COMPILER_MSVC
+   #if KAREN_COMPILER_AT_LEAST(10, 0)
+      #define KAREN_CXX11_HAVE_RVALUE_REFS
+      #define KAREN_CXX11_HAVE_STATIC_ASSERTIONS
+      #define KAREN_CXX11_HAVE_AUTO_TYPE
+      #define KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
+      #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
+   #endif
 #endif
 
 #endif
