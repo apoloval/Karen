@@ -27,81 +27,69 @@
 
 using namespace karen;
 
-class DictTestSuite : public UnitTestSuite
-{
-public:
 
-   DictTestSuite() : UnitTestSuite("Collections - TreeMap")
-   {
-      KAREN_UTEST_ADD(DictTestSuite::shouldCreateAnEmptyTreeMap);
-      KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElement);
-      KAREN_UTEST_ADD(DictTestSuite::shouldInsertOneElementUsingIndexingOperator);
-      KAREN_UTEST_ADD(DictTestSuite::shouldUpdateAnExistingElement);
-      KAREN_UTEST_ADD(DictTestSuite::shouldRemoveAnExistingElement);
-      KAREN_UTEST_ADD(DictTestSuite::shouldClear);
-      KAREN_UTEST_ADD(DictTestSuite::shouldIterate);
-   }
-   
-   void shouldCreateAnEmptyTreeMap()
+KAREN_BEGIN_UNIT_TEST(DictTestSuite);
+
+   KAREN_DECL_TEST(shouldCreateAnEmptyTreeMap,
    {
       TreeMap<String, int> d;
-      KAREN_UTEST_ASSERT(d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 0);
-   }
+      assertTrue(d.isEmpty());
+      assertEquals<int>(0, d.size());
+   });
    
-   void shouldInsertOneElement()
+   KAREN_DECL_TEST(shouldInsertOneElement,
    {
       TreeMap<String, int> d;
       d.put("Mark", 45);
-      KAREN_UTEST_ASSERT(!d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
-      KAREN_UTEST_ASSERT(d["Mark"] == 45);
-   }
+      assertFalse(d.isEmpty());
+      assertEquals<int>(1, d.size());
+      assertTrue(d.hasKey("Mark"));
+      assertEquals<int>(45, d["Mark"]);
+   });
    
-   void shouldInsertOneElementUsingIndexingOperator()
+   KAREN_DECL_TEST(shouldInsertOneElementUsingIndexingOperator,
    {
       TreeMap<String, int> d;
       d["Mark"] = 45;
-      KAREN_UTEST_ASSERT(!d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
-      KAREN_UTEST_ASSERT(d["Mark"] == 45);
-   }
+      assertFalse(d.isEmpty());
+      assertEquals<int>(1, d.size());
+      assertTrue(d.hasKey("Mark"));
+      assertEquals<int>(45, d["Mark"]);
+   });
       
-   void shouldUpdateAnExistingElement()
+   KAREN_DECL_TEST(shouldUpdateAnExistingElement,
    {
       TreeMap<String, int> d;
       d.put("Mark", 45);
       d["Mark"] = 40;
-      KAREN_UTEST_ASSERT(!d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.hasKey("Mark"));
-      KAREN_UTEST_ASSERT(d["Mark"] == 40);
-   }
+      assertFalse(d.isEmpty());
+      assertEquals<int>(1, d.size());
+      assertTrue(d.hasKey("Mark"));
+      assertEquals<int>(40, d["Mark"]);
+   });
       
-   void shouldRemoveAnExistingElement()
+   KAREN_DECL_TEST(shouldRemoveAnExistingElement,
    {
       TreeMap<String, int> d;
       d.put("Mark", 45);
       d.put("John", 35);
       d.remove("Mark");
-      KAREN_UTEST_ASSERT(!d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 1);
-      KAREN_UTEST_ASSERT(d.hasKey("John"));
-   }
+      assertFalse(d.isEmpty());
+      assertEquals<int>(1, d.size());
+      assertTrue(d.hasKey("John"));
+   });
       
-   void shouldClear()
+   KAREN_DECL_TEST(shouldClear,
    {
       TreeMap<String, int> d;
       d.put("Mark", 45);
       d.put("John", 35);
       d.clear();
-      KAREN_UTEST_ASSERT(d.isEmpty());
-      KAREN_UTEST_ASSERT(d.size() == 0);
-   }
+      assertTrue(d.isEmpty());
+      assertEquals<int>(0, d.size());
+   });
    
-   void shouldIterate()
+   KAREN_DECL_TEST(shouldIterate,
    {
       Tuple<const String, int> elems[] =
       {
@@ -115,13 +103,13 @@ public:
       int i = 0;
       for (it = d.begin(); it; it++)
       {
-         KAREN_UTEST_ASSERT(it->get<0>() == elems[i].get<0>());
-         KAREN_UTEST_ASSERT(it->get<1>() == elems[i].get<1>());
+         assertEquals(elems[i].get<0>(), it->get<0>());
+         assertEquals(elems[i].get<1>(), it->get<1>());
          i++;
       }
-   }
+   });
       
-};
+KAREN_END_UNIT_TEST(DictTestSuite);
 
 int main(int argc, char* argv[])
 {

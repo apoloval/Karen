@@ -28,97 +28,84 @@
 
 using namespace karen;
 
-class ArrayTestSuite : public UnitTestSuite
-{
-public:
-
-   ArrayTestSuite() : UnitTestSuite("Collections - Array")
-   {
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldCreateEmptyArray);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldCreateFromRawArray);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldNotIndexWhenEmpty);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldPushBackItems);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldIndexWhenNotEmpty);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldIterateArray);
-      KAREN_UTEST_ADD(ArrayTestSuite::shouldIterateArrayUsingForRange);
-   }
+KAREN_BEGIN_UNIT_TEST(ArrayTestSuite);
    
-   void shouldCreateEmptyArray()
+   KAREN_DECL_TEST(shouldCreateEmptyArray,
    {
       DynArray<int> a;
-      KAREN_UTEST_ASSERT(a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 0);
-   }
+      assertTrue(a.isEmpty());
+      assertEquals<int>(0, a.size());
+   });
    
-   void shouldNotIndexWhenEmpty()
+   KAREN_DECL_TEST(shouldNotIndexWhenEmpty,
    {
       DynArray<int> a;
       try
       {
          a[0];
-         KAREN_UTEST_FAILED("expected exception not raised");
+         assertionFailed("expected exception not raised");
       }
       catch (OutOfBoundsException&) {}
-   }
+   });
    
-   void shouldCreateFromRawArray()
+   KAREN_DECL_TEST(shouldCreateFromRawArray,
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
       DynArray<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 6);
-   }
+      assertFalse(a.isEmpty());
+      assertEquals<int>(6, a.size());
+   });
    
-   void shouldPushBackItems()
+   KAREN_DECL_TEST(shouldPushBackItems,
    {
       DynArray<int> a;
       a.append(10);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 1);
-      KAREN_UTEST_ASSERT(a[0] == 10);
+      assertFalse(a.isEmpty());
+      assertEquals<int>(1, a.size());
+      assertEquals(10, a[0]);
       a.append(11);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 2);
-      KAREN_UTEST_ASSERT(a[1] == 11);
+      assertFalse(a.isEmpty());
+      assertEquals<int>(2, a.size());
+      assertEquals(11, a[1]);
       a.append(12);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 3);
-      KAREN_UTEST_ASSERT(a[2] == 12);   
-   }
+      assertFalse(a.isEmpty());
+      assertEquals<int>(3, a.size());
+      assertEquals(12, a[2]);
+   });
 
-   void shouldIndexWhenNotEmpty()
+   KAREN_DECL_TEST(shouldIndexWhenNotEmpty,
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
       DynArray<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 6);
+      assertFalse(a.isEmpty());
+      assertEquals<int>(6, a.size());
       for (int i = 0; i < a.size(); i++)
-         KAREN_UTEST_ASSERT(a[i] == raw[i]);
-   }
+         assertEquals(a[i], raw[i]);
+   });
    
-   void shouldIterateArray()
+   KAREN_DECL_TEST(shouldIterateArray,
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
       DynArray<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 6);
+      assertFalse(a.isEmpty());
+      assertEquals<int>(6, a.size());
       int i = 0;
       for (Iterator<int> it = a.begin(), end = a.end(); it != end; it++)
-         KAREN_UTEST_ASSERT(*it == raw[i++]);
-   }
+         assertEquals(*it, raw[i++]);
+   });
 
-   void shouldIterateArrayUsingForRange()
+   KAREN_DECL_TEST(shouldIterateArrayUsingForRange,
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
       DynArray<int> a(raw, 6);
-      KAREN_UTEST_ASSERT(!a.isEmpty());
-      KAREN_UTEST_ASSERT(a.size() == 6);
+      assertFalse(a.isEmpty());
+      assertEquals<int>(6, a.size());
       int i = 0;
       for (int n : a)
-         KAREN_UTEST_ASSERT(n == raw[i++]);
-   }
+         assertEquals(n, raw[i++]);
+   });
 
-};
+KAREN_END_UNIT_TEST(ArrayTestSuite);
 
 int main(int argc, char* argv[])
 {

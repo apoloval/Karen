@@ -28,6 +28,96 @@
 
 namespace karen {
 
+void
+Test::assertionFailed(const String& cause)
+{
+   KAREN_THROW(::karen::InvalidAssertionException,
+         (const char*) cause);
+}
+
+UnitTest::UnitTest(const String& name) : _name(name), _nextTest(0) {}
+
+UnitTest::~UnitTest()
+{
+   for (int i = 0; i < _nextTest; i++)
+      delete _tests[i];
+}
+
+unsigned int
+UnitTest::run(
+      UnitTestReporter* reporter,
+      TestResult* testResults, 
+      unsigned int testResultsCount)
+{
+   if (reporter)
+      reporter->beginUnitTestSuite(_name);
+   int i = 0, passed = 0;
+   while (i < _nextTest)
+   {
+      if (reporter)
+         reporter->beginUnitTest(_tests[i]->name);
+      if (testResults)
+         testResults[i].test = _tests[i];
+      try
+      {
+         _tests[i]->run();
+         if (reporter)
+            reporter->endUnitTest(TEST_RESULT_PASSED);
+         if (testResults)
+            testResults[i].status = TEST_RESULT_PASSED;
+         passed++;
+      }
+      catch (InvalidAssertionException &e)
+      {
+         if (reporter)
+            reporter->endUnitTest(TEST_RESULT_ASSERTION_FAILED, e.cause());
+         if (testResults)
+            testResults[i].status = TEST_RESULT_ASSERTION_FAILED;
+      }
+      catch (TestFailedException &e)
+      {
+         if (reporter)
+            reporter->endUnitTest(TEST_RESULT_FAILED, e.cause());
+         if (testResults)
+            testResults[i].status = TEST_RESULT_FAILED;
+      }
+      catch (Exception& e)
+      {
+         if (reporter)
+            reporter->endUnitTest(TEST_RESULT_FAILED, String::format(
+                  "unexpected exception: %s", (const char*) e.cause()));
+         if (testResults)
+            testResults[i].status = TEST_RESULT_FAILED;
+      }
+      catch (std::exception& e)
+      {
+         if (reporter)
+            reporter->endUnitTest(TEST_RESULT_FAILED, String::format(
+                  "unexpected exception: %s", e.what()));
+         if (testResults)
+            testResults[i].status = TEST_RESULT_FAILED;
+      }
+      catch (...)
+      {
+         if (reporter)
+            reporter->endUnitTest(
+                  TEST_RESULT_FAILED, String("unknown exception raised"));
+         if (testResults)
+            testResults[i].status = TEST_RESULT_FAILED;
+      }
+      i++;
+   }
+   if (reporter)
+      reporter->endUnitTestSuite(passed, i);
+   return testResults ? i : 0;
+}
+
+void
+UnitTest::addTest(Test* test)
+{
+   _tests[_nextTest++] = test;
+}
+
 UnitTestSuite::UnitTestSuite(const String& suiteName)
  : _name(suiteName),
    _testCount(0)
@@ -117,16 +207,16 @@ StdOutUnitTestReporter::beginUnitTest(
 
 void
 StdOutUnitTestReporter::endUnitTest(
-      UnitTestSuite::TestResultStatus status,
+      TestResultStatus status,
       const Nullable<String>& info)
 {
    switch (status)
    {
-      case UnitTestSuite::TEST_RESULT_PASSED: 
+      case TEST_RESULT_PASSED: 
          std::cerr << "success"; break;
-      case UnitTestSuite::TEST_RESULT_ASSERTION_FAILED:
+      case TEST_RESULT_ASSERTION_FAILED:
          std::cerr << "ASSERTION FAILED"; break;
-      case UnitTestSuite::TEST_RESULT_FAILED:
+      case TEST_RESULT_FAILED:
          std::cerr << "FAILED"; break;
    }
    if (!info.isNull())

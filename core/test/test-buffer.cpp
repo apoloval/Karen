@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  
  * 02110-1301 USA
- * 
+ *
  * ---------------------------------------------------------------------
  */
 
@@ -29,62 +29,51 @@
 
 using namespace karen;
 
-class BufferTestSuite : public UnitTestSuite
+static UInt8* allocRawBuffer(unsigned long len)
 {
-public:
+   UInt8* data = new UInt8[len];
+   for (unsigned long i = 0; i < len; i++)
+      data[i] = (i % 256);
+   return data;
+}
 
-   BufferTestSuite()
-      : UnitTestSuite("Buffers")
-   {
-      KAREN_UTEST_ADD(BufferTestSuite::shouldInitiateBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldInitiateFromMemoryRegion);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldIndicateRightBoundaries);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldReadWholeBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldReadFirstPartOfBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldReadLastPartOfBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldReadFromTheMiddleOfBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldFailWhileReadingBeyondBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldWriteWholeBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldWriteToFirstPartOfBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldWriteToLastPartOfBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldFailWhileWritingBeyondBuffer);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldSetData);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldBeCleanAfterInitialization);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldBeDirtyAfterWrite);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldBeDirtyAfterSet);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldBeCleanAfterMarkedAsClean);
-      KAREN_UTEST_ADD(BufferTestSuite::shouldSetLastElement);
-   }
-   
-   void shouldInitiateBuffer()
+static karen::Buffer* allocBuffer(unsigned long len)
+{
+   UInt8* data = allocRawBuffer(len);
+   return new Buffer(data, len);
+}
+
+KAREN_BEGIN_UNIT_TEST(BufferTestSuite);
+
+   KAREN_DECL_TEST(shouldInitiateBuffer,
    {
       Buffer buf(1024);
-      KAREN_UTEST_ASSERT(buf.length() == 1024);
-   }
+      assertEquals<int>(1024, buf.length());
+   });
    
-   void shouldInitiateFromMemoryRegion()
+   KAREN_DECL_TEST(shouldInitiateFromMemoryRegion,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
-      KAREN_UTEST_ASSERT(buf.length() == 64);
+      assertEquals<int>(64, buf.length());
       for (int i = 0; i < 64; i++)
-         KAREN_UTEST_ASSERT(buf.get<UInt8>(i) == data[i]);
-   }
+         assertEquals<int>(data[i], buf.get<UInt8>(i));
+   });
    
-   void shouldIndicateRightBoundaries()
+   KAREN_DECL_TEST(shouldIndicateRightBoundaries,
    {
       Buffer buf(1024);
-      KAREN_UTEST_ASSERT(buf.isValidRange(0, 1024));
-      KAREN_UTEST_ASSERT(buf.isValidRange(0, 512));
-      KAREN_UTEST_ASSERT(buf.isValidRange(1, 512));
-      KAREN_UTEST_ASSERT(buf.isValidRange(512, 0));
-      KAREN_UTEST_ASSERT(buf.isValidRange(1024, 0));
-      KAREN_UTEST_ASSERT(!buf.isValidRange(1025, 0));
-      KAREN_UTEST_ASSERT(!buf.isValidRange(1024, 64));
-      KAREN_UTEST_ASSERT(!buf.isValidRange(512, 1024));
-   }
+      assertTrue(buf.isValidRange(0, 1024));
+      assertTrue(buf.isValidRange(0, 512));
+      assertTrue(buf.isValidRange(1, 512));
+      assertTrue(buf.isValidRange(512, 0));
+      assertTrue(buf.isValidRange(1024, 0));
+      assertFalse(buf.isValidRange(1025, 0));
+      assertFalse(buf.isValidRange(1024, 64));
+      assertFalse(buf.isValidRange(512, 1024));
+   });
    
-   void shouldReadWholeBuffer() 
+   KAREN_DECL_TEST(shouldReadWholeBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
@@ -92,10 +81,10 @@ public:
       buf.read(dst, 64);
       
       for (int i = 0; i < 64; i++)
-         KAREN_UTEST_ASSERT(data[i] == dst[i]);
-   }
+         assertEquals<int>(dst[i], data[i]);
+   });
    
-   void shouldReadFirstPartOfBuffer() 
+   KAREN_DECL_TEST(shouldReadFirstPartOfBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
@@ -103,10 +92,10 @@ public:
       buf.read(dst, 16);
       
       for (int i = 0; i < 16; i++)
-         KAREN_UTEST_ASSERT(data[i] == dst[i]);
-   }
+         assertEquals<int>(dst[i], data[i]);
+   });
    
-   void shouldReadLastPartOfBuffer() 
+   KAREN_DECL_TEST(shouldReadLastPartOfBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
@@ -114,10 +103,10 @@ public:
       buf.read(dst, 16, 48);
       
       for (int i = 0; i < 16; i++)
-         KAREN_UTEST_ASSERT(data[i + 48] == dst[i]);
-   }
+         assertEquals<int>(dst[i], data[i + 48]);
+   });
    
-   void shouldReadFromTheMiddleOfBuffer()
+   KAREN_DECL_TEST(shouldReadFromTheMiddleOfBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
@@ -125,10 +114,10 @@ public:
       buf.read(dst, 32, 16);
       
       for (int i = 0; i < 32; i++)
-         KAREN_UTEST_ASSERT(data[i + 16] == dst[i]);
-   }
+         assertEquals<int>(dst[i], data[i + 16]);
+   });
    
-   void shouldFailWhileReadingBeyondBuffer()
+   KAREN_DECL_TEST(shouldFailWhileReadingBeyondBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(data, 64);
@@ -136,147 +125,126 @@ public:
       try
       { 
          buf.read(dst, 32, 48);
-         KAREN_UTEST_FAILED("expected out of bounds exception not raised");
+         assertionFailed("expected out of bounds exception not raised");
       } catch (OutOfBoundsException& e) {}
-   }
+   });
    
-   void shouldWriteWholeBuffer()
+   KAREN_DECL_TEST(shouldWriteWholeBuffer,
    {
       UInt8* data = allocRawBuffer(64);
       Buffer buf(64);
       buf.write(data, 64);
 
       for (int i = 0; i < 32; i++)
-         KAREN_UTEST_ASSERT(buf.get<UInt8>(i) == data[i]);
+         assertEquals<int>(data[i], buf.get<UInt8>(i));
       delete []data;
-   }
+   });
    
-   void shouldWriteToFirstPartOfBuffer()
+   KAREN_DECL_TEST(shouldWriteToFirstPartOfBuffer,
    {
       UInt8* data = allocRawBuffer(16);
       Buffer buf(64);
       buf.write(data, 16);
 
       for (int i = 0; i < 16; i++)
-         KAREN_UTEST_ASSERT(buf.get<UInt8>(i) == data[i]);
+         assertEquals<int>(data[i], buf.get<UInt8>(i));
       delete []data;
-   }
+   });
    
-   void shouldWriteToLastPartOfBuffer()
+   KAREN_DECL_TEST(shouldWriteToLastPartOfBuffer,
    {
       UInt8* data = allocRawBuffer(16);
       Buffer buf(64);
       buf.write(data, 16, 48);
 
       for (int i = 0; i < 16; i++)
-         KAREN_UTEST_ASSERT(buf.get<UInt8>(i + 48) == data[i]);
+         assertEquals<int>(data[i], buf.get<UInt8>(i + 48));
       delete []data;
-   }
+   });
    
-   void shouldFailWhileWritingBeyondBuffer()
+   KAREN_DECL_TEST(shouldFailWhileWritingBeyondBuffer,
    {
       UInt8* data = allocRawBuffer(32);
       Buffer buf(64);
       try
       { 
          buf.write(data, 32, 48);
-         KAREN_UTEST_FAILED("expected out of bounds exception not raised");
+         assertionFailed("expected out of bounds exception not raised");
       } catch (OutOfBoundsException& e) {}
       delete data;
-   }
+   });
    
-   void shouldSetData()
+   KAREN_DECL_TEST(shouldSetData,
    {
       Buffer buf(64);
       buf.set<UInt8>(7, 32);
       buf.set<UInt32>(9, 16);
-      KAREN_UTEST_ASSERT(buf.get<UInt8>(32) == 7);
-      KAREN_UTEST_ASSERT(buf.get<UInt32>(16) == 9);
-   }
+      assertEquals<int>(7, buf.get<UInt8>(32));
+      assertEquals<int>(9, buf.get<UInt32>(16));
+   });
    
-   void shouldSetLastElement()
+   KAREN_DECL_TEST(shouldSetLastElement,
    {
       Buffer buf(64);
       buf.set<UInt8>(7, 63);
-   }
+   });
    
-   void shouldFailWhileSettingBeyondBuffer()
+   KAREN_DECL_TEST(shouldFailWhileSettingBeyondBuffer,
    {
       Buffer buf(64);
       try
       {
          buf.set<UInt8>(7, 128);
-         KAREN_UTEST_FAILED("expected out of bounds exception not raised");
+         assertionFailed("expected out of bounds exception not raised");
       } catch (OutOfBoundsException& e) {}
-   }
+   });
    
-   void shouldBeCleanAfterInitialization()
+   KAREN_DECL_TEST(shouldBeCleanAfterInitialization,
    {
       Buffer buf(64);
-      KAREN_UTEST_ASSERT(!buf.isDirty());
-   }
+      assertFalse(buf.isDirty());
+   });
    
-   void shouldBeDirtyAfterWrite()
+   KAREN_DECL_TEST(shouldBeDirtyAfterWrite,
    {
       Buffer buf(64);
       UInt8* data = allocRawBuffer(32);
       buf.write(data, 32);
-      KAREN_UTEST_ASSERT(buf.isDirty());
+      assertTrue(buf.isDirty());
       delete []data;
-   }
+   });
    
-   void shouldBeDirtyAfterSet()
+   KAREN_DECL_TEST(shouldBeDirtyAfterSet,
    {
       Buffer buf(64);
       buf.set<UInt8>(32, 7);
-      KAREN_UTEST_ASSERT(buf.isDirty());
-   }
+      assertTrue(buf.isDirty());
+   });
    
-   void shouldBeCleanAfterMarkedAsClean()
+   KAREN_DECL_TEST(shouldBeCleanAfterMarkedAsClean,
    {
       Buffer buf(64);
       buf.set<UInt8>(32, 7);
       buf.markAsClean();
-      KAREN_UTEST_ASSERT(!buf.isDirty());
-   }
-   
-private:
+      assertFalse(buf.isDirty());
+   });
+      
+KAREN_END_UNIT_TEST(BufferTestSuite);
 
-   static UInt8* allocRawBuffer(unsigned long len)
-   {
-      UInt8* data = new UInt8[len];
-      for (unsigned long i = 0; i < len; i++)
-         data[i] = (i % 256);
-      return data;
-   }
-   
-};
+KAREN_BEGIN_UNIT_TEST(BufferStreamsTestSuite);
 
-class BufferStreamsTestSuite : public UnitTestSuite
-{
-public:
-
-   BufferStreamsTestSuite()
-      : UnitTestSuite("Buffer Streams")
-   {
-      KAREN_UTEST_ADD(BufferStreamsTestSuite::shouldReadFromInputStream);
-      KAREN_UTEST_ADD(BufferStreamsTestSuite::shouldFailWhileReadingBeyondInputStream);
-      KAREN_UTEST_ADD(BufferStreamsTestSuite::shouldWriteToOutputStream);
-      KAREN_UTEST_ADD(BufferStreamsTestSuite::shouldFailWhileWritingBeyondOutputStream);
-   }
-   
-   void shouldReadFromInputStream()
+   KAREN_DECL_TEST(shouldReadFromInputStream,
    {
       Ptr<Buffer> buf = allocBuffer(64);
       BufferInputStream bis(buf);
       for (int i = 0; i < 64; i++)
       {
-         KAREN_UTEST_ASSERT(bis.bytesLeftToRead() == (64 - i));
-         KAREN_UTEST_ASSERT(bis.read<UInt8>() == i);
+         assertEquals<int>((64 - i), bis.bytesLeftToRead());
+         assertEquals<int>(i, bis.read<UInt8>());
       }
-   }
+   });
    
-   void shouldFailWhileReadingBeyondInputStream()
+   KAREN_DECL_TEST(shouldFailWhileReadingBeyondInputStream,
    {
       Ptr<Buffer> buf = allocBuffer(64);
       BufferInputStream bis(buf);
@@ -285,25 +253,25 @@ public:
       try
       {
          bis.read<UInt8>();
-         KAREN_UTEST_FAILED("expected invalid state exception not raised");
+         assertionFailed("expected invalid state exception not raised");
       }
       catch (IOException& e) {}
-   }
+   });
    
-   void shouldWriteToOutputStream()
+   KAREN_DECL_TEST(shouldWriteToOutputStream,
    {
       Buffer buf(64);
       BufferOutputStream bos(&buf);
       for (int i = 0; i < 64; i++)
       {
-         KAREN_UTEST_ASSERT(bos.bytesLeftToWrite() == 64 - i);
+         assertEquals<int>(64 - i, bos.bytesLeftToWrite());
          bos.write<UInt8>(i);
       }
       for (int i = 0; i < 64; i++)
-         KAREN_UTEST_ASSERT(buf.get<UInt8>(i) == i);
-   }
+         assertEquals<int>(i, buf.get<UInt8>(i));
+   });
    
-   void shouldFailWhileWritingBeyondOutputStream()
+   KAREN_DECL_TEST(shouldFailWhileWritingBeyondOutputStream,
    {
       Buffer buf(64);
       BufferOutputStream bos(&buf);
@@ -312,21 +280,11 @@ public:
       try
       {
          bos.write<UInt8>(7);
-         KAREN_UTEST_FAILED("expected invalid state exception not raised");
+         assertionFailed("expected invalid state exception not raised");
       } catch (IOException&) {}
-   }
-   
-private:
+   });
 
-   static karen::Buffer* allocBuffer(unsigned long len)
-   {
-      UInt8* data = new UInt8[len];
-      for (unsigned long i = 0; i < len; i++)
-         data[i] = (i % 256);
-      return new Buffer(data, len);
-   }
-   
-};
+KAREN_END_UNIT_TEST(BufferStreamsTestSuite);
 
 int main(int argc, char* argv[])
 {

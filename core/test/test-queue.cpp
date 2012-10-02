@@ -27,9 +27,7 @@
 
 using namespace karen;
 
-class PriorityQueueTestSuite : public UnitTestSuite
-{
-public:
+KAREN_BEGIN_UNIT_TEST(PriorityQueueTestSuite);
 
    struct Entry
    {
@@ -43,35 +41,23 @@ public:
       { return e1.priority < e2.priority; }
    };
 
-   PriorityQueueTestSuite()
-      : UnitTestSuite("Collections - Priority Queue")
-   {
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::createEmptyQueue);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertOneElement);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertSeveralElements);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::removeElement);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::insertDuplicatedElements);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::iterateOnDuplicatedElements);
-      KAREN_UTEST_ADD(PriorityQueueTestSuite::pullDuplicatedElements);
-   }
-   
-   void createEmptyQueue()
+   KAREN_DECL_TEST(createEmptyQueue,
    {
       PriorityQueue<int> q;
-      KAREN_UTEST_ASSERT(q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 0);
-   }
+      assertTrue(q.isEmpty());
+      assertEquals<int>(0, q.size());
+   });
    
-   void insertOneElement()
+   KAREN_DECL_TEST(insertOneElement,
    {
       PriorityQueue<int> q;
       q.put(10);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 1);
-      KAREN_UTEST_ASSERT(q.hasElement(10));
-   }
+      assertFalse(q.isEmpty());
+      assertEquals<int>(1, q.size());
+      assertTrue(q.hasElement(10));
+   });
    
-   void insertSeveralElements()
+   KAREN_DECL_TEST(insertSeveralElements,
    {
       PriorityQueue<int> q;
       q.put(10);
@@ -79,17 +65,17 @@ public:
       q.put(15);
       q.put(1);
       q.put(3);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 5);
-      KAREN_UTEST_ASSERT(q.hasElement(1));
-      KAREN_UTEST_ASSERT(q.hasElement(3));
-      KAREN_UTEST_ASSERT(q.hasElement(4));
-      KAREN_UTEST_ASSERT(q.hasElement(10));
-      KAREN_UTEST_ASSERT(q.hasElement(15));
-      KAREN_UTEST_ASSERT(q.head() == 15);
-   }
+      assertFalse(q.isEmpty());
+      assertEquals<int>(5, q.size());
+      assertTrue(q.hasElement(1));
+      assertTrue(q.hasElement(3));
+      assertTrue(q.hasElement(4));
+      assertTrue(q.hasElement(10));
+      assertTrue(q.hasElement(15));
+      assertEquals(15, q.head());
+   });
    
-   void removeElement()
+   KAREN_DECL_TEST(removeElement,
    {
       PriorityQueue<int> q;
       q.put(10);
@@ -98,17 +84,17 @@ public:
       q.put(1);
       q.put(3);
       q.removeAll(15);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 4);
-      KAREN_UTEST_ASSERT(q.hasElement(1));
-      KAREN_UTEST_ASSERT(q.hasElement(3));
-      KAREN_UTEST_ASSERT(q.hasElement(4));
-      KAREN_UTEST_ASSERT(q.hasElement(10));
-      KAREN_UTEST_ASSERT(!q.hasElement(15));
-      KAREN_UTEST_ASSERT(q.head() == 10);
-   }
+      assertFalse(q.isEmpty());
+      assertEquals<int>(4, q.size());
+      assertTrue(q.hasElement(1));
+      assertTrue(q.hasElement(3));
+      assertTrue(q.hasElement(4));
+      assertTrue(q.hasElement(10));
+      assertFalse(q.hasElement(15));
+      assertEquals<int>(10, q.head());
+   });
    
-   void insertDuplicatedElements()
+   KAREN_DECL_TEST(insertDuplicatedElements,
    {
       PriorityQueue<Entry, EntryLessThan> q;
       Entry ent[] = {
@@ -119,11 +105,11 @@ public:
       };
       for (int i = 0; i < 4; i++)
          q.put(ent[i]);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 4);
-   }
+      assertFalse(q.isEmpty());
+      assertEquals<int>(4, q.size());
+   });
    
-   void iterateOnDuplicatedElements()
+   KAREN_DECL_TEST(iterateOnDuplicatedElements,
    {
       PriorityQueue<Entry, EntryLessThan> q;
       Entry ent[] = {
@@ -140,18 +126,18 @@ public:
       };
       for (int i = 0; i < 4; i++)
          q.put(ent[i]);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 4);
+      assertFalse(q.isEmpty());
+      assertEquals<int>(4, q.size());
       Iterator<const Entry> it = q.begin();
       for (int i = 0; i < 4; i++)
       {
          const Entry &e = *it;
-         KAREN_UTEST_ASSERT(e.name == ord[i].name);
+         assertEquals<String>(ord[i].name, e.name);
          it++;
       }
-   }
+   });
    
-   void pullDuplicatedElements()
+   KAREN_DECL_TEST(pullDuplicatedElements,
    {
       PriorityQueue<Entry, EntryLessThan> q;
       Entry ent[] = {
@@ -168,16 +154,16 @@ public:
       };
       for (int i = 0; i < 4; i++)
          q.put(ent[i]);
-      KAREN_UTEST_ASSERT(!q.isEmpty());
-      KAREN_UTEST_ASSERT(q.size() == 4);
+      assertFalse(q.isEmpty());
+      assertEquals<int>(4, q.size());
       for (int i = 0; i < 4; i++)
       {
          Entry e = q.poll();
-         KAREN_UTEST_ASSERT(e.name == ord[i].name);
+         assertEquals<String>(ord[i].name, e.name);
       }
-   }
+   });
    
-};
+KAREN_END_UNIT_TEST(PriorityQueueTestSuite);
 
 int main(int argc, char* argv[])
 {

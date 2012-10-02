@@ -28,157 +28,136 @@
 using namespace karen;
 
 
-class ListTestSuite : public UnitTestSuite
-{
-public:
-   ListTestSuite() : UnitTestSuite("Collections - List")
-   {
-      KAREN_UTEST_ADD(ListTestSuite::createEmptyList);
-      KAREN_UTEST_ADD(ListTestSuite::insertOneElementinsertFront);
-      KAREN_UTEST_ADD(ListTestSuite::insertOneElementinsertBack);
-      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsinsertFront);
-      KAREN_UTEST_ADD(ListTestSuite::insertSeveralElementsinsertBack);
-      KAREN_UTEST_ADD(ListTestSuite::iterateFromHead);
-      KAREN_UTEST_ADD(ListTestSuite::contains);
-      KAREN_UTEST_ADD(ListTestSuite::removeIterator);
-      KAREN_UTEST_ADD(ListTestSuite::removeWithInvalidIterator);
-      KAREN_UTEST_ADD(ListTestSuite::removeFirst);
-      KAREN_UTEST_ADD(ListTestSuite::removeLast);
-      KAREN_UTEST_ADD(ListTestSuite::clearEmpty);
-      KAREN_UTEST_ADD(ListTestSuite::clearNotEmpty);
-      KAREN_UTEST_ADD(ListTestSuite::insertBefore);
-      KAREN_UTEST_ADD(ListTestSuite::insertAfter);
-      KAREN_UTEST_ADD(ListTestSuite::iterateForRange);
-   }
-   
-   void createEmptyList()
+KAREN_BEGIN_UNIT_TEST(ListTestSuite);
+
+   KAREN_DECL_TEST(createEmptyList,
    {
       LinkedList<int> l;
-      KAREN_UTEST_ASSERT(l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 0);      
-   }
+      assertTrue(l.isEmpty());
+      assertEquals<int>(0, l.size());
+   });
    
-   void insertOneElementinsertFront()
+   KAREN_DECL_TEST(insertOneElementinsertFront,
    {
       LinkedList<int> l;
       l.insertFront(11);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 1);
-      KAREN_UTEST_ASSERT(l.first() == 11);
-      KAREN_UTEST_ASSERT(l.last() == 11);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(1, l.size());
+      assertEquals<int>(11, l.first());
+      assertEquals<int>(11, l.last());
+   });
 
-   void insertOneElementinsertBack()
+   KAREN_DECL_TEST(insertOneElementinsertBack,
    {
       LinkedList<int> l;
       l.insertBack(10);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 1);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 10);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(1, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(10, l.last());
+   });
 
-   void insertSeveralElementsinsertFront()
+   KAREN_DECL_TEST(insertSeveralElementsinsertFront,
    {
       LinkedList<int> l;
       l.insertFront(11);
       l.insertFront(12);
       l.insertFront(13);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 3);
-      KAREN_UTEST_ASSERT(l.first() == 13);
-      KAREN_UTEST_ASSERT(l.last() == 11);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(3, l.size());
+      assertEquals<int>(13, l.first());
+      assertEquals<int>(11, l.last());
+   });
 
-   void insertSeveralElementsinsertBack()
+   KAREN_DECL_TEST(insertSeveralElementsinsertBack,
    {
       LinkedList<int> l;
       l.insertBack(11);
       l.insertBack(12);
       l.insertBack(13);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 3);
-      KAREN_UTEST_ASSERT(l.first() == 11);
-      KAREN_UTEST_ASSERT(l.last() == 13);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(3, l.size());
+      assertEquals<int>(11, l.first());
+      assertEquals<int>(13, l.last());
+   });
 
-   void iterateFromHead()
+   KAREN_DECL_TEST(iterateFromHead,
    {
       LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
          l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 19);
+      assertFalse(l.isEmpty());
+      assertEquals<int>(10, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(19, l.last());
       Iterator<int> it = l.begin();
-      KAREN_UTEST_ASSERT(it);
+      assertTrue(it);
       for (; it; it++)
-         KAREN_UTEST_ASSERT(*it == j++);
-   }
+         assertEquals<int>(j++, *it);
+   });
 
-   void contains()
+   KAREN_DECL_TEST(contains,
    {
       LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
          l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 19);
-      KAREN_UTEST_ASSERT(l.hasElement(15));
-      KAREN_UTEST_ASSERT(!l.hasElement(25));
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(10, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(19, l.last());
+      assertTrue(l.hasElement(15));
+      assertFalse(l.hasElement(25));
+   });
 
-   void removeIterator()
+   KAREN_DECL_TEST(removeIterator,
    {
       LinkedList<int> l;
       int j = 10;
       for (int i = j; i < 20; i++)
          l.insertBack(i);
             
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 10);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 19);
+      assertFalse(l.isEmpty());
+      assertEquals<int>(10, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(19, l.last());
 
       Iterator<int> it = l.begin();
       for (int i = 0; i < 5; i++)
          it++;
       l.remove(it);
-      KAREN_UTEST_ASSERT(*it == 16);
-      KAREN_UTEST_ASSERT(!l.hasElement(15));
-   }
+      assertEquals(16, *it);
+      assertFalse(l.hasElement(15));
+   });
 
-   void removeFirst()
+   KAREN_DECL_TEST(removeFirst,
    {
       LinkedList<int> l;
       for (int i = 10; i < 20; i++)
          l.insertBack(i);
       l.removeFirst();
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 9);
-      KAREN_UTEST_ASSERT(l.first() == 11);
-      KAREN_UTEST_ASSERT(l.last() == 19);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(9, l.size());
+      assertEquals<int>(11, l.first());
+      assertEquals<int>(19, l.last());
+   });
    
-   void removeLast()
+   KAREN_DECL_TEST(removeLast,
    {
       LinkedList<int> l;
       for (int i = 10; i < 20; i++)
          l.insertBack(i);
       l.removeLast();
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 9);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 18);
-   }
+      assertFalse(l.isEmpty());
+      assertEquals<int>(9, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(18, l.last());
+   });
    
-   void removeWithInvalidIterator()
+   KAREN_DECL_TEST(removeWithInvalidIterator,
    {
       LinkedList<int> l;
       for (int i = 10; i < 20; i++)
@@ -188,7 +167,7 @@ public:
       {
          Iterator<int> it;
          l.remove(it);
-         KAREN_UTEST_FAILED("expected exception not raised");
+         assertionFailed("expected exception not raised");
       }
       catch (InvalidInputException&) {}
       try
@@ -196,30 +175,30 @@ public:
          LinkedList<int> ll;
          Iterator<int> it = ll.begin();
          l.remove(it);
-         KAREN_UTEST_FAILED("expected exception not raised");
+         assertionFailed("expected exception not raised");
       }
       catch (InvalidInputException&) {}
-   }
+   });
    
-   void clearNotEmpty()
+   KAREN_DECL_TEST(clearNotEmpty,
    {
       LinkedList<int> l;
       for (int i = 10; i < 20; i++)
          l.insertBack(i);
       l.clear();
-      KAREN_UTEST_ASSERT(l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 0);
-   }
+      assertTrue(l.isEmpty());
+      assertEquals<int>(0, l.size());
+   });
    
-   void clearEmpty()
+   KAREN_DECL_TEST(clearEmpty,
    {
       LinkedList<int> l;
       l.clear();
-      KAREN_UTEST_ASSERT(l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 0);
-   }
+      assertTrue(l.isEmpty());
+      assertEquals<int>(0, l.size());
+   });
    
-   void insertBefore()
+   KAREN_DECL_TEST(insertBefore,
    {
       LinkedList<int> l;
       l.insertBack(10);
@@ -229,19 +208,19 @@ public:
       Iterator<int> it = l.begin();
       ++it; ++it; ++it;
       l.insertBefore(13, it);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 5);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 14);
-      KAREN_UTEST_ASSERT(*it == 14);
+      assertFalse(l.isEmpty());
+      assertEquals<int>(5, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(14, l.last());
+      assertEquals<int>(14, *it);
       int j = 10;
       it = l.begin();
-      KAREN_UTEST_ASSERT(it);
+      assertTrue(it);
       for (; it; it++)
-         KAREN_UTEST_ASSERT(*it == j++);
-   }
+         assertEquals<int>(j++, *it);
+   });
 
-   void insertAfter()
+   KAREN_DECL_TEST(insertAfter,
    {
       LinkedList<int> l;
       l.insertBack(10);
@@ -250,19 +229,19 @@ public:
       l.insertBack(14);
       Iterator<int> it = l.begin();
       l.insertAfter(11, it);
-      KAREN_UTEST_ASSERT(!l.isEmpty());
-      KAREN_UTEST_ASSERT(l.size() == 5);
-      KAREN_UTEST_ASSERT(l.first() == 10);
-      KAREN_UTEST_ASSERT(l.last() == 14);
-      KAREN_UTEST_ASSERT(*it == 10);
+      assertFalse(l.isEmpty());
+      assertEquals<int>(5, l.size());
+      assertEquals<int>(10, l.first());
+      assertEquals<int>(14, l.last());
+      assertEquals(10, *it);
       int j = 10;
       it = l.begin();
-      KAREN_UTEST_ASSERT(it);
+      assertTrue(it);
       for (; it; ++it)
-         KAREN_UTEST_ASSERT(*it == j++);
-   }
+         assertEquals<int>(j++, *it);
+   });
    
-   void iterateForRange()
+   KAREN_DECL_TEST(iterateForRange,
    {
       LinkedList<int> l;
       l.insertBack(10);
@@ -273,13 +252,13 @@ public:
       int values[] = { 10, 12, 13, 14 };
       for (int num : l)
       {
-         KAREN_UTEST_ASSERT(num == values[i++]);
+         assertEquals<int>(values[i++], num);
       }
-      KAREN_UTEST_ASSERT(i == 4);
+      assertEquals<int>(4, i);
       
-   }
+   });
    
-};
+KAREN_END_UNIT_TEST(ListTestSuite);
 
 int main(int argc, char* argv[])
 {

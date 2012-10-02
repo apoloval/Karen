@@ -27,26 +27,14 @@
 
 using namespace karen;
 
-class FileTestSuite : public UnitTestSuite
-{
-public:
+KAREN_BEGIN_UNIT_TEST(FileTestSuite);
 
-   FileTestSuite()
-      : UnitTestSuite("File")
-   {
-      KAREN_UTEST_ADD(FileTestSuite::shouldCreateFile);
-      KAREN_UTEST_ADD(FileTestSuite::shouldWriteAndWriteFile);
-      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenNotCreatingAndFileDoesNotExist);
-      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenReadingNotReadableFile);
-      KAREN_UTEST_ADD(FileTestSuite::shouldFailWhenWritingNotWriteableFile);
-   }
-   
-   void shouldCreateFile()
+   KAREN_DECL_TEST(shouldCreateFile,
    {
       File f("/tmp/foobar1", FileOpenMode::CREATE_AND_WRITE_MODE);      
-   }
+   });
    
-   void shouldWriteAndWriteFile()
+   KAREN_DECL_TEST(shouldWriteAndWriteFile,
    {
       const String masterMessage("Hello World!");
       {
@@ -56,42 +44,43 @@ public:
       {
          File f("/tmp/foobar1", FileOpenMode::READ_ONLY_MODE);
          String msg = f.read<String>();
-         KAREN_UTEST_ASSERT(msg == masterMessage);
+         assertEquals<String>(masterMessage, msg);
       }
-   }
+   });
    
-   void shouldFailWhenNotCreatingAndFileDoesNotExist()
+   KAREN_DECL_TEST(shouldFailWhenNotCreatingAndFileDoesNotExist,
    {
       try
       { 
          File f("/tmp/foobar2", FileOpenMode::WRITE_ONLY_MODE);
-         KAREN_UTEST_FAILED("Expected IOException not thrown");
+         assertionFailed("Expected IOException not thrown");
       }
       catch (IOException&) {}
-   }
+   });
    
-   void shouldFailWhenReadingNotReadableFile()
+   KAREN_DECL_TEST(shouldFailWhenReadingNotReadableFile,
    {
       try
       { 
          File f("/tmp/foobar1", FileOpenMode::WRITE_ONLY_MODE);
          f.read<UInt8>();
-         KAREN_UTEST_FAILED("Expected IOException not thrown");
+         assertionFailed("Expected IOException not thrown");
       }
       catch (IOException&) {}
-   }
+   });
 
-   void shouldFailWhenWritingNotWriteableFile()
+   KAREN_DECL_TEST(shouldFailWhenWritingNotWriteableFile,
    {
       try
       { 
          File f("/tmp/foobar1", FileOpenMode::READ_ONLY_MODE);
          f.write<UInt8>(7);
-         KAREN_UTEST_FAILED("Expected IOException not thrown");
+         assertionFailed("Expected IOException not thrown");
       }
       catch (IOException&) {}
-   }
-};
+   });
+   
+KAREN_END_UNIT_TEST(FileTestSuite);
 
 int main(int argc, char* argv[])
 {

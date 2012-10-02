@@ -27,48 +27,34 @@
 
 using namespace karen;
 
-class SetTestSuite : public UnitTestSuite
-{
-public:
+KAREN_BEGIN_UNIT_TEST(SetTestSuite);
 
-   SetTestSuite() : UnitTestSuite("Collections - Set")
-   {
-      KAREN_UTEST_ADD(SetTestSuite::createEmptySet);
-      KAREN_UTEST_ADD(SetTestSuite::insertOneElement);
-      KAREN_UTEST_ADD(SetTestSuite::insertSeveralElements);
-      KAREN_UTEST_ADD(SetTestSuite::insertDuplicatedElements);
-      KAREN_UTEST_ADD(SetTestSuite::containsElement);
-      KAREN_UTEST_ADD(SetTestSuite::iterate);
-      KAREN_UTEST_ADD(SetTestSuite::removeElement);
-      KAREN_UTEST_ADD(SetTestSuite::clear);
-   }
-   
-   void createEmptySet()
+   KAREN_DECL_TEST(createEmptySet,
    {
       TreeSet<int> s;
-      KAREN_UTEST_ASSERT(s.isEmpty());
-      KAREN_UTEST_ASSERT(s.size() == 0);
-   }
+      assertTrue(s.isEmpty());
+      assertEquals<int>(0, s.size());
+   });
    
-   void insertOneElement()
+   KAREN_DECL_TEST(insertOneElement,
    {
       TreeSet<int> s;
       s.insert(10);
-      KAREN_UTEST_ASSERT(!s.isEmpty());
-      KAREN_UTEST_ASSERT(s.size() == 1);
-   }
+      assertFalse(s.isEmpty());
+      assertEquals<int>(1, s.size());
+   });
    
-   void insertSeveralElements()
+   KAREN_DECL_TEST(insertSeveralElements,
    {
       TreeSet<int> s;
       s.insert(10);
       s.insert(15);
       s.insert(7);
-      KAREN_UTEST_ASSERT(!s.isEmpty());
-      KAREN_UTEST_ASSERT(s.size() == 3);
-   }
+      assertFalse(s.isEmpty());
+      assertEquals<int>(3, s.size());
+   });
    
-   void insertDuplicatedElements()
+   KAREN_DECL_TEST(insertDuplicatedElements,
    {
       TreeSet<int> s;
       s.insert(10);
@@ -76,11 +62,11 @@ public:
       s.insert(7);
       s.insert(10);
       s.insert(15);
-      KAREN_UTEST_ASSERT(!s.isEmpty());
-      KAREN_UTEST_ASSERT(s.size() == 3);
-   }
+      assertFalse(s.isEmpty());
+      assertEquals<int>(3, s.size());
+   });
    
-   void containsElement()
+   KAREN_DECL_TEST(containsElement,
    {
       TreeSet<int> s;
       s.insert(10);
@@ -88,11 +74,11 @@ public:
       s.insert(7);
       s.insert(10);
       s.insert(15);
-      KAREN_UTEST_ASSERT(s.hasElement(7));
-      KAREN_UTEST_ASSERT(!s.hasElement(13));
-   }
+      assertTrue(s.hasElement(7));
+      assertFalse(s.hasElement(13));
+   });
    
-   void iterate()
+   KAREN_DECL_TEST(iterate,
    {
       TreeSet<int> s;
       s.insert(10);
@@ -107,12 +93,12 @@ public:
       int seq[] = { 2, 7, 10, 15, 17, 20 };
       int i = 0;
       Iterator<const int> it = s.begin();
-      KAREN_UTEST_ASSERT(it);
+      assertTrue(it);
       for (; it; it++)
-         KAREN_UTEST_ASSERT(*it == seq[i++]);
-   }
+         assertEquals<int>(seq[i++], *it);
+   });
    
-   void removeElement()
+   KAREN_DECL_TEST(removeElement,
    {
       TreeSet<int> s;
       s.insert(10);
@@ -129,10 +115,10 @@ public:
       int seq[] = { 2, 7, 15, 17, 20 };
       int i = 0;
       for (Iterator<const int> it = s.begin(); it; it++)
-         KAREN_UTEST_ASSERT(*it == seq[i++]);
-   }
+         assertEquals<int>(seq[i++], *it);
+   });
    
-   void clear()
+   KAREN_DECL_TEST(clear,
    {
       TreeSet<int> s;
       s.insert(10);
@@ -145,11 +131,11 @@ public:
       s.insert(2);
       
       s.clear();
-      KAREN_UTEST_ASSERT(s.isEmpty());
-      KAREN_UTEST_ASSERT(s.size() == 0);
-   }
+      assertTrue(s.isEmpty());
+      assertEquals<int>(0, s.size());
+   });
    
-};
+KAREN_END_UNIT_TEST(SetTestSuite);
 
 int main(int argc, char* argv[])
 {

@@ -25,10 +25,12 @@
 #ifndef KAREN_CORE_UTEST_H
 #define KAREN_CORE_UTEST_H
 
-#define GEO_MAX_TESTS_PER_SUITE 256
+#define KAREN_MAX_TESTS_PER_SUITE 256
+#define KAREN_MAX_TESTS_PER_UNIT 256
 
 #include "KarenCore/string.h"
 #include "KarenCore/exception.h"
+#include "KarenCore/first-class.h"
 #include "KarenCore/types.h"
 
 namespace karen {
@@ -47,6 +49,117 @@ KAREN_DECL_EXCEPTION(InvalidAssertionException);
  */
 KAREN_DECL_EXCEPTION(TestFailedException);
 
+class Test
+{
+public:
+
+   String name;
+   
+   inline Test(const String& name) : name(name) {}
+   
+   inline virtual ~Test() {}
+   
+   virtual void run() = 0;
+   
+   void assertionFailed(const String& cause);
+
+   template <typename T>
+   static void assert(const BinaryPredicate<T, T>& predicate,
+                      const T& expected, const T& actual);
+
+   template <typename T>
+   inline static void assertEquals(const T& expected, const T& actual)
+   { return Test::assert<T>(Equals<T, T>(), expected, actual); }
+   
+   template <typename T>
+   inline static void assertNotEquals(const T& expected, const T& actual)
+   { return Test::assert<T>(NotEquals<T, T>(), expected, actual); }
+};
+
+template <>
+void
+Test::assert<int>(const BinaryPredicate<int, int>& predicate,
+                  const int& expected, const int& actual)
+{
+   if (!predicate(expected, actual))
+      KAREN_THROW(::karen::InvalidAssertionException,
+         "assertion failed: expected '%d' %s '%d'",
+         expected, (const char*) predicate, actual);
+}
+
+template <>
+void
+Test::assert<float>(const BinaryPredicate<float, float>& predicate,
+                    const float& expected, const float& actual)
+{
+   if (!predicate(expected, actual))
+      KAREN_THROW(::karen::InvalidAssertionException,
+         "assertion failed: expected '%f' %s '%f'",
+         expected, (const char*) predicate, actual);
+}
+
+template <>
+void
+Test::assert<String>(const BinaryPredicate<String, String>& predicate,
+                     const String& expected, const String& actual)
+{
+   if (!predicate(expected, actual))
+      KAREN_THROW(::karen::InvalidAssertionException,
+         "assertion failed: expected '%s' %s '%s'",
+         (const char*) expected, (const char*) predicate, (const char*) actual);
+}
+
+enum TestResultStatus
+{
+   TEST_RESULT_PASSED,
+   TEST_RESULT_ASSERTION_FAILED,
+   TEST_RESULT_FAILED,
+};
+
+struct TestResult
+{
+   const Test*       test;
+   TestResultStatus  status;
+};
+
+class UnitTest
+{
+public:
+
+   UnitTest(const String& name);
+   
+   virtual ~UnitTest();
+   
+   unsigned int run(UnitTestReporter* reporter,
+                    TestResult* testResults,
+                    unsigned int testResultsCount);
+
+protected:
+
+   void addTest(Test* test);
+
+private:
+   String _name;
+   Test* _tests[KAREN_MAX_TESTS_PER_UNIT];
+   unsigned int _nextTest;
+};
+
+#define KAREN_BEGIN_UNIT_TEST(name) \
+   class name : public UnitTest { \
+   public:\
+      inline name() : UnitTest(#name) {
+
+#define KAREN_DECL_TEST(name, ...) \
+         struct name : Test { \
+            inline name() : Test(#name) {} \
+            virtual void run() { __VA_ARGS__ }\
+         }; \
+         this->addTest(new name());
+   
+#define KAREN_END_UNIT_TEST(name) \
+      }\
+   }
+
 /**
  * Unit test suite class. This class represent unit test suites. This is
  * an abstract class aimed to be extended by concrete unit test suites.
@@ -63,14 +176,6 @@ public:
    {
       String   name;
       TestCode code;
-   };
-   
-   //! Test result type.
-   enum TestResultStatus
-   {
-      TEST_RESULT_PASSED,
-      TEST_RESULT_ASSERTION_FAILED,
-      TEST_RESULT_FAILED,
    };
    
    /** 
@@ -115,27 +220,29 @@ protected:
     * Adds a new test to the suite.
     */
    void addTest(Test t);
+   
+   template <typename T>
+   void assertEquals(const T& expected, const T& found);
 
 private:
 
    String         _name;
-   Test           _test[GEO_MAX_TESTS_PER_SUITE];
+   Test           _test[KAREN_MAX_TESTS_PER_SUITE];
    unsigned int   _testCount;
 
 };
 
-#define KAREN_UTEST_ASSERT(expr) { \
+#define assertTrue(expr) { \
    if (!(expr)) { \
       KAREN_THROW(::karen::InvalidAssertionException, \
-      "assertion failed: %s", #expr); \
+      "assertion failed: expression '%s' is not true", #expr); \
    }\
 }
-#define KAREN_UTEST_FAILED(reason) { \
-   KAREN_THROW(::karen::TestFailedException, reason); \
-}
-#define KAREN_UTEST_ADD(code) { \
-   Test tst = { #code, static_cast<TestCode>(&code) }; \
-   addTest(tst); \
+#define assertFalse(expr) { \
+   if (expr) { \
+      KAREN_THROW(::karen::InvalidAssertionException, \
+      "assertion failed: expression '%s' is not false", #expr); \
+   }\
 }
 
 /*
@@ -166,7 +273,7 @@ public:
     * Report end of unit test
     */
    virtual void endUnitTest(
-         UnitTestSuite::TestResultStatus status, 
+         TestResultStatus status, 
          const Nullable<String>& info = Nullable<String>()) = 0;
 
 };
@@ -195,7 +302,7 @@ public:
     * Report end of unit test
     */
    virtual void endUnitTest(
-         UnitTestSuite::TestResultStatus status, 
+         TestResultStatus status, 
          const Nullable<String>& info = Nullable<String>());
 
 };
