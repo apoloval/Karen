@@ -76,6 +76,7 @@
    #define KAREN_COMPILER KAREN_COMPILER_MSVC
    #define KAREN_COMPILER_MAJOR_VERSION ((_MSC_VER / 100) - 6)
    #define KAREN_COMPILER_MINOR_VERSION ((_MSC_VER % 100) / 10)
+   #pragma warning( disable : 4290 )
 #elif defined(__CYGWIN__)
    #define KAREN_COMPILER KAREN_COMPILER_CYGWIN
    #define KAREN_COMPILER_MAJOR_VERSION __GNUC__
