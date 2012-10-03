@@ -169,6 +169,7 @@ typedef long long          Int64;
    #if KAREN_COMPILER_AT_LEAST(3, 0)
       #define KAREN_CXX11_HAVE_DELEGATING_CONSTRUCTORS
       #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
+      #define KAREN_CXX11_HAVE_RANGE_FOR
    #endif
    #if KAREN_COMPILER_AT_LEAST(3, 1)
       #define KAREN_CXX11_HAVE_INITIALIZER_LISTS
@@ -191,6 +192,7 @@ typedef long long          Int64;
    #endif
    #if KAREN_COMPILER_AT_LEAST(4, 6)
       #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
+      #define KAREN_CXX11_HAVE_RANGE_FOR
    #endif
    #if KAREN_COMPILER_AT_LEAST(4, 7)
       #define KAREN_CXX11_HAVE_DELEGATING_CONSTRUCTORS

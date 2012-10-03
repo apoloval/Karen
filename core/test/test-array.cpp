@@ -94,6 +94,7 @@ KAREN_BEGIN_UNIT_TEST(ArrayTestSuite);
          assertEquals(*it, raw[i++]);
    });
 
+#ifdef KAREN_CXX11_HAVE_RANGE_FOR
    KAREN_DECL_TEST(shouldIterateArrayUsingForRange,
    {
       int raw[] = { 10, 11, 12, 13, 14, 15 };
@@ -104,6 +105,7 @@ KAREN_BEGIN_UNIT_TEST(ArrayTestSuite);
       for (int n : a)
          assertEquals(n, raw[i++]);
    });
+#endif
 
 KAREN_END_UNIT_TEST(ArrayTestSuite);
 
