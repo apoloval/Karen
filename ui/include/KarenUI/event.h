@@ -25,7 +25,7 @@
 #ifndef KAREN_UI_EVENT_H
 #define KAREN_UI_EVENT_H
 
-#include "KarenUI/types.h"
+#include "KarenUI/euclidean.h"
 #include <KarenCore/exception.h>
 #include <KarenCore/platform.h>
 #include <KarenCore/pointer.h>

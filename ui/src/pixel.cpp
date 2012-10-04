@@ -22,21 +22,11 @@
  * ---------------------------------------------------------------------
  */
 
-#include "KarenUI/types.h"
+#include "KarenUI/pixel.h"
 
 #include <cmath>
 
 namespace karen { namespace ui {
-
-KAREN_EXPORT const Color Color::BLACK   (0x00, 0x00, 0x00);
-KAREN_EXPORT const Color Color::WHITE   (0xff, 0xff, 0xff);
-KAREN_EXPORT const Color Color::RED     (0xff, 0x00, 0x00);
-KAREN_EXPORT const Color Color::GREEN   (0x00, 0xff, 0x00);
-KAREN_EXPORT const Color Color::BLUE    (0x00, 0x00, 0xff);
-KAREN_EXPORT const Color Color::YELLOW  (0xff, 0xff, 0x00);
-KAREN_EXPORT const Color Color::CYAN    (0x00, 0xff, 0xff);
-KAREN_EXPORT const Color Color::MAGENTA (0xff, 0x00, 0xff);
-KAREN_EXPORT const Color Color::GREY    (0xc0, 0xc0, 0xc0);
 
 #if (KAREN_ENDIANNESS == KAREN_BIG_ENDIAN)
 KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_8BPP_GREYSCALE(
@@ -122,4 +112,4 @@ KAREN_EXPORT const PixelFormat PixelFormat::FORMAT_32BPP_ABGR(
    32);
 #endif
 
-}} /* Namespace karen::ui */
+}}

@@ -25,13 +25,15 @@
 #ifndef KAREN_UI_DRAW_H
 #define KAREN_UI_DRAW_H
 
-#include "KarenUI/bitmap.h"
-#include "KarenUI/types.h"
 #include <KarenCore/bolt.h>
 #include <KarenCore/collection.h>
 #include <KarenCore/exception.h>
 #include <KarenCore/platform.h>
 #include <KarenCore/types.h>
+
+#include "KarenUI/bitmap.h"
+#include "KarenUI/color.h"
+#include "KarenUI/euclidean.h"
 
 using karen::DynArray;
 

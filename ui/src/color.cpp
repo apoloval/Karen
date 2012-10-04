@@ -22,47 +22,20 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef KAREN_UI_BUTTON_H
-#define KAREN_UI_BUTTON_H
+#include "KarenUI/color.h"
 
-#include "KarenUI/euclidean.h"
-#include "KarenUI/widget.h"
-#include <KarenCore/string.h>
+#include <cmath>
 
 namespace karen { namespace ui {
 
-class Button : public Widget
-{
-public:
+KAREN_EXPORT const Color Color::BLACK   (0x00, 0x00, 0x00);
+KAREN_EXPORT const Color Color::WHITE   (0xff, 0xff, 0xff);
+KAREN_EXPORT const Color Color::RED     (0xff, 0x00, 0x00);
+KAREN_EXPORT const Color Color::GREEN   (0x00, 0xff, 0x00);
+KAREN_EXPORT const Color Color::BLUE    (0x00, 0x00, 0xff);
+KAREN_EXPORT const Color Color::YELLOW  (0xff, 0xff, 0x00);
+KAREN_EXPORT const Color Color::CYAN    (0x00, 0xff, 0xff);
+KAREN_EXPORT const Color Color::MAGENTA (0xff, 0x00, 0xff);
+KAREN_EXPORT const Color Color::GREY    (0xc0, 0xc0, 0xc0);
 
-   /**
-    * Create a new instance of button with given caption and 
-    * background theme color.
-    */
-   Button(const String& caption, const Color& bgColor);
-
-   /**
-    * Create a new instance of button with given caption.
-    */
-   Button(const String& caption);
-
-   /**
-    * Default theme color.
-    */
-   static const Color DEFAULT_THEME_COLOR;
-
-   /**
-    * Draw this widget on given canvas. 
-    */
-   virtual void draw(Canvas& canvas);   
-
-private:
-
-   Color    _bgColor;
-   String   _caption;
-
-};
-
-}}; /* Namespace karen::ui */
-
-#endif
+}}

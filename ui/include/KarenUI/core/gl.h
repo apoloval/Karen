@@ -27,7 +27,7 @@
 
 #include "KarenUI/bitmap.h"
 #include "KarenUI/draw.h"
-#include "KarenUI/types.h"
+#include "KarenUI/euclidean.h"
 #include <KarenCore/collection.h>
 #include <KarenCore/pointer.h>
 

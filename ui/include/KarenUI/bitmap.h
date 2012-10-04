@@ -25,11 +25,14 @@
 #ifndef KAREN_UI_BITMAP_H
 #define KAREN_UI_BITMAP_H
 
-#include "KarenUI/types.h"
 #include <KarenCore/buffer.h>
 #include <KarenCore/collection.h>
 #include <KarenCore/exception.h>
 #include <KarenCore/platform.h>
+
+#include "KarenUI/color.h"
+#include "KarenUI/pixel.h"
+#include "KarenUI/euclidean.h"
 
 namespace karen { namespace ui {
 

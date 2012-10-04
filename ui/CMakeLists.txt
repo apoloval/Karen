@@ -31,14 +31,16 @@ list(APPEND sources
    src/app.cpp
    src/bitmap.cpp
    src/button.cpp
+   src/color.cpp
    src/core/cocoa.mm
    # src/core/ft.cpp
    src/core/gl.cpp
    src/core/glut.cpp
    src/draw.cpp
    src/engine.cpp
+   src/euclidean.cpp
    src/event.cpp
-   src/types.cpp
+   src/pixel.cpp
    src/widget.cpp
 )
 
@@ -53,10 +55,10 @@ list(APPEND headers
    include/KarenUI/core/glut.h
    include/KarenUI/draw.h
    include/KarenUI/engine.h
+   include/KarenUI/euclidean.h
    include/KarenUI/event.h
    include/KarenUI/loop.h
    include/KarenUI/timer.h
-   include/KarenUI/types.h
    include/KarenUI/widget.h
    include/KarenUI/window.h
 )

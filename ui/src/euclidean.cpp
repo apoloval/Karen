@@ -22,47 +22,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef KAREN_UI_BUTTON_H
-#define KAREN_UI_BUTTON_H
-
 #include "KarenUI/euclidean.h"
-#include "KarenUI/widget.h"
-#include <KarenCore/string.h>
 
 namespace karen { namespace ui {
 
-class Button : public Widget
-{
-public:
-
-   /**
-    * Create a new instance of button with given caption and 
-    * background theme color.
-    */
-   Button(const String& caption, const Color& bgColor);
-
-   /**
-    * Create a new instance of button with given caption.
-    */
-   Button(const String& caption);
-
-   /**
-    * Default theme color.
-    */
-   static const Color DEFAULT_THEME_COLOR;
-
-   /**
-    * Draw this widget on given canvas. 
-    */
-   virtual void draw(Canvas& canvas);   
-
-private:
-
-   Color    _bgColor;
-   String   _caption;
-
-};
-
-}}; /* Namespace karen::ui */
-
-#endif
+}} /* Namespace karen::ui */
