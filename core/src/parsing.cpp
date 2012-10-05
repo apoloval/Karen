@@ -30,7 +30,7 @@ void
 tokenizeString(
       const String& str, 
       Array<String>& tokens,
-      String::Element separator)
+      char separator)
 {
    tokens.clear();
    if (!str.isEmpty())

@@ -36,7 +36,7 @@ namespace karen {
  */
 KAREN_EXPORT void tokenizeString(const String& str, 
                                  Array<String>& tokens,
-                                 String::Element separator = ' '); 
+                                 char separator = ' '); 
 
 }; // namespace karen
 

@@ -31,7 +31,9 @@
 
 namespace karen {
 
-class String;
+template <typename CharType> class StringBase;
+
+typedef StringBase<char> String;
 
 /**
  * Abstract exception class. This class provides an abstraction for a

@@ -34,7 +34,6 @@ list(APPEND sources
    src/file.cpp
    src/numeric.cpp
    src/parsing.cpp
-   src/string.cpp
    src/test.cpp
    src/timing.cpp
 )
@@ -58,6 +57,7 @@ list(APPEND headers
    include/KarenCore/pointer.h
    include/KarenCore/stream.h
    include/KarenCore/string.h
+   include/KarenCore/string-inl.h
    include/KarenCore/test.h
    include/KarenCore/timing.h
    include/KarenCore/types.h

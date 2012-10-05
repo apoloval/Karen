@@ -40,18 +40,13 @@ template <class T>
 class ConstIterator;
 
 /**
- * String base class. This typedef redeclares a STL-based string class
- * as the base class used in Karen to implement strings. 
- */
-typedef std::string StringBase;
-
-/**
  * String class. This class provides an abstraction for a string of
  * characters or bytes. It is based on STL string class as base, including
  * a member renaming (to fit Karen coding standards) and additional
  * members not included in STL strings. 
  */
-class KAREN_EXPORT String
+template <typename CharType>
+class KAREN_EXPORT StringBase
 {
 public:
 
@@ -68,337 +63,278 @@ public:
    typedef unsigned long Length;
    
    /**
-    * String element data type. This data type provides an abstraction for
-    * the character elements of a string. 
-    */
-   typedef char Element;
-
-   /**
     * Format a string following by substituting a variable-length set of
     * parameters. The substitution follows the printf() rules.
     */
-   static String format(const char *str, ...);
+   static StringBase format(const CharType *str, ...);
 
    /**
     * Double to string converter. This static function creates a new String
     * object representing the value of given double with the given number
     * of decimal digits.
     */
-   static String fromDouble(double num, unsigned int decimalDigits = 2);
+   static StringBase fromDouble(double num, unsigned int decimalDigits = 2);
    
    /**
     * Long to string converter. This static function creates a new String
     * object representing the value of given long.
     */
-   static String fromLong(long num);
+   static StringBase fromLong(long num);
 
    /**
     * Default constructor. This creates a new zero-length string. 
     */
-   inline String() : _base() {}
+   StringBase();
    
    /**
     * Value constructor. This creates a new string by copying the one
     * passed as argument.
     */
-   inline String(const String& str) : _base(str._base) {}
+   StringBase(const StringBase& str);
    
    /**
     * Value constructor. This creates a new string from given null-terminated
     * char pointer. 
     */
-   inline String(const char* str) : _base(str) {}
+   StringBase(const CharType* str);
    
    /**
     * Value constructor. This creates a new string from given char array and
     * given array length. 
     */
-   inline String(const char* str, unsigned long strLen) : _base(str, strLen) {}
+   StringBase(const CharType* str, unsigned long strLen);
    
    /**
     * Value constructor. This creates a new string from given STL string
     * object. 
     */
-   inline String(const std::string& str) : _base(str) {}
+   StringBase(const std::string& str);
    
    /**
     * Virtual destructor.     
     */
-   inline virtual ~String() {}
+   virtual ~StringBase();
    
    /**
     * Cast operator to null-terminated C-like string.
     */
-   inline operator const char* () const
-   { return _base.c_str(); }
+   operator const CharType* () const;
    
    /**
     * Return the length of the string. 
     */
-   inline Length length() const { return _base.length(); }
+   Length length() const;
    
    /**
     * Indicate whether string is empty (zero-length).
     */
-   inline bool isEmpty() const { return _base.empty(); }
+   bool isEmpty() const;
    
    /**
     * Clear the string, removing all characters and setting it to
     * zero-length. 
     */
-   inline void clear() { _base.clear(); }
+   void clear();
    
    /**
     * Check whether this string starts with given one passed as argument.
     */
-   inline bool startsWith(const String& str) const
-   { return head(str.length()) == str; }
+   bool startsWith(const StringBase& str) const;
    
    /**
     * Check whether this string ends with given one passed as argument.
     */
-   inline bool endsWith(const String& str) const
-   { return tail(str.length()) == str; }
+   bool endsWith(const StringBase& str) const;
    
    /**
-    * Find given character element in this string. If not found, the
-    * nullable element has a null value. 
+    * Find given character CharType in this string. If not found, the
+    * nullable CharType has a null value. 
     */
-   inline Position findChar(Element elem, Position pos = Position()) const
-   { 
-      size_t p = pos.isNull() ? _base.find(elem) : _base.find(elem, pos); 
-      return (p == std::string::npos) ? Position() : Position(p); 
-   }
+   Position findChar(CharType elem, Position pos = Position()) const;
    
    /**
-    * Find given character element in this string in reverse way (from tail
-    * to head). If not found, the nullable element has a null value. 
+    * Find given character CharType in this string in reverse way (from tail
+    * to head). If not found, the nullable CharType has a null value. 
     */
-   inline Position reverseFindChar(
-         Element elem, Position pos = Position()) const
-   { 
-      size_t p = pos.isNull() ? _base.rfind(elem) : _base.rfind(elem, pos); 
-      return (p == std::string::npos) ? Position() : Position(p); 
-   }
+   Position reverseFindChar(CharType elem, Position pos = Position()) const;
    
    /**
     * Append a determined count of a character to the end of the string.
     */
-   inline String& append(Element character, Length count)
-   { _base.append(count, character); return *this; }
+   StringBase& append(CharType character, Length count);
    
    /**
     * Append string passed as argument to this string. 
     */
-   inline String& append(const String &str) 
-   { _base.append(str._base); return *this; }
+   StringBase& append(const StringBase &str);
    
    /**
     * Return the concatenation of this string with a determined count of
     * character passed as arguments. 
     */
-   inline String concat(Element character, Length count) const
-   { String res(*this); res.append(character, count); return res; }
+   StringBase concat(CharType character, Length count) const;
    
    /**
     * Return the concatenation of this string and given one passed as
     * argument.
     */
-   inline String concat(const String& str) const
-   { String res(*this); res.append(str); return res; }
+   StringBase concat(const StringBase& str) const;
    
    /**
     * Return the string slice by given position and length.
     */
-   inline String slice(Position pos, Length len) const
-   { return (pos < length()) ? String(_base.substr(pos, len)) : ""; }
+   StringBase slice(Position pos, Length len) const;
    
    /**
     * Return the string head by given length.
     */
-   inline String head(Length len) const
-   { return slice(0, len); }
+   StringBase head(Length len) const;
    
    /**
     * Return the string tail by given length.
     */
-   inline String tail(Length len) const
-   {
-      Length l = length();
-      return (len < l) ? slice(l - len, len) : *this;
-   }
+   StringBase tail(Length len) const;
    
    /**
     * Remove given slice from this string.
     */
-   inline String& removeSlice(Position pos, Length len)
-   {
-      if (pos < length()) 
-         _base.erase(pos, len); 
-      return *this;
-   }
+   StringBase& removeSlice(Position pos, Length len);
    
    /**
-    * Remove given count of elements from head.
+    * Remove given count of CharTypes from head.
     */
-   inline String& removeFromHead(Length len)
-   { return removeSlice(0, len); }
+   StringBase& removeFromHead(Length len);
    
    /**
-    * Remove given count of elements from tail.
+    * Remove given count of CharTypes from tail.
     */
-   inline String& removeFromTail(Length len)
-   {
-      Length l = length();
-      return removeSlice((len < l) ? (l - len) : 0, len); 
-   }      
+   StringBase& removeFromTail(Length len);
    
    /**
     * Return the string resulting from removing the head passed as argument
     * if it matches with this string head. If it doesn't match, returns a
     * this string unaltered. 
     */
-   inline String removeHead(const String& str) const
-   { return startsWith(str) ? tail(length() - str.length()) : *this; }
+   StringBase removeHead(const StringBase& str) const;
    
    /**
     * Return the string resulting from removing the tail passed as argument
     * if it matches with this string tail. If it doesn't match, returns a
     * this string unaltered. 
     */
-   inline String removeTail(const String& str) const
-   { return endsWith(str) ? head(length() - str.length()) : *this; }
+   StringBase removeTail(const StringBase& str) const;
    
    /**
     * Capitalize the string, converting the first symbol to upper case if
     * possible.
     */
-   inline String capitalize() const
-   { std::string r(_base); if (r.length() > 0) r[0] = toupper(r[0]); return r; }
+   StringBase capitalize() const;
    
    /**
     * Return a lower case copy of this string. 
     */
-   inline String toLowerCase() const
-   { 
-      std::string r(_base); 
-      for (int i = 0; i < r.length(); i++) 
-         r[i] = tolower(r[i]);
-      return r;
-   }
+   StringBase toLowerCase() const;
    
    /**
     * Return a upper case copy of this string. 
     */
-   inline String toUpperCase() const
-   { 
-      std::string r(_base); 
-      for (int i = 0; i < r.length(); i++) 
-         r[i] = toupper(r[i]);
-      return r;
-   }
+   StringBase toUpperCase() const;
    
    /**
     * Assign operator.
     */
-   inline String& operator = (const String& str)
-   { _base = str._base; return *this; }
+   StringBase& operator = (const StringBase& str);
    
    /**
     * Add operator. This add operator return a string resulting of
     * concatenating this string with given one passed as argument. 
     */
-   inline String operator + (const String& str) const
-   { return String(*this).append(str); }
+   StringBase operator + (const StringBase& str) const;
    
    /**
     * Equals to operator.
     */
-   inline bool operator == (const String& str) const
-   { return _base == str._base; }
+   bool operator == (const StringBase& str) const;
    
    /**
     * Equals to operator.
     */
-   bool operator == (const char* str) const
-   { return _base == str; }
+   bool operator == (const CharType* str) const;
    
    /**
     * Not equals to operator.
     */
-   inline bool operator != (const String& str) const
-   { return _base != str._base; }    
+   bool operator != (const StringBase& str) const;
 
    /**
     * Not equals to operator.
     */
-   inline bool operator != (const char* str) const
-   { return _base != str; }
+   bool operator != (const CharType* str) const;
    
    /**
     * Less than operator.
     */
-   inline bool operator < (const String &str) const
-   { return _base < str._base; }
+   bool operator < (const StringBase &str) const;
    
    /**
     * Greater than operator.
     */
-   inline bool operator > (const String &str) const
-   { return _base > str._base; }
+   bool operator > (const StringBase &str) const;
    
    /**
     * Less than or equal operator.
     */
-   inline bool operator <= (const String &str) const
-   { return _base <= str._base; }
+   bool operator <= (const StringBase &str) const;
    
    /**
     * Greater than or equal operator.
     */
-   inline bool operator >= (const String &str) const
-   { return _base >= str._base; }
+   bool operator >= (const StringBase &str) const;
    
    /**
     * Index operator. If given position is not valid for this string, a
     * OutOfBoundsException is raised. 
     */
-   Element& operator [] (const Position &pos);
+   CharType& operator [] (const Position &pos);
 
    /**
     * Index operator. If given position is not valid for this string, a
     * OutOfBoundsException is raised. 
     */
-   const Element& operator [] (const Position &pos) const;
+   const CharType& operator [] (const Position &pos) const;
 
    /**
-    * Obtain an iterator pointing to the first element of the string.
+    * Obtain an iterator pointing to the first CharType of the string.
     */
-   Iterator<char> begin();
+   Iterator<CharType> begin();
 
    /**
     * Obtain an iterator pointing to (beyond) the end of the string.
     */
-   Iterator<char> end();
+   Iterator<CharType> end();
 
    /**
-    * Obtain a const-iterator pointing to the first element of the string.
+    * Obtain a const-iterator pointing to the first CharType of the string.
     */
-   Iterator<const char> begin() const;
+   Iterator<const CharType> begin() const;
 
    /**
     * Obtain a const-iterator pointing to (beyond) the end of the string.
     */
-   Iterator<const char> end() const;
+   Iterator<const CharType> end() const;
 
 private:
 
-   mutable StringBase _base;
+   mutable std::basic_string<CharType> _base;
 
 };
+
+typedef StringBase<char> String;
 
 }; // namespace karen
 
 using ::karen::String;
+
+#include "KarenCore/string-inl.h"
 
 #endif
