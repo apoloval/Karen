@@ -130,6 +130,7 @@
 #endif
 #else // non-windows
    #define KAREN_EXPORT __attribute__ ((visibility ("default")))
+   #define KAREN_IMPORT
    #define KAREN_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 

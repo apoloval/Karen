@@ -46,7 +46,7 @@ class ConstIterator;
  * members not included in STL strings. 
  */
 template <typename CharType>
-class KAREN_EXPORT StringBase
+class StringBase
 {
 public:
 
@@ -119,6 +119,11 @@ public:
     * Cast operator to null-terminated C-like string.
     */
    operator const CharType* () const;
+
+   /**
+    * Cast operator to STL string.
+    */
+   operator const std::basic_string<CharType>& () const;
    
    /**
     * Return the length of the string. 
@@ -329,6 +334,9 @@ private:
 
 };
 
+template class KAREN_EXPORT std::allocator<char>;
+template class KAREN_EXPORT std::basic_string<char>;
+template class KAREN_EXPORT StringBase<char>;
 typedef StringBase<char> String;
 
 }; // namespace karen

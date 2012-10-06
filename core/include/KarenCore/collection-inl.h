@@ -150,13 +150,13 @@ IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::prevAfterN
 template <class T, class CollectionClass, 
           class ImplementationClass, class IteratorClass>
 const T&
-IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getAfterNullCheck() const
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getConstAfterNullCheck()
 { return *_impl; }   
    
 template <class T, class CollectionClass, 
           class ImplementationClass, class IteratorClass>
 T&
-IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getAfterNullCheck()
+IteratorImpl<T, CollectionClass, ImplementationClass, IteratorClass>::getNonConstAfterNullCheck()
 { return const_cast<T&>(*_impl); }   
 
 template <class T>

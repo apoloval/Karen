@@ -32,28 +32,24 @@ Exception::Exception(
    const String& sourceFile,
    long sourceLine,
    Exception* nestedException)
- : _cause(new String(nestedException ? cause + "\n" + nestedException->cause() : cause)), 
-   _sourceFile(new String(sourceFile)),
-   _sourceLine(sourceLine),
-   _nestedException(nestedException)
 {
+   this->init(cause, sourceFile, sourceLine, nestedException);
 }
 
 Exception::Exception(
    const String& cause,
    const String& sourceFile,
    long sourceLine) 
- : Exception(cause, sourceFile, sourceLine, NULL)
 {
+   this->init(cause, sourceFile, sourceLine, nullptr);
 }
 
 Exception::Exception(
    const String& cause,
    Exception* nestedException) 
- : Exception(cause, "unknown file", -1, nestedException)
 {
+   this->init(cause, "unknown file", -1, nestedException);
 }
-
 
 Exception::~Exception()
 throw ()
@@ -62,4 +58,16 @@ throw ()
    delete _sourceFile;
 }
 
-}; // namespace karen
+void Exception::init(const String &cause,
+                     const String &sourceFile,
+                     long sourceLine,
+                     Exception *nestedException)
+{
+   _cause = new String(
+            nestedException ? cause + "\n" + nestedException->cause() : cause);
+   _sourceFile = new String(sourceFile);
+   _sourceLine = sourceLine;
+   _nestedException = nestedException;
+}
+
+};

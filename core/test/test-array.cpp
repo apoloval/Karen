@@ -79,7 +79,7 @@ KAREN_BEGIN_UNIT_TEST(ArrayTestSuite);
       DynArray<int> a(raw, 6);
       assertFalse(a.isEmpty());
       assertEquals<int>(6, a.size());
-      for (int i = 0; i < a.size(); i++)
+      for (unsigned int i = 0; i < a.size(); i++)
          assertEquals(a[i], raw[i]);
    });
    

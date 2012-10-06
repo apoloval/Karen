@@ -168,7 +168,29 @@ private:
    
 };
 
-/** 
+template <class T>
+class AbstractConstIterator : public AbstractIterator<const T>
+{
+private:
+
+   virtual const T& getAfterNullCheck()
+   { return this->getConstAfterNullCheck(); }
+
+   virtual const T& getConstAfterNullCheck() = 0;
+};
+
+template <class T>
+class AbstractNonConstIterator : public AbstractIterator<T>
+{
+private:
+
+   virtual T& getAfterNullCheck()
+   { return this->getNonConstAfterNullCheck(); }
+
+   virtual T& getNonConstAfterNullCheck() = 0;
+};
+
+/**
  * Iterator class. This class is used by any collection to wrap an actual
  * iterator implementation. 
  */
@@ -218,7 +240,7 @@ public:
    /**
     * Obtain iterator implementation.
     */
-   template <class Impl = AbstractIterator<T> >
+   template <class Impl>
    inline Impl* impl()
    { return dynamic_cast<Impl*>((AbstractIterator<T>*) _impl); }
    

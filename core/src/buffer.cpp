@@ -28,7 +28,8 @@
 
 namespace karen {
 
-Buffer::Buffer(unsigned long length) : Buffer(new UInt8[length], length)
+Buffer::Buffer(unsigned long length)
+ : _length(length), _data(new UInt8[length]), _dirty(false)
 {
 }
 
@@ -38,7 +39,7 @@ Buffer::Buffer(void* data, unsigned long length)
 }
 
 Buffer::Buffer(const Buffer& buf)
- : Buffer(new UInt8[buf._length], buf._length)
+ : _length(buf._length), _data(new UInt8[buf._length]), _dirty(false)
 {
    memcpy(_data, buf._data, _length);
 }

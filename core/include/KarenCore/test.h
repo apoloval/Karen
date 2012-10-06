@@ -49,7 +49,7 @@ KAREN_DECL_EXCEPTION(InvalidAssertionException);
  */
 KAREN_DECL_EXCEPTION(TestFailedException);
 
-class Test
+class KAREN_EXPORT Test
 {
 public:
 
@@ -122,7 +122,7 @@ struct TestResult
    TestResultStatus  status;
 };
 
-class UnitTest
+class KAREN_EXPORT UnitTest
 {
 public:
 

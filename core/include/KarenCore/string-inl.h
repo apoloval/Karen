@@ -41,8 +41,8 @@ namespace karen {
  * string iterator.
  */
 template <typename CharType>
-class StringIterator : public AbstractIterator<CharType>,
-                       public AbstractIterator<const CharType>
+class StringIterator : public AbstractConstIterator<CharType>,
+                       public AbstractNonConstIterator<CharType>
 {
 public:
 
@@ -83,12 +83,12 @@ private:
       _itImpl--;
    }
 
-   virtual char& getAfterNullCheck()
+   virtual char& getNonConstAfterNullCheck()
    {
       return *_itImpl;
    }
 
-   virtual const char& getAfterNullCheck() const
+   virtual const char& getConstAfterNullCheck()
    {
       return *_itImpl;
    }
@@ -121,6 +121,10 @@ StringBase<CharType>::~StringBase() {}
 template <typename CharType>
 StringBase<CharType>::operator const CharType* () const
 { return _base.c_str(); }
+
+template <typename CharType>
+StringBase<CharType>::operator const std::basic_string<CharType>& () const
+{ return _base; }
 
 template <typename CharType>
 typename StringBase<CharType>::Length
@@ -240,7 +244,7 @@ StringBase<CharType>
 StringBase<CharType>::toLowerCase() const
 { 
    std::string r(_base); 
-   for (int i = 0; i < r.length(); i++) 
+   for (unsigned int i = 0; i < r.length(); i++)
       r[i] = tolower(r[i]);
    return r;
 }
@@ -250,7 +254,7 @@ StringBase<CharType>
 StringBase<CharType>::toUpperCase() const
 { 
    std::string r(_base); 
-   for (int i = 0; i < r.length(); i++) 
+   for (unsigned int i = 0; i < r.length(); i++)
       r[i] = toupper(r[i]);
    return r;
 }
@@ -313,7 +317,12 @@ StringBase<CharType>::format(const CharType *str, ...)
    Ptr<char> buf = new char[MAX_FORMAT_LENGTH];
    va_list args;
    va_start(args, str);
-   vsnprintf(buf, MAX_FORMAT_LENGTH, str, args);
+#if KAREN_COMPILER == KAREN_COMPILER_MSVC
+   vsnprintf_s(buf, MAX_FORMAT_LENGTH,
+               MAX_FORMAT_LENGTH / sizeof(CharType), str, args);
+#else
+   vsnprintf(buf, MAX_FORMAT_LENGTH / sizeof(CharType), str, args);
+#endif
    va_end(args);
 
    StringBase res(buf);
@@ -325,8 +334,8 @@ StringBase<CharType>
 StringBase<CharType>::fromDouble(double num, unsigned int decimalDigits)
 {
    long ip = (long) num;
-   float tmp = num - ip;
-   for (int i = 0; i < decimalDigits; i++)
+   double tmp = num - ip;
+   for (unsigned int i = 0; i < decimalDigits; i++)
       tmp *= 10l;
    long fp = (long) tmp;
    

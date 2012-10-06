@@ -126,7 +126,7 @@ KAREN_BEGIN_UNIT_TEST(BufferTestSuite);
       { 
          buf.read(dst, 32, 48);
          assertionFailed("expected out of bounds exception not raised");
-      } catch (OutOfBoundsException& e) {}
+      } catch (OutOfBoundsException&) {}
    });
    
    KAREN_DECL_TEST(shouldWriteWholeBuffer,
@@ -170,7 +170,7 @@ KAREN_BEGIN_UNIT_TEST(BufferTestSuite);
       { 
          buf.write(data, 32, 48);
          assertionFailed("expected out of bounds exception not raised");
-      } catch (OutOfBoundsException& e) {}
+      } catch (OutOfBoundsException&) {}
       delete data;
    });
    
@@ -196,7 +196,7 @@ KAREN_BEGIN_UNIT_TEST(BufferTestSuite);
       {
          buf.set<UInt8>(7, 128);
          assertionFailed("expected out of bounds exception not raised");
-      } catch (OutOfBoundsException& e) {}
+      } catch (OutOfBoundsException&) {}
    });
    
    KAREN_DECL_TEST(shouldBeCleanAfterInitialization,
@@ -255,7 +255,7 @@ KAREN_BEGIN_UNIT_TEST(BufferStreamsTestSuite);
          bis.read<UInt8>();
          assertionFailed("expected invalid state exception not raised");
       }
-      catch (IOException& e) {}
+      catch (IOException&) {}
    });
    
    KAREN_DECL_TEST(shouldWriteToOutputStream,

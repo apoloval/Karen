@@ -26,6 +26,11 @@ cmake_minimum_required(VERSION 2.6)
 
 project(KarenCore)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake")
+
+include(cxx11)
+include(testing)
+
 set(sources)
 list(APPEND sources
    src/buffer.cpp

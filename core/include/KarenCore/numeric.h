@@ -34,8 +34,6 @@ class KAREN_EXPORT Integer
 {
 public:
 
-   Integer() = delete;
-   
    /**
     * Convert a string object into a long value. The string object is
     * interpreted in the base specified as argument. If string value cannot
@@ -49,8 +47,6 @@ public:
 class KAREN_EXPORT Float
 {
 public:
-
-   Float() = delete;
 
    /**
     * Convert a string object into a long value. The string object is

@@ -117,6 +117,8 @@ public:
 
 };
 
+template class KAREN_EXPORT Ptr<AbstractFile>;
+
 /**
  * File class. This class provides a concrete representation of a file
  * not bounded to the concrete backend that supports the filesystem access.
@@ -152,6 +154,10 @@ private:
    Ptr<AbstractFile> _impl;
 
 };
+
+class FileFactory;
+
+template class KAREN_EXPORT Ptr<FileFactory>;
 
 /**
  * File factory class. This abstract class provides the interface

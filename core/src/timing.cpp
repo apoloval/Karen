@@ -28,6 +28,7 @@
 
 #define KAREN_TIMING_POSIX    1
 #define KAREN_TIMING_SDL      2
+#define KAREN_TIMING_WIN32    3
 
 /*
  * If no timing backend is specified, let's choose a defaulted one 
@@ -39,7 +40,7 @@
 #  elif KAREN_PLATFORM == KAREN_PLATFORM_OSX
 #     define KAREN_TIMING KAREN_TIMING_POSIX
 #  elif KAREN_PLATFORM == KAREN_PLATFORM_WINDOWS
-#     define KAREN_TIMING KAREN_TIMING_POSIX
+#     define KAREN_TIMING KAREN_TIMING_WIN32
 #  else
 #     error Unknown runtime platform
 #  endif
@@ -140,12 +141,40 @@ private:
 };
 #endif
 
+#if KAREN_TIMING == KAREN_TIMING_WIN32
+class Win32Counter : public AbstractCounter
+{
+public:
+
+   virtual void start() throw (InvalidStateException)
+   {
+      KAREN_THROW(UnsupportedOperationException,
+                  "Win32 timing was not implemented yet");
+   }
+
+   virtual double stop() throw (InvalidStateException)
+   {
+      KAREN_THROW(UnsupportedOperationException,
+                  "Win32 timing was not implemented yet");
+   }
+
+   virtual bool isRunning() const
+   {
+      KAREN_THROW(UnsupportedOperationException,
+                  "Win32 timing was not implemented yet");
+   }
+};
+
+#endif
+
 Counter::Counter() : _impl(NULL)
 {
 #if KAREN_TIMING == KAREN_TIMING_SDL
    _impl = new SDLCounter();
 #elif KAREN_TIMING == KAREN_TIMING_POSIX
    _impl = new PosixCounter();
+#elif KAREN_TIMING == KAREN_TIMING_WIN32
+   _impl = new Win32Counter();
 #endif
 }
 
@@ -156,6 +185,9 @@ sleepMillis(unsigned long millis)
    SDL_Delay((Uint32) millis);
 #elif KAREN_TIMING == KAREN_TIMING_POSIX
    usleep((useconds_t) millis * 1000l);
+#elif KAREN_TIMING == KAREN_TIMING_WIN32
+   KAREN_THROW(UnsupportedOperationException,
+               "Win32 timing was not implemented yet");
 #endif
 }
 
@@ -182,6 +214,9 @@ getTimeSinceLaunched()
       
    return (now.tv_sec - startTime.tv_sec) * 1000.0 +
           (now.tv_usec - startTime.tv_usec) / 1000.0;
+#elif KAREN_TIMING == KAREN_TIMING_WIN32
+   KAREN_THROW(UnsupportedOperationException,
+               "Win32 timing was not implemented yet");
 #endif
 }
 

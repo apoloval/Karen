@@ -91,7 +91,7 @@ public:
     * Check whether this collection has the given element. This performs
     * an iteration on the collection to find the element.
     */
-   template <class Equals = DefaultEquals<T> >
+   template <class Equals>
    inline bool hasElement(const T& t, Equals eq = Equals()) const;
    
    /**
@@ -293,7 +293,7 @@ public:
    /**
     * Remove all ocurrences of given element from the list.
     */
-   template <class Equals = DefaultEquals<T> >
+   template <class Equals>
    inline void removeAll(const T& t, Equals eq = Equals());
 
 };
@@ -383,8 +383,8 @@ template <class T,
           class CollectionClass, 
           class ImplementationClass,
           class IteratorClass = typename ImplementationClass::iterator>
-class IteratorImpl : public AbstractIterator<T>,
-                     public AbstractIterator<const T>
+class IteratorImpl : public AbstractConstIterator<T>,
+                     public AbstractNonConstIterator<T>
 {
 public:
 
@@ -412,9 +412,9 @@ private:
    
    inline virtual void prevAfterNullCheck();
    
-   inline virtual const T& getAfterNullCheck() const;
+   inline virtual const T& getConstAfterNullCheck();
    
-   inline virtual T& getAfterNullCheck();
+   inline virtual T& getNonConstAfterNullCheck();
    
 };
 
@@ -749,7 +749,7 @@ public:
    /**
     * Remove all ocurrences of given element from the queue.
     */
-   template <class Equals = DefaultEquals<T> >
+   template <class Equals>
    inline void removeAll(const T& t, Equals eq = Equals());
 
 };

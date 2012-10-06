@@ -89,6 +89,11 @@ protected:
    
 private:
 
+   void init(const String& cause,
+             const String& sourceFile,
+             long sourceLine,
+             Exception* nestedException);
+
    String*        _cause;
    String*        _sourceFile;
    long           _sourceLine;
@@ -172,6 +177,12 @@ KAREN_DECL_EXCEPTION(NotFoundException);
  * I/O exception. This exception is raised when an I/O error takes place.
  */
 KAREN_DECL_EXCEPTION(IOException);
+
+/**
+ * Unsupported operation. This exception is raised when an operation is
+ * not supported by the requested object.
+ */
+KAREN_DECL_EXCEPTION(UnsupportedOperationException);
 
 }; // namespace karen
 

@@ -39,7 +39,7 @@ UnitTest::UnitTest(const String& name) : _name(name), _nextTest(0) {}
 
 UnitTest::~UnitTest()
 {
-   for (int i = 0; i < _nextTest; i++)
+   for (unsigned int i = 0; i < _nextTest; i++)
       delete _tests[i];
 }
 
@@ -51,7 +51,7 @@ UnitTest::run(
 {
    if (reporter)
       reporter->beginUnitTestSuite(_name);
-   int i = 0, passed = 0;
+   unsigned int i = 0, passed = 0;
    while (i < _nextTest)
    {
       if (reporter)
