@@ -91,7 +91,7 @@ public:
     * Check whether this collection has the given element. This performs
     * an iteration on the collection to find the element.
     */
-   template <class Equals>
+   template <class Equals = DefaultEquals<T>>
    inline bool hasElement(const T& t, Equals eq = Equals()) const;
    
    /**

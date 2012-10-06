@@ -60,6 +60,7 @@ list(APPEND headers
    include/KarenCore/parsing.h
    include/KarenCore/platform.h
    include/KarenCore/pointer.h
+   include/KarenCore/pointer-inl.h
    include/KarenCore/stream.h
    include/KarenCore/string.h
    include/KarenCore/string-inl.h

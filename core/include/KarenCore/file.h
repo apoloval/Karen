@@ -155,9 +155,10 @@ private:
 
 };
 
+#if KAREN_COMPILER == KAREN_COMPILER_MSVC
 class FileFactory;
-
 template class KAREN_EXPORT Ptr<FileFactory>;
+#endif
 
 /**
  * File factory class. This abstract class provides the interface

@@ -334,9 +334,12 @@ private:
 
 };
 
+#if KAREN_COMPILER == KAREN_COMPILER_MSVC
 template class KAREN_EXPORT std::allocator<char>;
 template class KAREN_EXPORT std::basic_string<char>;
 template class KAREN_EXPORT StringBase<char>;
+#endif
+
 typedef StringBase<char> String;
 
 }; // namespace karen
