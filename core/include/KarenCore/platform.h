@@ -134,6 +134,14 @@
    #define KAREN_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
+/* Define the macros to export template instantiations for DLLs. */
+#if KAREN_COMPILER == KAREN_COMPILER_MSVC
+   #define KAREN_EXPORT_TEMPLATE(tempdef, ...) \
+         template class KAREN_EXPORT tempdef __VA_ARGS__
+#else
+   #define KAREN_EXPORT_TEMPLATE(tempdef, ...)
+#endif
+
 // Integer formats of fixed bit width
 #if KAREN_ARCH_TYPE == KAREN_ARCH_32
 typedef unsigned long      UInt32;
@@ -204,7 +212,7 @@ typedef long long          Int64;
       #define KAREN_CXX11_HAVE_RVALUE_REFS
       #define KAREN_CXX11_HAVE_STATIC_ASSERTIONS
       #define KAREN_CXX11_HAVE_AUTO_TYPE
-      #define KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
+      // #define KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
       #define KAREN_CXX11_HAVE_NULL_PTR_CONSTANT
    #endif
 #endif

@@ -22,7 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include <KarenCore/collection.h>
+#include <KarenCore/map.h>
 #include <KarenCore/test.h>
 
 using namespace karen;
@@ -36,7 +36,7 @@ KAREN_BEGIN_UNIT_TEST(DictTestSuite);
       assertTrue(d.isEmpty());
       assertEquals<int>(0, d.size());
    });
-   
+
    KAREN_DECL_TEST(shouldInsertOneElement,
    {
       TreeMap<String, int> d;
@@ -108,7 +108,7 @@ KAREN_BEGIN_UNIT_TEST(DictTestSuite);
          i++;
       }
    });
-      
+
 KAREN_END_UNIT_TEST(DictTestSuite);
 
 int main(int argc, char* argv[])

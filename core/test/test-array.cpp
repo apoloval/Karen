@@ -22,7 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include <KarenCore/collection.h>
+#include <KarenCore/array.h>
 #include <KarenCore/parsing.h>
 #include <KarenCore/test.h>
 

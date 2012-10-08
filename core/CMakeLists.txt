@@ -35,6 +35,7 @@ set(sources)
 list(APPEND sources
    src/buffer.cpp
    src/exception.cpp
+   src/events.cpp
    src/file-posix.cpp
    src/file.cpp
    src/numeric.cpp
@@ -46,21 +47,32 @@ list(APPEND sources
 set(headers)
 list(APPEND headers
    include/KarenCore.h
+   include/KarenCore/array.h
+   include/KarenCore/array-inl.h
    include/KarenCore/bolt.h
    include/KarenCore/buffer.h
    include/KarenCore/collection-inl.h
    include/KarenCore/collection.h
    include/KarenCore/events.h
+   include/KarenCore/events-inl.h
    include/KarenCore/exception.h
    include/KarenCore/file-posix.h
    include/KarenCore/file.h
    include/KarenCore/first-class.h
    include/KarenCore/iterator.h
+   include/KarenCore/list.h
+   include/KarenCore/list-inl.h
+   include/KarenCore/map.h
+   include/KarenCore/map-inl.h
    include/KarenCore/numeric.h
    include/KarenCore/parsing.h
    include/KarenCore/platform.h
    include/KarenCore/pointer.h
    include/KarenCore/pointer-inl.h
+   include/KarenCore/queue.h
+   include/KarenCore/queue-inl.h
+   include/KarenCore/set.h
+   include/KarenCore/set-inl.h
    include/KarenCore/stream.h
    include/KarenCore/string.h
    include/KarenCore/string-inl.h

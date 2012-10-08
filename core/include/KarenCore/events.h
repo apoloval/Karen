@@ -25,14 +25,13 @@
 #ifndef KAREN_CORE_EVENTS_H
 #define KAREN_CORE_EVENTS_H
 
-#include "KarenCore/collection.h"
+#include "KarenCore/list.h"
 #include "KarenCore/exception.h"
 #include "KarenCore/pointer.h"
 
 #ifdef KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
 #include <functional>
 #endif
-
 namespace karen {
 
 class KAREN_EXPORT Event
@@ -51,96 +50,40 @@ public:
    virtual void sendEvent(const Event& event) const throw (IOException) = 0;
 };
 
+class Subscriber
+{
+public:
+
+   virtual ~Subscriber() {}
+
+   virtual void invoke(const Event&) = 0;
+};
+
+KAREN_EXPORT_TEMPLATE(Ptr<Subscriber>);
+KAREN_EXPORT_TEMPLATE(LinkedList<Ptr<Subscriber>>);
+
 class KAREN_EXPORT LocalEventChannel
 {
 public:
 
-   inline virtual ~LocalEventChannel()
-   {
-      _eventSubscribers.clear();
-   }
+   LocalEventChannel();
+
+   virtual ~LocalEventChannel();
    
    template <typename T, typename E>
-   void subscribe(T* target, void (T::* callback) (const E&))
-   {
-      auto subscriber = new FunctionMemberEventSubscriber<T, E>(
-            target, callback);
-      _eventSubscribers.insertBack(subscriber);
-   }
+   void subscribe(T* target, void (T::* callback) (const E&));
    
 #ifdef KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
    template <typename E>
-   void subscribe(std::function<void(const E&)> lambda)
-   {
-      auto subscriber = new LambdaEventSubscriber<E>(lambda);
-      _eventSubscribers.insertBack(subscriber);
-   }
+   void subscribe(std::function<void(const E&)> lambda);
 #endif
 
 protected:
 
-   virtual void sendEvent(const Event& ev)
-   {
-      for (auto it = _eventSubscribers.begin(),
-           end = _eventSubscribers.end(); it != end; it++)
-      {
-         (*it)->invoke(ev);
-      }
-   }
+   virtual void sendEvent(const Event& ev);
 
 private:
 
-   struct Subscriber
-   {
-      virtual ~Subscriber() {}
-      
-      virtual void invoke(const Event&) = 0;
-   };
-
-   template <typename T, typename E>
-   struct FunctionMemberEventSubscriber : Subscriber
-   {
-      T* _target;
-      void (T::* _callback)(const E&);
-      
-      FunctionMemberEventSubscriber(T* target,
-                                    void (T::* callback)(const E&)) :
-         _target(target), _callback(callback)
-      {}
-      
-      virtual void invoke(const Event& ev)
-      {
-         auto narrowed = dynamic_cast<const E*>(&ev);
-         if (narrowed)
-         {
-            (_target->*_callback)(*narrowed);
-         }
-      }
-   };
-
-#ifdef KAREN_CXX11_HAVE_LAMBDA_FUNCTIONS
-
-   template <typename E>
-   struct LambdaEventSubscriber : Subscriber
-   {
-      std::function<void(const E&)> _lambda;
-      
-      LambdaEventSubscriber(std::function<void(const E&)>& lambda) :
-            _lambda(lambda)
-      {}
-      
-      virtual void invoke(const Event& ev)
-      {
-         auto narrowed = dynamic_cast<const E*>(&ev);
-         if (narrowed)
-         {
-            _lambda(*narrowed);
-         }
-      }
-   };
-   
-#endif
-   
    typedef LinkedList<Ptr<Subscriber>> EventSubscriberList;
    
    EventSubscriberList _eventSubscribers;
@@ -152,6 +95,8 @@ private:
       __VA_ARGS__; \
    };   
 
-};
+}
+
+#include "KarenCore/events-inl.h"
 
 #endif

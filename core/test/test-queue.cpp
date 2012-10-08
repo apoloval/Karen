@@ -22,7 +22,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include <KarenCore/collection.h>
+#include <KarenCore/queue.h>
 #include <KarenCore/test.h>
 
 using namespace karen;
