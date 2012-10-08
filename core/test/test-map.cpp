@@ -28,7 +28,7 @@
 using namespace karen;
 
 
-KAREN_BEGIN_UNIT_TEST(DictTestSuite);
+KAREN_BEGIN_UNIT_TEST(MapTestSuite);
 
    KAREN_DECL_TEST(shouldCreateAnEmptyTreeMap,
    {
@@ -109,11 +109,11 @@ KAREN_BEGIN_UNIT_TEST(DictTestSuite);
       }
    });
 
-KAREN_END_UNIT_TEST(DictTestSuite);
+KAREN_END_UNIT_TEST(MapTestSuite);
 
 int main(int argc, char* argv[])
 {
    StdOutUnitTestReporter rep;
-   DictTestSuite suite;
+   MapTestSuite suite;
    suite.run(&rep, NULL, 0);
 }

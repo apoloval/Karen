@@ -98,10 +98,10 @@ set_target_properties(KarenCore PROPERTIES
 # Unit test executables
 karen_add_test(KarenCore-UnitTest-Array test/test-array.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-Buffer test/test-buffer.cpp KarenCore)
-karen_add_test(KarenCore-UnitTest-Dict test/test-dict.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-Events test/test-events.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-File test/test-file.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-List test/test-list.cpp KarenCore)
+karen_add_test(KarenCore-UnitTest-Map test/test-map.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-Queue test/test-queue.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-Set test/test-set.cpp KarenCore)
 karen_add_test(KarenCore-UnitTest-String test/test-string.cpp KarenCore)
