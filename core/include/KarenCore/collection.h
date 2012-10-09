@@ -185,6 +185,64 @@ private:
    
 };
 
+template <typename T, typename CollectionType, typename StdIteratorType>
+class StdIteratorAdaptorBase : public AbstractIterator<T>
+{
+public:
+
+   inline StdIteratorAdaptorBase(const CollectionType& collection,
+                                 const StdIteratorType& iterator,
+                                 const StdIteratorType& end);
+
+   inline virtual bool isNull() const;
+   
+   inline StdIteratorType& impl();
+   
+   inline const CollectionType* collection();
+
+   inline virtual void nextAfterNullCheck();
+   
+   inline virtual void prevAfterNullCheck();
+
+   inline virtual T& getAfterNullCheck();
+
+protected:
+
+   mutable const CollectionType* _collection;
+   mutable StdIteratorType _stdIterator;
+   mutable StdIteratorType _stdEnd;
+};
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+class ConstStdIteratorAdaptor : 
+      public StdIteratorAdaptorBase<const T, CollectionType, StdIteratorType>
+{
+public:
+
+   inline ConstStdIteratorAdaptor(const CollectionType& collection,
+                                  const StdIteratorType& iterator,
+                                  const StdIteratorType& end);
+
+   inline virtual ConstStdIteratorAdaptor* clone() const;
+
+   inline virtual Ptr<AbstractIterator<const T>> toConstIterator();
+};
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+class StdIteratorAdaptor : 
+      public StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>
+{
+public:
+
+   inline StdIteratorAdaptor(const CollectionType& collection,
+                             const StdIteratorType& iterator,
+                             const StdIteratorType& end);
+
+   inline virtual StdIteratorAdaptor* clone() const;
+
+   inline virtual Ptr<AbstractIterator<const T>> toConstIterator();
+};
+
 }; // namespace karen
 
 #include "KarenCore/collection-inl.h"

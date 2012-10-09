@@ -93,6 +93,85 @@ T&
 IteratorImpl<T, CollectionClass, IteratorClass>::getNonConstAfterNullCheck()
 { return const_cast<T&>(*_impl); }   
 
+template <typename T, typename CollectionType, typename StdIteratorType>
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::StdIteratorAdaptorBase(
+      const CollectionType& collection,
+      const StdIteratorType& iterator,
+      const StdIteratorType& end)
+   : _collection(&collection), _stdIterator(iterator), _stdEnd(end)
+{}
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+bool
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::isNull() const
+{ return _stdIterator == _stdEnd; }
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+StdIteratorType&
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::impl()
+{ return _stdIterator; }
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+const CollectionType*
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::collection()
+{ return _collection; }
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+void
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::nextAfterNullCheck()
+{ _stdIterator++; }   
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+void
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::prevAfterNullCheck()
+{ _stdIterator--; }   
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+T&
+StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>::getAfterNullCheck()
+{ return *_stdIterator; }   
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+ConstStdIteratorAdaptor<T, CollectionType, StdIteratorType>::ConstStdIteratorAdaptor(
+      const CollectionType& collection,
+      const StdIteratorType& iterator,
+      const StdIteratorType& end)
+   : StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>(
+         collection, iterator, end)
+{}
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+ConstStdIteratorAdaptor<T, CollectionType, StdIteratorType>*
+ConstStdIteratorAdaptor<T, CollectionType, StdIteratorType>::clone() const
+{ return new ConstStdIteratorAdaptor(*_collection, _stdIterator, _stdEnd); }
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+Ptr<AbstractIterator<const T>>
+ConstStdIteratorAdaptor<T, CollectionType, StdIteratorType>::toConstIterator()
+{ return clone(); }
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+StdIteratorAdaptor<T, CollectionType, StdIteratorType>::StdIteratorAdaptor(
+      const CollectionType& collection,
+      const StdIteratorType& iterator,
+      const StdIteratorType& end)
+   : StdIteratorAdaptorBase<T, CollectionType, StdIteratorType>(
+         collection, iterator, end)
+{}
+
+template <typename T, typename CollectionType, typename StdIteratorType>
+StdIteratorAdaptor<T, CollectionType, StdIteratorType>*
+StdIteratorAdaptor<T, CollectionType, StdIteratorType>::clone() const
+{ return new StdIteratorAdaptor(*_collection, _stdIterator, _stdEnd); }
+   
+template <typename T, typename CollectionType, typename StdIteratorType>
+Ptr<AbstractIterator<const T>>
+StdIteratorAdaptor<T, CollectionType, StdIteratorType>::toConstIterator()
+{
+   return new ConstStdIteratorAdaptor<T, CollectionType, StdIteratorType>(
+         _collection, _stdIterator, _stdEnd);
+}
+   
 }; // namespace karen
 
 #endif
